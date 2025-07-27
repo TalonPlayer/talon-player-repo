@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49a4460353b27a749ae55818e0f8dbb8, type: 3}
+  m_Name: Gold Bar
+  m_EditorClassIdentifier: 
+  _name: Gold Bar
+  rarity: 2
+  sparklePrefab: {fileID: 7972145161350723157, guid: 906a1cfc80f8a314cb97941a1d93f586, type: 3}
+  model: {fileID: 3435856054453871475, guid: 84e06e51526ec2e4691337624c226990, type: 3}
+  pickUpSound: {fileID: 8300000, guid: 902dd7be984fafb4bb6aa4e995a4a14e, type: 3}
+  spawnSound: {fileID: 8300000, guid: 902dd7be984fafb4bb6aa4e995a4a14e, type: 3}
+  volume: 0.1
+  scoreValue: 30
+  multiplierValue: 10

@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b80c2c7ed8e5a743a97d5307742c820, type: 3}
+  m_Name: Corn
+  m_EditorClassIdentifier: 
+  itemName: Corn
+  itemId: Item_101
+  primaryText: '[LMB to Eat]'
+  secondaryText: 
+  itemSprite: {fileID: 21300000, guid: 914de75f93f40ae49a62f619d98c9f6e, type: 3}
+  itemModel: {fileID: 2550026246424485500, guid: 807f7943bb384754289fefd96f9bacae,
+    type: 3}
+  itemIndicator: {fileID: 0}
+  hasIndicator: 0
+  isStackable: 1
+  delay: 0
+  cooldown: 0.85
+  animator: {fileID: 5609989031457396250, guid: 807f7943bb384754289fefd96f9bacae,
+    type: 3}
+  indicatorPos: {x: 0, y: 0, z: 0}
+  showIndicator: 0
+  sellingPrice: 0
+  healAmount: 0

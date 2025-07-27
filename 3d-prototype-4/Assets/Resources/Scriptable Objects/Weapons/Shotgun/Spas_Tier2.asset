@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1556f13af427b304391643db147ec183, type: 3}
+  m_Name: Spas_Tier2
+  m_EditorClassIdentifier: 
+  _name: Spas
+  id: ID_041
+  infiniteAmmo: 0
+  shots: 10
+  damage: 30
+  collateral: 5
+  reloadTime: 0.75
+  fireRate: 0.35
+  infiniteTime: 0
+  lifeTime: 10
+  model: {fileID: 1210994881293886300, guid: 33054d9de1cafa544bd12c09094e0422, type: 3}
+  projectilePrefab: {fileID: 5692490307125188112, guid: 5b93acea610c0294fa5f6a5808be50c7, type: 3}
+  ammoColor: {r: 1, g: 0.25726852, b: 0.25, a: 1}
+  muzzleFlashPrefab: {fileID: 4500840615125761693, guid: e4facbfe15731454ba177dce8243f732, type: 3}
+  shootSound: {fileID: 8300000, guid: c1dfec927904fc247a3c6c7f3dfe4f7c, type: 3}
+  reloadSound: {fileID: 8300000, guid: 73d8da416fe1cd04e9497a25c68536da, type: 3}
+  holdingAnim: {fileID: 9100000, guid: f793be4511ea0174089ec06e35b2163d, type: 2}

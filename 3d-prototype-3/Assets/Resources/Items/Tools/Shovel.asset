@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89b604cd37a24314fbeb5f07b4a56b0e, type: 3}
+  m_Name: Shovel
+  m_EditorClassIdentifier: 
+  itemName: Shovel
+  itemId: item_200
+  primaryText: '[LMB to Sow]'
+  secondaryText: '[RMB to Remove]'
+  count: 0
+  itemSprite: {fileID: 21300000, guid: 7d7ce9c5a3de5e548984292cb4ab88c1, type: 3}
+  itemModel: {fileID: 8745143510519904643, guid: 3fed4dcad7a77f2409c1c067a554cf08,
+    type: 3}
+  itemIndicator: {fileID: 8131918482370879126, guid: 276048189b8cf0d4ea7e5ee4284ff580,
+    type: 3}
+  hasIndicator: 1
+  delay: 0.25
+  cooldown: 0.75
+  animator: {fileID: 8623401668832800919, guid: 3fed4dcad7a77f2409c1c067a554cf08,
+    type: 3}
+  isStackable: 0
+  indicatorPos: {x: 0.78886706, y: 1.007, z: 5.9363203}
+  showIndicator: 0
+  soilPrefab: {fileID: 8131918482370879126, guid: 43c89e47e2f52d34eb2f7ec7ebb122a8,
+    type: 3}
+  soilRadius: 0.75

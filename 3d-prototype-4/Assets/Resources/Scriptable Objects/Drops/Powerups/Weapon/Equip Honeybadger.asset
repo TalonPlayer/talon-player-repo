@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79d2435506de26b41baeab89087498a2, type: 3}
+  m_Name: Equip Honeybadger
+  m_EditorClassIdentifier: 
+  _name: Equip Honeybadger
+  rarity: 14
+  sparklePrefab: {fileID: 7972145161350723157, guid: fb78703d0f80d354d96dc692f249d86e, type: 3}
+  model: {fileID: 3011063840629383214, guid: a61a41e36e6c1084e89aebf63ba9175e, type: 3}
+  pickUpSound: {fileID: 8300000, guid: fbdccc1176476d6449ee2b4f848ce47d, type: 3}
+  spawnSound: {fileID: 8300000, guid: 774862505db2a6149b6056f962e4e618, type: 3}
+  volume: 1
+  loopSound: {fileID: 5418912909068469172, guid: d5539ff63a86a6342bbbce0886935d30, type: 3}
+  weapon: {fileID: 11400000, guid: c52934a9adc36384983b364bffb9883d, type: 2}

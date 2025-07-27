@@ -1,5 +1,5 @@
 {
-    "name": "PlayerMovement",
+    "name": "PlayerInput",
     "maps": [
         {
             "name": "Ground Movement",
@@ -16,21 +16,12 @@
                 },
                 {
                     "name": "Jump",
-                    "type": "Value",
+                    "type": "Button",
                     "id": "3a77080b-4f07-4dd2-9e65-eda950e7b9af",
-                    "expectedControlType": "",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
-                },
-                {
-                    "name": "Slide",
-                    "type": "Button",
-                    "id": "53ce637f-1149-4b22-a70c-6ab46477f881",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "SlowTap(duration=1E-08,pressPoint=1E-08)",
-                    "initialStateCheck": false
                 },
                 {
                     "name": "Crouch",
@@ -38,8 +29,17 @@
                     "id": "2f98d10e-de39-4322-bf40-d1e248234241",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "SlowTap(pressPoint=1E-08)",
+                    "interactions": "SlowTap(duration=1E-08,pressPoint=1E-08)",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Dash",
+                    "type": "Value",
+                    "id": "1678be39-adc5-4c70-9cd5-88912b3f61d9",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -111,23 +111,71 @@
                 },
                 {
                     "name": "",
-                    "id": "2b02aae3-fbab-4a93-83d0-532cb844b505",
-                    "path": "<Keyboard>/leftShift",
+                    "id": "05c9bc7e-72f4-4db8-a037-e1e69da7624c",
+                    "path": "<Keyboard>/leftCtrl",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Slide",
+                    "action": "Crouch",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "05c9bc7e-72f4-4db8-a037-e1e69da7624c",
+                    "id": "e8cdde77-ce6e-44dd-81e5-8eac3aa507bb",
                     "path": "<Keyboard>/leftShift",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Crouch",
+                    "action": "Dash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Combat",
+            "id": "8c0a0e07-9d71-4a40-a252-ac89665a8166",
+            "actions": [
+                {
+                    "name": "Left Arm Attack",
+                    "type": "Button",
+                    "id": "250b664b-fc1f-40d5-ac68-d455a6627225",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Right Arm Attack",
+                    "type": "Button",
+                    "id": "a4f932c9-585b-4cf0-a23e-8db7e26b78c2",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "9e6b24f1-9f05-4870-8357-feb2b22d3d40",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Left Arm Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "278ae324-ead7-41c0-b5e4-befa930c751d",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Right Arm Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

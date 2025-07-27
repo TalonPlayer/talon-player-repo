@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1556f13af427b304391643db147ec183, type: 3}
+  m_Name: DeathMachine_Tier3
+  m_EditorClassIdentifier: 
+  _name: Death Machine
+  id: ID_032
+  infiniteAmmo: 1
+  shots: 50
+  damage: 55
+  collateral: 15
+  reloadTime: 0.25
+  fireRate: 0.015
+  infiniteTime: 0
+  lifeTime: 10
+  model: {fileID: 4912679248320151565, guid: 3f7870bc4bc33e04885e7af06db6ab77, type: 3}
+  projectilePrefab: {fileID: 6921153942526054540, guid: 1238693b2a6b39d49b21321f762a5190, type: 3}
+  ammoColor: {r: 0.58971465, g: 0.28773582, b: 1, a: 1}
+  muzzleFlashPrefab: {fileID: 4500840615125761693, guid: 2e65a9ebdb5d72647b51fd90c7e1a08d, type: 3}
+  shootSound: {fileID: 8300000, guid: e1f5b0f60ae3fbf4d93fc28db64b7311, type: 3}
+  reloadSound: {fileID: 8300000, guid: 73d8da416fe1cd04e9497a25c68536da, type: 3}
+  holdingAnim: {fileID: 9100000, guid: ebcd2f8484804634d92a4ab24464d9d3, type: 2}

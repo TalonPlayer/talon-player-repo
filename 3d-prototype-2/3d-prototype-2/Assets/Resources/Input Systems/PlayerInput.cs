@@ -38,21 +38,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""Jump"",
-                    ""type"": ""Value"",
+                    ""type"": ""Button"",
                     ""id"": ""3a77080b-4f07-4dd2-9e65-eda950e7b9af"",
-                    ""expectedControlType"": """",
+                    ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
-                },
-                {
-                    ""name"": ""Slide"",
-                    ""type"": ""Button"",
-                    ""id"": ""53ce637f-1149-4b22-a70c-6ab46477f881"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": ""SlowTap(duration=1E-08,pressPoint=1E-08)"",
-                    ""initialStateCheck"": false
                 },
                 {
                     ""name"": ""Crouch"",
@@ -60,8 +51,17 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""id"": ""2f98d10e-de39-4322-bf40-d1e248234241"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""SlowTap(pressPoint=1E-08)"",
+                    ""interactions"": ""SlowTap(duration=1E-08,pressPoint=1E-08)"",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Dash"",
+                    ""type"": ""Value"",
+                    ""id"": ""1678be39-adc5-4c70-9cd5-88912b3f61d9"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -133,23 +133,71 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""2b02aae3-fbab-4a93-83d0-532cb844b505"",
-                    ""path"": ""<Keyboard>/leftShift"",
+                    ""id"": ""05c9bc7e-72f4-4db8-a037-e1e69da7624c"",
+                    ""path"": ""<Keyboard>/leftCtrl"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Slide"",
+                    ""action"": ""Crouch"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""05c9bc7e-72f4-4db8-a037-e1e69da7624c"",
+                    ""id"": ""e8cdde77-ce6e-44dd-81e5-8eac3aa507bb"",
                     ""path"": ""<Keyboard>/leftShift"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Crouch"",
+                    ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""Combat"",
+            ""id"": ""8c0a0e07-9d71-4a40-a252-ac89665a8166"",
+            ""actions"": [
+                {
+                    ""name"": ""Left Arm Attack"",
+                    ""type"": ""Button"",
+                    ""id"": ""250b664b-fc1f-40d5-ac68-d455a6627225"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Right Arm Attack"",
+                    ""type"": ""Button"",
+                    ""id"": ""a4f932c9-585b-4cf0-a23e-8db7e26b78c2"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""9e6b24f1-9f05-4870-8357-feb2b22d3d40"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Left Arm Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""278ae324-ead7-41c0-b5e4-befa930c751d"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Right Arm Attack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -162,8 +210,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_GroundMovement = asset.FindActionMap("Ground Movement", throwIfNotFound: true);
         m_GroundMovement_Move = m_GroundMovement.FindAction("Move", throwIfNotFound: true);
         m_GroundMovement_Jump = m_GroundMovement.FindAction("Jump", throwIfNotFound: true);
-        m_GroundMovement_Slide = m_GroundMovement.FindAction("Slide", throwIfNotFound: true);
         m_GroundMovement_Crouch = m_GroundMovement.FindAction("Crouch", throwIfNotFound: true);
+        m_GroundMovement_Dash = m_GroundMovement.FindAction("Dash", throwIfNotFound: true);
+        // Combat
+        m_Combat = asset.FindActionMap("Combat", throwIfNotFound: true);
+        m_Combat_LeftArmAttack = m_Combat.FindAction("Left Arm Attack", throwIfNotFound: true);
+        m_Combat_RightArmAttack = m_Combat.FindAction("Right Arm Attack", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -227,16 +279,16 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private List<IGroundMovementActions> m_GroundMovementActionsCallbackInterfaces = new List<IGroundMovementActions>();
     private readonly InputAction m_GroundMovement_Move;
     private readonly InputAction m_GroundMovement_Jump;
-    private readonly InputAction m_GroundMovement_Slide;
     private readonly InputAction m_GroundMovement_Crouch;
+    private readonly InputAction m_GroundMovement_Dash;
     public struct GroundMovementActions
     {
         private @PlayerInput m_Wrapper;
         public GroundMovementActions(@PlayerInput wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_GroundMovement_Move;
         public InputAction @Jump => m_Wrapper.m_GroundMovement_Jump;
-        public InputAction @Slide => m_Wrapper.m_GroundMovement_Slide;
         public InputAction @Crouch => m_Wrapper.m_GroundMovement_Crouch;
+        public InputAction @Dash => m_Wrapper.m_GroundMovement_Dash;
         public InputActionMap Get() { return m_Wrapper.m_GroundMovement; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -252,12 +304,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
-            @Slide.started += instance.OnSlide;
-            @Slide.performed += instance.OnSlide;
-            @Slide.canceled += instance.OnSlide;
             @Crouch.started += instance.OnCrouch;
             @Crouch.performed += instance.OnCrouch;
             @Crouch.canceled += instance.OnCrouch;
+            @Dash.started += instance.OnDash;
+            @Dash.performed += instance.OnDash;
+            @Dash.canceled += instance.OnDash;
         }
 
         private void UnregisterCallbacks(IGroundMovementActions instance)
@@ -268,12 +320,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
-            @Slide.started -= instance.OnSlide;
-            @Slide.performed -= instance.OnSlide;
-            @Slide.canceled -= instance.OnSlide;
             @Crouch.started -= instance.OnCrouch;
             @Crouch.performed -= instance.OnCrouch;
             @Crouch.canceled -= instance.OnCrouch;
+            @Dash.started -= instance.OnDash;
+            @Dash.performed -= instance.OnDash;
+            @Dash.canceled -= instance.OnDash;
         }
 
         public void RemoveCallbacks(IGroundMovementActions instance)
@@ -291,11 +343,70 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         }
     }
     public GroundMovementActions @GroundMovement => new GroundMovementActions(this);
+
+    // Combat
+    private readonly InputActionMap m_Combat;
+    private List<ICombatActions> m_CombatActionsCallbackInterfaces = new List<ICombatActions>();
+    private readonly InputAction m_Combat_LeftArmAttack;
+    private readonly InputAction m_Combat_RightArmAttack;
+    public struct CombatActions
+    {
+        private @PlayerInput m_Wrapper;
+        public CombatActions(@PlayerInput wrapper) { m_Wrapper = wrapper; }
+        public InputAction @LeftArmAttack => m_Wrapper.m_Combat_LeftArmAttack;
+        public InputAction @RightArmAttack => m_Wrapper.m_Combat_RightArmAttack;
+        public InputActionMap Get() { return m_Wrapper.m_Combat; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(CombatActions set) { return set.Get(); }
+        public void AddCallbacks(ICombatActions instance)
+        {
+            if (instance == null || m_Wrapper.m_CombatActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_CombatActionsCallbackInterfaces.Add(instance);
+            @LeftArmAttack.started += instance.OnLeftArmAttack;
+            @LeftArmAttack.performed += instance.OnLeftArmAttack;
+            @LeftArmAttack.canceled += instance.OnLeftArmAttack;
+            @RightArmAttack.started += instance.OnRightArmAttack;
+            @RightArmAttack.performed += instance.OnRightArmAttack;
+            @RightArmAttack.canceled += instance.OnRightArmAttack;
+        }
+
+        private void UnregisterCallbacks(ICombatActions instance)
+        {
+            @LeftArmAttack.started -= instance.OnLeftArmAttack;
+            @LeftArmAttack.performed -= instance.OnLeftArmAttack;
+            @LeftArmAttack.canceled -= instance.OnLeftArmAttack;
+            @RightArmAttack.started -= instance.OnRightArmAttack;
+            @RightArmAttack.performed -= instance.OnRightArmAttack;
+            @RightArmAttack.canceled -= instance.OnRightArmAttack;
+        }
+
+        public void RemoveCallbacks(ICombatActions instance)
+        {
+            if (m_Wrapper.m_CombatActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(ICombatActions instance)
+        {
+            foreach (var item in m_Wrapper.m_CombatActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_CombatActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public CombatActions @Combat => new CombatActions(this);
     public interface IGroundMovementActions
     {
         void OnMove(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
-        void OnSlide(InputAction.CallbackContext context);
         void OnCrouch(InputAction.CallbackContext context);
+        void OnDash(InputAction.CallbackContext context);
+    }
+    public interface ICombatActions
+    {
+        void OnLeftArmAttack(InputAction.CallbackContext context);
+        void OnRightArmAttack(InputAction.CallbackContext context);
     }
 }
