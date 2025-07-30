@@ -13634,8 +13634,8 @@ MonoBehaviour:
     m_SceneAsset: {fileID: 102900000, guid: 4ae39f08d52d305409eac6d25fdb0937, type: 3}
     m_SceneName: Universal Gameplay
   worldScenes:
-  - m_SceneAsset: {fileID: 102900000, guid: ad4869e9e55895144a47934be6c15cff, type: 3}
-    m_SceneName: Test World
+  - m_SceneAsset: {fileID: 102900000, guid: 993a3bb6f6bfb55419744afa37dc747b, type: 3}
+    m_SceneName: Apartment
   - m_SceneAsset: {fileID: 102900000, guid: ad4869e9e55895144a47934be6c15cff, type: 3}
     m_SceneName: Test World
   prevIndex: 0
@@ -13670,7 +13670,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1132088628}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 5
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -13684,7 +13684,7 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 0
+  m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 112
@@ -14803,9 +14803,7 @@ MonoBehaviour:
   yImmune: {fileID: 1017394035}
   nuke: {fileID: 7157533418708032047, guid: dae2b8b78b4e5ae4caaae853ddc7fca0, type: 3}
   rewards:
-  - {fileID: 11400000, guid: 4a0ae490ded713f4ca6c5f32e00a8f6f, type: 2}
-  - {fileID: 11400000, guid: 0de04da358b4f2a48b31c6470b14ae8b, type: 2}
-  - {fileID: 11400000, guid: d6ee72059931280419677836692668f0, type: 2}
+  - {fileID: 11400000, guid: aee23f636afda2c4e812d4f5c35a09b8, type: 2}
 --- !u!4 &1871421011 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1909659621964958880, guid: af0c5de5572dfd3418ee8f866ddb018c, type: 3}

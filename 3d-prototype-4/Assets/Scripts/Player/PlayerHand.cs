@@ -85,7 +85,7 @@ public class PlayerHand : MonoBehaviour
     {
         fireCooldown = hand.fireRate;
 
-        Vector3 shootDirection = GetMouseDirection();
+        Vector3 shootDirection = GetAimDirection();
         Projectile proj = projPool[currentRounds - 1];
 
         proj.transform.position = muzzlePoint.position + shootDirection.normalized; // offset forward
@@ -115,11 +115,18 @@ public class PlayerHand : MonoBehaviour
     }
 
 
-    Vector3 GetMouseDirection()
+    Vector3 GetAimDirection()
     {
-        Vector3 mouseWorldPos = MouseWorld.GetMouseWorldPosition(groundLayer);
+        Vector3 mouseWorldPos = MouseWorld.GetMouseWorldPosition(1 << 6);
         Vector3 dir = (mouseWorldPos - muzzlePoint.position).normalized;
-        dir.y = 0f;
+
+
+        Vector3 enemyPos = MouseWorld.GetMouseWorldPosition(1 << 8);
+        if (enemyPos != Vector3.zero)
+            dir = (enemyPos - muzzlePoint.position).normalized;
+        else
+            dir.y = 0f;
+            
         return dir;
     }
 
@@ -211,7 +218,7 @@ public class PlayerHand : MonoBehaviour
 
     public void LookAtMouse()
     {
-        Vector3 mouseWorldPos = MouseWorld.GetMouseWorldPosition(groundLayer);
+        Vector3 mouseWorldPos = MouseWorld.GetMouseWorldPosition(1 << 6);
         Vector3 lookDirection = mouseWorldPos - transform.position;
         lookDirection.y = 0f;
 

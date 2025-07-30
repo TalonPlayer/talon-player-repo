@@ -18,7 +18,7 @@ public class Nuke : MonoBehaviour
 
         foreach (Enemy e in EntityManager.Instance.enemies)
         {
-            e.OnHit(10000000);
+            e.OnHit(9999);
         }
         PlayerManager.Instance.NukeImmunity();
         Invoke(nameof(DelayDestroy), 5f);

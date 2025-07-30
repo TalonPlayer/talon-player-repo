@@ -10,7 +10,7 @@ public class PlayerMovement : MonoBehaviour
     public float maxSpeed = 5f;
     public float dashSpeed = 20f;
     public float dashDuration = 0.5f;
-
+    bool onSlope = false;
     public Rigidbody rb;
     private Vector3 inputDirection;
     private Vector3 currentVelocity;
@@ -42,8 +42,8 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!isDashing)
         {
-            Movement();
             SnapToGround();
+            Movement();
         }
         UpdateAnimation();
     }
@@ -95,6 +95,7 @@ public class PlayerMovement : MonoBehaviour
             horizontalVelocity = horizontalVelocity.normalized * maxSpeed;
         }
 
+        rb.useGravity = !onSlope;
         rb.velocity = new Vector3(horizontalVelocity.x, rb.velocity.y, horizontalVelocity.z);
     }
 
@@ -102,18 +103,16 @@ public class PlayerMovement : MonoBehaviour
     {
         RaycastHit hit;
 
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, 1f))
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, 1.25f, 1 << 6))
         {
-            if (hit.collider.CompareTag("Ground"))
-            {
-                Vector3 pos = new Vector3(
-                    transform.position.x,
-                    hit.point.y,
-                    transform.position.z
-                );
-                transform.position = pos;
-            }
+            float angle = Vector3.Angle(hit.normal, Vector3.up);
+            onSlope = angle > 10f;
+
+            Vector3 vel = rb.velocity;
+            vel.y = 0f;
+            rb.velocity = vel;
         }
+        else onSlope = false;
     }
     void UpdateAnimation()
     {
