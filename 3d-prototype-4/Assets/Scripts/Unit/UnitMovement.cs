@@ -11,12 +11,14 @@ public class UnitMovement : MonoBehaviour
     public float maxSpeed = 12f;
     public float rotationSpeed = 5f;
     private Unit unit;
+    private float radius;
     void Awake()
     {
         unit = GetComponent<Unit>();
     }
     void Start()
     {
+        radius = agent.radius;
         agent.updateRotation = false;
         float speed = Random.Range(minSpeed, maxSpeed);
         agent.speed = speed;
@@ -30,6 +32,11 @@ public class UnitMovement : MonoBehaviour
             ToggleMovement(false);
             return;
         }
+
+        if (agent.isOnOffMeshLink)
+            agent.radius = .05f;
+        else
+            agent.radius = radius;
 
         ToggleMovement(true);
         RotateToTarget();

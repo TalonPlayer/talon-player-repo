@@ -723,7 +723,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 20364858}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -1464,7 +1464,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 42489233}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -5335,7 +5335,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 142955782}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -15594,18 +15594,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 496694859}
-        m_TargetAssemblyTypeName: EntityManager, Assembly-CSharp
-        m_MethodName: UnitReset
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 3
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
   onReset:
     m_PersistentCalls:
       m_Calls:
@@ -18959,7 +18947,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 531941640}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -33010,7 +32998,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 808770028}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -40520,7 +40508,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 870790143}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -42214,9 +42202,10 @@ GameObject:
   - component: {fileID: 910220059}
   - component: {fileID: 910220061}
   - component: {fileID: 910220060}
-  m_Layer: 0
+  - component: {fileID: 910220062}
+  m_Layer: 6
   m_Name: Door Panel.008
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -42287,6 +42276,27 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 910220058}
   m_Mesh: {fileID: 4419695635136742577, guid: f79bf3154f2f3c247968a9b71fb55d3a, type: 3}
+--- !u!65 &910220062
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910220058}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.010599004, y: 0.00038100916, z: 0.019174507}
+  m_Center: {x: -0.005299491, y: 0.00019050733, z: 0.0095872665}
 --- !u!1 &910803218
 GameObject:
   m_ObjectHideFlags: 0
@@ -50612,7 +50622,6 @@ GameObject:
   - component: {fileID: 1120993930}
   - component: {fileID: 1120993933}
   - component: {fileID: 1120993932}
-  - component: {fileID: 1120993931}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -50635,27 +50644,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 668235550}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &1120993931
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1120993929}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1120993932
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -51059,9 +51047,10 @@ GameObject:
   - component: {fileID: 1127021993}
   - component: {fileID: 1127021995}
   - component: {fileID: 1127021994}
-  m_Layer: 0
+  - component: {fileID: 1127021996}
+  m_Layer: 6
   m_Name: Door Panel.004
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -51132,6 +51121,27 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1127021992}
   m_Mesh: {fileID: -8178163582374753720, guid: f79bf3154f2f3c247968a9b71fb55d3a, type: 3}
+--- !u!65 &1127021996
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1127021992}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.010599009, y: 0.00038100497, z: 0.01917451}
+  m_Center: {x: -0.0052995053, y: 0.00019050419, z: 0.0095872525}
 --- !u!1 &1127274900
 GameObject:
   m_ObjectHideFlags: 0
@@ -56725,7 +56735,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1256862097}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -64093,7 +64103,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1442579658}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -73508,7 +73518,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1665003493}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -74678,7 +74688,6 @@ GameObject:
   - component: {fileID: 1686632963}
   - component: {fileID: 1686632966}
   - component: {fileID: 1686632965}
-  - component: {fileID: 1686632964}
   m_Layer: 0
   m_Name: Cube (1)
   m_TagString: Untagged
@@ -74701,27 +74710,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 668235550}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &1686632964
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1686632962}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1686632965
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -78643,9 +78631,10 @@ GameObject:
   - component: {fileID: 1772091594}
   - component: {fileID: 1772091596}
   - component: {fileID: 1772091595}
-  m_Layer: 0
+  - component: {fileID: 1772091597}
+  m_Layer: 6
   m_Name: Door Panel
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -78716,6 +78705,27 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1772091593}
   m_Mesh: {fileID: 6651266879060527873, guid: f79bf3154f2f3c247968a9b71fb55d3a, type: 3}
+--- !u!65 &1772091597
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1772091593}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.010599008, y: 0.00038100523, z: 0.01917451}
+  m_Center: {x: -0.0052995076, y: 0.00019050585, z: 0.009587265}
 --- !u!1 &1772366226
 GameObject:
   m_ObjectHideFlags: 0
@@ -92149,7 +92159,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2138340326}
-  - component: {fileID: 2138340325}
   m_Layer: 0
   m_Name: Map Unpacker
   m_TagString: Untagged
@@ -92157,19 +92166,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2138340325
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2138340324}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50889b3d8bb710548a09ce105a193660, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mapObj: {fileID: 0}
 --- !u!4 &2138340326
 Transform:
   m_ObjectHideFlags: 0

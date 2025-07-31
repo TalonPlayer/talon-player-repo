@@ -65,6 +65,7 @@ public class EntityManager : MonoBehaviour
     public void SpawnEnemy(Transform spawn)
     {
         Vector3 pos = RandExt.RandomPosition(spawn);
+        pos.y += 2f;
         pos = SnapToGround(pos);
         GameObject obj = Instantiate(
             enemyPrefabs[Random.Range(0, enemyPrefabs.Count)],
@@ -96,8 +97,7 @@ public class EntityManager : MonoBehaviour
     public Vector3 SnapToGround(Vector3 pos)
     {
         RaycastHit hit;
-
-        if (Physics.Raycast(pos, Vector3.down, out hit, 3f, 1 << 6)) // Layer 6 = Ground
+        if (Physics.Raycast(pos, Vector3.down, out hit, 3.5f, 1 << 6)) // Layer 6 = Ground
         {
             Vector3 groundedPos = pos;
             groundedPos.y = hit.point.y;

@@ -8,9 +8,15 @@ public class EnemyMovement : MonoBehaviour
     public NavMeshAgent agent;
     public float facingThreshold = .65f; // value must be between 0 and 1
     private Enemy enemy;
+    private float radius;
     void Awake()
     {
         enemy = GetComponent<Enemy>();
+    }
+
+    void Start()
+    {
+        radius = agent.radius;
     }
 
     public void Init(int _min, int _max)
@@ -31,6 +37,10 @@ public class EnemyMovement : MonoBehaviour
             ToggleMovement(false);
             return;
         }
+        if (agent.isOnOffMeshLink)
+            agent.radius = .05f;
+        else
+            agent.radius = radius;
 
         ToggleMovement(true);
         agent.destination = enemy.target.transform.position;

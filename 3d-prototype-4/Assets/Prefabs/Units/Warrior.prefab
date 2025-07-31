@@ -333,6 +333,7 @@ GameObject:
   - component: {fileID: 7374429191470324738}
   - component: {fileID: 1825895088413204719}
   - component: {fileID: 8220551543916816991}
+  - component: {fileID: 7608744690029807940}
   m_Layer: 15
   m_Name: Warrior
   m_TagString: Unit
@@ -516,7 +517,8 @@ MonoBehaviour:
   animator: {fileID: 2209479418843785090}
   body: {fileID: 919601723764455088}
   heldItems:
-  - {fileID: 0}
+  - {fileID: 5140058457956581039}
+  - {fileID: 5711521743974140812}
 --- !u!114 &7374429191470324738
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -531,7 +533,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackDelay: 0.5
   attackTime: 0.5
-  cooldown: 0.5
+  cooldown: 0.1
   canAttack: 1
   isAttacking: 0
   damage: 75
@@ -575,6 +577,27 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &7608744690029807940
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4256850857139868247}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cf934286ca6e2f409044eadfdf40df3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Method: 2
+  m_Curve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  eBody: {fileID: 0}
+  uBody: {fileID: 1276282184770293554}
 --- !u!1 &4476418106648121534
 GameObject:
   m_ObjectHideFlags: 0
@@ -6433,6 +6456,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c2339309170eccc4fbc08f7212d2884e, type: 3}
+--- !u!1 &5711521743974140812 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3760493341238422710, guid: c2339309170eccc4fbc08f7212d2884e, type: 3}
+  m_PrefabInstance: {fileID: 8893643922858010426}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7094886728134491737 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1808912017832384867, guid: c2339309170eccc4fbc08f7212d2884e, type: 3}

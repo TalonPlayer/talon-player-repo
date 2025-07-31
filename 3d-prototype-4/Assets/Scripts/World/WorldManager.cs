@@ -177,14 +177,18 @@ public class WorldManager : MonoBehaviour
         nextLevelZones = RandExt.ShuffleList(nextLevelZones);
         float rand = Random.Range(0f, 100f);
         int num = 0;
-        if (rand <= 15f) // 1 Door (10%)
-            num = 1;
-        else if (rand <= 40f) // 2 Doors (30%)
-            num = 2;
-        else if (rand <= 70f) // 3 Doors (30%)
-            num = 3;
-        else if (rand <= 100f) // 4 Doors (30%)
-            num = 4;
+        if (nextLevelZones.Count != 2)
+        {
+            if (rand <= 15f) // 1 Door (10%)
+                num = 1;
+            else if (rand <= 40f) // 2 Doors (30%)
+                num = 2;
+            else if (rand <= 70f) // 3 Doors (30%)
+                num = 3;
+            else if (rand <= 100f) // 4 Doors (30%)
+                num = 4;
+        }
+        else num = 2;
         for (int i = 0; i < num; i++)
         {
             nextLevelZones[i].OpenDoor();

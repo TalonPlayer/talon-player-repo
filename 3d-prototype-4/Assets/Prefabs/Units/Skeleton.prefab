@@ -744,6 +744,7 @@ GameObject:
   - component: {fileID: 8412198430034703900}
   - component: {fileID: 8295757959438145686}
   - component: {fileID: 5718086317476185876}
+  - component: {fileID: -8390852010040906550}
   m_Layer: 15
   m_Name: Skeleton
   m_TagString: Unit
@@ -1011,6 +1012,27 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &-8390852010040906550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8218253090887419684}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cf934286ca6e2f409044eadfdf40df3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Method: 2
+  m_Curve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  eBody: {fileID: 0}
+  uBody: {fileID: 986171745048451721}
 --- !u!1 &8237071560112606619
 GameObject:
   m_ObjectHideFlags: 0
