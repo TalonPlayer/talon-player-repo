@@ -6,6 +6,10 @@ public class Powerup : Drop
 {
     public AudioSource loopSound;
 
+    /// <summary>
+    /// Creates a looping sound for powerups
+    /// </summary>
+    /// <param name="obj"></param>
     public void LoopSound(GameObject obj)
     {
         AudioSource source = obj.gameObject.AddComponent<AudioSource>();

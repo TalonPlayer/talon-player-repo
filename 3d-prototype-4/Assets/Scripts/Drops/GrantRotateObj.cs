@@ -6,6 +6,9 @@ public class GrantRotateObj : Powerup
 {
     public RotatingObject obj;
 
+    /// <summary>
+    /// Creates a spinning object a round the player
+    /// </summary>
     public override void OnPickUp()
     {
         base.OnPickUp();

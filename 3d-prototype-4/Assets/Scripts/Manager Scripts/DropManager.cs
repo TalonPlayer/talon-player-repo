@@ -6,6 +6,7 @@ using UnityEngine;
 public class WeightedDrop
 {
     public Drop drop;
+    public string name;
     public float weight;
     public int activeCount = 0;
     public WeightedDrop(Drop _drop, float _weight)
@@ -38,6 +39,7 @@ public class DropManager : MonoBehaviour
     private float totalWeight;
     private List<WeightedDrop> weightedDrops = new List<WeightedDrop>();
     private Dictionary<Drop, WeightedDrop> dropToWeight = new Dictionary<Drop, WeightedDrop>();
+    private bool powerupSpawned;
     void Awake()
     {
         Instance = this;
@@ -65,6 +67,7 @@ public class DropManager : MonoBehaviour
             float weight = 1f / d.rarity;
             totalWeight += weight;
             WeightedDrop wd = new WeightedDrop(d, weight);
+            wd.name = d._name;
             weightedDrops.Add(wd);
             dropToWeight[d] = wd;
         }
@@ -73,6 +76,11 @@ public class DropManager : MonoBehaviour
         foreach (WeightedDrop w in weightedDrops)
         {
             w.weight /= totalWeight;
+
+            float weight = w.weight;
+            weight = Mathf.Round(weight * 10000f) / 100f;
+
+            Debug.Log(w.name + ": " + weight + "%");
         }
     }
 
@@ -140,6 +148,7 @@ public class DropManager : MonoBehaviour
                 SpawnDrop(dropZone);
                 yield return new WaitForSeconds(spawnInBetweenTime);
             }
+            powerupSpawned = false;
         }
         dropAreaAnimator.speed = 1f;
     }
@@ -148,28 +157,36 @@ public class DropManager : MonoBehaviour
     public void SpawnDrop(Transform location)
     {
         if (weightedDrops.Count == 0) return;
-
-        float rand = Random.Range(0f, 1f);
-        float totalChance = 0f;
-
-        foreach (WeightedDrop w in weightedDrops)
+        bool loop = true;
+        do
         {
-            float adjustedWeight = w.weight;
+            float rand = Random.Range(0f, 1f);
+            float totalChance = 0f;
 
-            // If the drop already exists, then reduce the chances of it spawning
-            if (w.drop is Powerup && w.activeCount > 0)
-                adjustedWeight *= 0.05f; // reduce weight if that powerup is already active
-
-            totalChance += adjustedWeight;
-
-            // If the random number is within the range of the total chance
-            // then that drop is being spawned
-            if (rand <= totalChance)
+            foreach (WeightedDrop w in weightedDrops)
             {
-                SpawnDropObject(w.drop, location);
-                return;
+                float adjustedWeight = w.weight;
+                totalChance += adjustedWeight;
+
+                // If the random number is within the range of the total chance
+                // then that drop is being spawned
+                if (rand <= totalChance)
+                {
+                    if (w.drop is Powerup && !powerupSpawned)
+                    {
+                        powerupSpawned = true;
+                        loop = false;
+                    }
+                    else if (w.drop is Powerup && powerupSpawned)
+                        continue;
+                        
+                    SpawnDropObject(w.drop, location);
+                    loop = false;
+                    return;
+                }
             }
-        }
+        } while (loop);
+
     }
 
     public void SpawnDropObject(Drop drop, Transform location)

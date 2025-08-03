@@ -21,9 +21,11 @@ public class EnemyMovement : MonoBehaviour
 
     public void Init(int _min, int _max)
     {
+        // Randomize move speed
         float speed = Random.Range(_min, _max);
         agent.speed = speed;
 
+        // Only run if the movement speed is high enough
         enemy.body.Play("IsRunning", speed > 2.5f);
 
         if (speed > 9f)
@@ -32,11 +34,14 @@ public class EnemyMovement : MonoBehaviour
 
     void Update()
     {
+        // If enemy is not aggro, has no target, or the player is dead, don't move
         if (!enemy.isAggro || !PlayerManager.Instance.player.isAlive || enemy.target == null)
         {
             ToggleMovement(false);
             return;
         }
+
+        // If the enemy is on a mesh link, reduce agent radius so that others can get on it
         if (agent.isOnOffMeshLink)
             agent.radius = .05f;
         else
@@ -47,9 +52,16 @@ public class EnemyMovement : MonoBehaviour
         float distanceToTarget = Vector3.Distance(transform.position, enemy.target.transform.position);
         if (IsFacingTarget() && distanceToTarget <= agent.stoppingDistance + 0.1f)
         {
+            // Don't move if close to target
             ToggleMovement(false);
-            if (PlayerManager.Instance.player.isImmune)
+
+            // If the player is immune, kill the enemy
+            if (enemy.target.name == "Player"
+                && PlayerManager.Instance.player.isImmune
+                && PlayerManager.Instance.player.movement.isDashing)
                 enemy.OnDeath();
+
+            // Attack target
             else
                 enemy.combat.StartAttack();
         }
@@ -68,6 +80,10 @@ public class EnemyMovement : MonoBehaviour
         if (enemy.isAlive) enemy.body.PlayRandom("IsChasing", 4, on);
     }
 
+    /// <summary>
+    /// Is the enemy facing the target given the threshold
+    /// </summary>
+    /// <returns></returns>
     private bool IsFacingTarget()
     {
         if (enemy.target == null || enemy.combat.isAttacking) return false;
@@ -78,5 +94,11 @@ public class EnemyMovement : MonoBehaviour
         float dot = Vector3.Dot(transform.forward, toTarget);
 
         return dot > facingThreshold; // You can adjust the threshold (1 = perfect alignment)
+    }
+
+    public void AlterSpeed(float multiplier)
+    {
+        agent.speed *= multiplier;
+        enemy.body.Play("IsRunning", agent.speed > 2.5f);
     }
 }

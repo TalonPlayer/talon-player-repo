@@ -10,11 +10,12 @@ public class SpawnUnit : Powerup
     {
         base.OnPickUp();
 
+        // Spawns the unit around the player
         for (int i = 0; i < spawns; i++)
         {
             Vector3 pos = PlayerManager.Instance.player.transform.position;
             pos += RandExt.RandomDirection(0f, 360f);
-            pos.y = 0f;
+            pos.y += 1f;
             EntityManager.Instance.SpawnUnit(pos, unit);
         }
     }

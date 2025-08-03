@@ -15,9 +15,11 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 inputDirection;
     private Vector3 currentVelocity;
     private Player player;
-
-    private bool isDashing = false;
+    public bool isDashing = false;
+    private bool isBoosted = false;
+    private float defaultSpeed;
     private Coroutine dashRoutine;
+    private Coroutine boostRoutine;
 
     void Awake()
     {
@@ -136,4 +138,33 @@ public class PlayerMovement : MonoBehaviour
         player.body.Play("Strafe", strafeAmount);
     }
 
+    public void AlterSpeed(float multiplier)
+    {
+        maxSpeed *= multiplier;
+    }
+    /// <summary>
+    /// Change player's move speed for the given duration
+    /// </summary>
+    /// <param name="multiplier"></param>
+    /// <param name="duration"></param>
+    public void SpeedBoost(float multiplier, float duration)
+    {
+        if (!isBoosted) // Keep the default speed
+        {
+            isBoosted = true;
+            defaultSpeed = maxSpeed;
+        }
+        else // If already boosted, stop the current one
+            if (boostRoutine != null) StopCoroutine(boostRoutine);
+
+        boostRoutine = StartCoroutine(SpeedRoutine(duration));
+        AlterSpeed(multiplier);
+    }
+
+    IEnumerator SpeedRoutine(float time)
+    {
+        yield return new WaitForSeconds(time);
+        isBoosted = false;
+        maxSpeed = defaultSpeed;
+    }
 }

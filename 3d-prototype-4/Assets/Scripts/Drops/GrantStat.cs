@@ -10,6 +10,7 @@ public class GrantStat : Powerup
     {
         base.OnPickUp();
 
+        // Gives the player the type of stat
         switch (type)
         {
             case Type.life:

@@ -28,14 +28,22 @@ public class Enemy : Entity
         EntityManager.healthTick += CheckHealth;
     }
 
+    /// <summary>
+    /// Spawn the enemy for the given time
+    /// </summary>
+    /// <param name="spawnTime"></param>
     public void Spawn(float spawnTime)
     {
+        // Play the animation of spawning and ignore other enemy colliders
         body.PlayRandom("IsSpawning", 1, true);
         cc.excludeLayers += 1 << 8;
         isSpawning = true;
         Invoke(nameof(EndSpawn), spawnTime);
     }
 
+    /// <summary>
+    /// When the spawn ends
+    /// </summary>
     public void EndSpawn()
     {
         isSpawning = false;
@@ -43,6 +51,12 @@ public class Enemy : Entity
         EntityManager.aggroTick += CheckTarget;
     }
 
+    /// <summary>
+    /// Initiate the enemy health and speed
+    /// </summary>
+    /// <param name="_health"></param>
+    /// <param name="_min"></param>
+    /// <param name="_max"></param>
     public void Init(int _health, int _min, int _max)
     {
         health = _health;
@@ -52,6 +66,10 @@ public class Enemy : Entity
     void Update()
     {
     }
+    
+    /// <summary>
+    /// Check to see if the enemy is alive
+    /// </summary>
     public void CheckHealth()
     {
         if (health <= 0.0f)
@@ -61,24 +79,42 @@ public class Enemy : Entity
         }
     }
 
+    /// <summary>
+    /// What happens when the enemy dies
+    /// </summary>
     public void OnDeath()
     {
+        // Don't allow enemy to check their target
         EntityManager.aggroTick -= CheckTarget;
         EntityManager.Instance.enemies.Remove(this);
 
+        // Reward player score
         PlayerManager.Instance.AddScore(100);
+
+        // Don't check health since already dead
         EntityManager.healthTick -= CheckHealth;
+
+        // Attempt to spawn a skull
         EntityManager.Instance.SpawnSkull(transform.position);
+
+        // Changet the count of zombies
         WorldManager.Instance.UpdateCount();
+
+        // Death animation
         body.PlayRandom("IsDead", 8, true);
         body.Play("RandomFloat", Random.Range(.8f, 1.5f));
         isAggro = false;
 
+        // Ignore some layers when dying
         cc.excludeLayers += deathLayer;
 
         onDeath?.Invoke();
     }
 
+    /// <summary>
+    /// Delay the destroy
+    /// </summary>
+    /// <param name="time"></param>
     public void DestroySelf(float time)
     {
         Invoke(nameof(DestroySelf), time);
@@ -89,6 +125,10 @@ public class Enemy : Entity
         Destroy(gameObject);
     }
 
+    /// <summary>
+    /// When the enemy gets hit
+    /// </summary>
+    /// <param name="damage"></param>
     public void OnHit(int damage)
     {
         if (bloodParticles != null)
@@ -102,6 +142,10 @@ public class Enemy : Entity
         };
     }
 
+    /// <summary>
+    /// Aggro to a specific target
+    /// </summary>
+    /// <param name="_target"></param>
     public void AggroUnit(Transform _target)
     {
         if (!isAlive) return;
@@ -113,16 +157,23 @@ public class Enemy : Entity
 
     }
 
+    /// <summary>
+    /// Check to see if the target is still alive
+    /// </summary>
     public void CheckTarget()
     {
+        // Target was destroyed so not aggro
         if (target == null) isAggro = false;
+
+        // there are no more units or enemy is no longer alive
         if (EntityManager.Instance.units.Count == 0 && isAggro || !isAlive) return;
 
-        
+        // Default closest is the player
         Transform closest = PlayerManager.Instance.player.transform;
         Vector3 currentPos = transform.position;
         float closestDistanceSqr = (closest.position - currentPos).sqrMagnitude;
 
+        // Check to see if there are any units that are closer than the player
         foreach (Unit u in EntityManager.Instance.units)
         {
             if (u == null) continue;
@@ -135,7 +186,7 @@ public class Enemy : Entity
             }
         }
 
-
+        // Target the new unit or player
         if (closest != null)
         {
             if (target != closest)

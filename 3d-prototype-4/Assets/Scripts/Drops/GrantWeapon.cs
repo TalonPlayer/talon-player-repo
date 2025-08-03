@@ -9,6 +9,7 @@ public class GrantWeapon : Powerup
     {
         base.OnPickUp();
 
+        // Gives the player a weapon, if the player is currently holding the same weapon, upgrade it
         if (weapon._name == PlayerManager.Instance.player.hand.hand._name)
         {
             Weapon w = WeaponLibrary.Instance.Upgrade(PlayerManager.Instance.player.hand.hand);

@@ -32,7 +32,7 @@ public class EntityManager : MonoBehaviour
     }
     void Start()
     {
-        
+
     }
 
     void Update()
@@ -208,5 +208,10 @@ public class EntityManager : MonoBehaviour
 
         PhysicalDrop skull = Instantiate(skullPrefab, pos, Quaternion.identity, skullFolder);
         skull.LaunchUp();
+    }
+
+    public void ClearAggro()
+    {
+        aggroTick = null;
     }
 }

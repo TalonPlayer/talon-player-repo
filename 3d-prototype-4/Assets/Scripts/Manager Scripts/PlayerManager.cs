@@ -27,6 +27,7 @@ public class PlayerManager : MonoBehaviour
     public GameObject yImmune;
     public Nuke nuke;
     public List<Drop> rewards;
+    public List<string> bufferedUnits;
     Coroutine immunityRoutine;
     void Awake()
     {
@@ -108,16 +109,16 @@ public class PlayerManager : MonoBehaviour
             dashes++;
             HudManager.Instance.UpdateText(1, dashes);
         }
-            
+
     }
     public void GrantNuke()
     {
         if (nukes < 9)
         {
-            nukes++; 
-           HudManager.Instance.UpdateText(2, nukes);
+            nukes++;
+            HudManager.Instance.UpdateText(2, nukes);
         }
-            
+
     }
     public void GiveReward()
     {
@@ -179,6 +180,42 @@ public class PlayerManager : MonoBehaviour
     public void PlaySound(AudioClip clip)
     {
         playerAudio.PlayOneShot(clip, Random.Range(.8f, 1.4f));
+    }
+
+    public void SpawnBufferedUnits()
+    {
+        bool ankleBiterSpawned = false;
+        foreach (string name in bufferedUnits)
+        {
+            Vector3 pos = player.transform.position;
+            pos.y += 20f;
+            DropObject obj;
+            switch (name)
+            {
+                case "Skeleton":
+                    obj = DropManager.Instance.SpawnDropObject(rewards[0], pos);
+                    obj.MoveTo(player.transform);
+                    obj.moveSpeed = 2.5f;
+                    break;
+                case "Ankle Biter":
+                    if (ankleBiterSpawned) break;
+                    obj = DropManager.Instance.SpawnDropObject(rewards[1], pos);
+                    obj.MoveTo(player.transform);
+                    obj.moveSpeed = 2.5f;
+                    ankleBiterSpawned = true;
+                    break;
+                case "Gunner":
+                    obj = DropManager.Instance.SpawnDropObject(rewards[2], pos);
+                    obj.MoveTo(player.transform);
+                    obj.moveSpeed = 2.5f;
+                    break;
+                case "Warrior":
+                    obj = DropManager.Instance.SpawnDropObject(rewards[3], pos);
+                    obj.MoveTo(player.transform);
+                    obj.moveSpeed = 2.5f;
+                    break;
+            }
+        }
     }
 
     /*

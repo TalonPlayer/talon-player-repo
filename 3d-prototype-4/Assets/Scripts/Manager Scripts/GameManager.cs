@@ -63,12 +63,12 @@ public enum GameState
     
     
     Easter Egg Maps
-    The Test Room
+    The Test Room <- Done
     Magatsu Inaba
     FPP Lab
     Andover High Lunch Room
     Vineyard House
-    Apartment
+    Apartment <- Done
     Area 88
     Squid Game Start Room
     The Skeld

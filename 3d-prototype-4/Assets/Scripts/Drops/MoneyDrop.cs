@@ -10,6 +10,8 @@ public class MoneyDrop : Drop
     public override void OnPickUp()
     {
         base.OnPickUp();
+
+        // Give the player some score and multiplier
         PlayerManager.Instance.AddScore(scoreValue);
         PlayerManager.Instance.AddMultiplier(multiplierValue);
     }

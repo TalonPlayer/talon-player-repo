@@ -6,7 +6,6 @@ using UnityEngine.SceneManagement;
 public class SceneWorldManager : MonoBehaviour
 {
     public static SceneWorldManager Instance;
-
     public SceneField universalGameplay;
     public List<SceneField> worldScenes;
     private List<AsyncOperation> scenesToload = new List<AsyncOperation>();
@@ -60,12 +59,13 @@ public class SceneWorldManager : MonoBehaviour
 
             if (allDone) break;
 
-            yield return new WaitForSeconds(2f); // Wait 1 frame, smooth update
+            yield return new WaitForSeconds(1f); // Wait 1 frame, smooth update
             PlayerManager.Instance.TeleportPlayer(WorldManager.Instance.worldCenter);
-            
-            yield return new WaitForSeconds(.5f);
+
+            yield return new WaitForSeconds(1f);
             HudManager.Instance.ToggleBlackScreen(false);
-            
+
+            PlayerManager.Instance.SpawnBufferedUnits();
         }
 
     }

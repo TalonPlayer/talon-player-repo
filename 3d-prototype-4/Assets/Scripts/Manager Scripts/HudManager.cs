@@ -36,6 +36,7 @@ public class HudManager : MonoBehaviour
 
     public void ToggleBlackScreen(bool on)
     {
+        Debug.Log("Toggle Black Screen: " + on);
         blackScreen.SetBool("FadeIn", on);
     }
 

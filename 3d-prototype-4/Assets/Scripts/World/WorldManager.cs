@@ -108,11 +108,7 @@ public class WorldManager : MonoBehaviour
 
         // The current count of zombies decreases by 1 (Used to determine how many should be spawned within a wave)
         currentCount--;
-
-
-
-
-
+        
         if (totalCount <= 0)
         {
             if (isLastLevel)
@@ -120,7 +116,14 @@ public class WorldManager : MonoBehaviour
                 DropManager.Instance.Burst();
                 DropManager.Instance.DelayBurst(3);
                 DropManager.Instance.DelayBurst(4);
-                portal.SetActive(true);
+
+                Invoke(nameof(ActivatePortal), 3f);
+                PlayerManager.Instance.bufferedUnits.Clear();
+                foreach (Unit u in EntityManager.Instance.units)
+                    PlayerManager.Instance.bufferedUnits.Add(u._name);
+                foreach (Unit u in EntityManager.Instance.units)
+                    u.OnHit(9999);
+                EntityManager.Instance.ClearAggro();
             }
             else
             {
@@ -131,6 +134,11 @@ public class WorldManager : MonoBehaviour
 
         EntityManager.Instance.RecycleRagdolls();
         EntityManager.Instance.RecycleDrops();
+    }
+
+    public void ActivatePortal()
+    {
+        portal.SetActive(true);
     }
 
     public IEnumerator WaveCheckRoutine(float timer)
@@ -170,6 +178,8 @@ public class WorldManager : MonoBehaviour
         currentWorld = worlds[levelIndex];
         InitWorld();
         onReset?.Invoke();
+
+
     }
 
     public void OpenRandomDoor()

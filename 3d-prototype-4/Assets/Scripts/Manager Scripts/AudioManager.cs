@@ -24,7 +24,7 @@ public class AudioManager : MonoBehaviour
 
     public void PlayBackgroundMusic(AudioClip audioClip)
     {
-        bgAudio.PlayOneShot(audioClip);
+        // bgAudio.PlayOneShot(audioClip);
     }
     public void PlayDropSound(AudioClip audioClip)
     {

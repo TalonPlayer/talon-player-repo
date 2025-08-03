@@ -12,7 +12,7 @@ public class PhysicalDrop : MonoBehaviour
     void Start()
     {
         value = Random.Range(.75f, 1.25f);
-        transform.localScale *= value;
+        transform.localScale *= value; // Value of drop changes the size
         StartCoroutine(LifeTime());
     }
 
@@ -22,25 +22,30 @@ public class PhysicalDrop : MonoBehaviour
         Destroy(gameObject);
     }
 
+    /// <summary>
+    /// Skulls upgrade current weapon
+    /// </summary>
     public void SkullPickUp()
     {
         Weapon w = PlayerManager.Instance.player.hand.hand;
         Weapon upgrade = WeaponLibrary.Instance.Upgrade(w);
-        if (value >= 1.225f)
-        {
+        if (value >= 1.225f) // if value is above 1.225f, double upgrade
             upgrade = WeaponLibrary.Instance.Upgrade(upgrade);
-        }
-        
 
         PlayerManager.Instance.player.hand.Equip(upgrade);
     }
     
-
+    /// <summary>
+    /// Gems increase player's multiplier by a large amount
+    /// </summary>
     public void GemPickUp()
     {
-        PlayerManager.Instance.AddMultiplier((int) (value * 150f));
+        PlayerManager.Instance.AddMultiplier((int)(value * 150f));
     }
 
+    /// <summary>
+    /// Launches drop upwards
+    /// </summary>
     public void LaunchUp()
     {
         Vector3 rand = RandExt.RandomDirection(85f, 95f);
@@ -53,7 +58,7 @@ public class PhysicalDrop : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Player")
+        if (other.tag == "Player") // Player picked up drop
         {
             onPickUp?.Invoke();
             Destroy(gameObject);

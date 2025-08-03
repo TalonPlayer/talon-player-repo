@@ -15,11 +15,18 @@ public class DropObject : MonoBehaviour
     Coroutine timerRoutine;
     void Start()
     {
+        // Sound played when spawned
         audioSource.PlayOneShot(drop.spawnSound, Random.Range(.6f, 1.8f));
+
+        // If the drop is a powerup, create a looping audiosource
         if (drop is Powerup powerup)
             powerup.LoopSound(gameObject);
+
+        // Randomly rotate the drop
         rotateSpeed = Random.Range(25f, 90f);
         rotationAxis = Random.onUnitSphere;
+
+        // The drop has a life span
         timerRoutine = StartCoroutine(Timer());
     }
     void Update()
@@ -35,7 +42,11 @@ public class DropObject : MonoBehaviour
         if (other.tag == "Player")
         {
             drop.OnPickUp();
+
+            // Move the drop to the top left of the screen
             MoveTo(DropManager.Instance.collectLocation);
+
+            // Delay the destroy so that way the item can move there
             Invoke(nameof(DelayDestroy), 1f);
         }
     }
@@ -56,6 +67,10 @@ public class DropObject : MonoBehaviour
         DropManager.Instance.CheckDrop(drop);
     }
 
+    /// <summary>
+    /// Move to a targeted location
+    /// </summary>
+    /// <param name="target"></param>
     public void MoveTo(Transform target)
     {
         targetLocation = target;

@@ -26,6 +26,7 @@ public class EnemyCombat : MonoBehaviour
     }
     public void OnDeath()
     {
+        // Stop attack routine to prevent attacks after death
         if (attackRoutine != null)
         {
             StopCoroutine(attackRoutine);
@@ -46,6 +47,7 @@ public class EnemyCombat : MonoBehaviour
         yield return new WaitForSeconds(attackDelay);
         Attack();
         yield return new WaitForSeconds(attackTime);
+        // Continue moving once attack is over
         enemy.movement.ToggleMovement(true);
         canAttack = true;
         isAttacking = false;
@@ -54,8 +56,11 @@ public class EnemyCombat : MonoBehaviour
     public void Attack()
     {
         if (enemy.target == null) return;
-
+        
+        // If the target is a unit, attack unit
         Unit u = enemy.target.GetComponent<Unit>();
+        
+        // If the target is the player, kill the player if they are not immune
         Player p = enemy.target.GetComponent<Player>();
         if (u)
             if (u.isAlive)
