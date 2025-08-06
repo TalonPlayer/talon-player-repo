@@ -33,21 +33,29 @@ public class UnitMovement : MonoBehaviour
             return;
         }
 
-        if (agent.isOnOffMeshLink)
-            agent.radius = .05f;
-        else
-            agent.radius = radius;
+
+        agent.radius = agent.isOnOffMeshLink ? .05f : radius;
+
+        bool hasStraightPath = agent.hasPath && agent.pathStatus == NavMeshPathStatus.PathComplete;
+        agent.updateRotation = !hasStraightPath;
+
+        if (hasStraightPath) RotateToTarget();
+        agent.destination = unit.target.transform.position;
 
         ToggleMovement(true);
-        RotateToTarget();
-        agent.destination = unit.target.transform.position;
-        float distanceToTarget = Vector3.Distance(transform.position, unit.target.transform.position);
-        if (IsFacingTarget() && distanceToTarget <= agent.stoppingDistance + unit.combat.attackRange)
-        {
-            ToggleMovement(false);
 
-            if (unit.combat.canAttack)
-                unit.combat.StartAttack();
+        float distanceToTarget = Vector3.Distance(transform.position, unit.target.transform.position);
+        if (distanceToTarget <= agent.stoppingDistance + unit.combat.attackRange)
+        {
+            agent.updateRotation = false;
+            RotateToTarget();
+            if (IsFacingTarget())
+            {
+                ToggleMovement(false);
+                if (unit.combat.canAttack)
+                    unit.combat.StartAttack();
+            }
+
         }
     }
 

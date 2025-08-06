@@ -158,7 +158,7 @@ public class EntityManager : MonoBehaviour
         if (unitCount == 0) return;
 
         float angleStep = 360f / unitCount;
-        float radius = 2f;
+        float radius = 1f;
 
         for (int i = 0; i < unitCount; i++)
         {

@@ -55,6 +55,7 @@ public class NextLevelZone : MonoBehaviour
 
     public void TransferToNewWorld()
     {
+        HudManager.Instance.AdvanceLevel("hide", 0);
         AudioManager.Instance.bgAudio.Stop();
         SceneWorldManager.Instance.TransferToWorld(WorldManager.Instance.worldIndex + 1);
     }

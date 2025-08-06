@@ -12,6 +12,9 @@ public class HudManager : MonoBehaviour
     public TextMeshProUGUI lifeText, dashText, nukeText, multiplierText, scoreText;
     public Image multiplierBar, ammoBar, timerBar;
     public Animator blackScreen;
+    public Animator levelEndAnimator;
+    public TextMeshProUGUI levelText;
+    public List<UIPointer> pointers;
     private int displayedScore = 0;
     private Coroutine scoreRoutine;
     void Awake()
@@ -133,6 +136,36 @@ public class HudManager : MonoBehaviour
             default:
                 Debug.Log("Invalid Bar Index");
                 break;
+        }
+    }
+
+    public void AdvanceLevel(string levelName, int levelNum)
+    {
+        if (levelName == "hide")
+        {
+            levelEndAnimator.SetTrigger("Hide");
+        }
+        else
+        {
+            levelText.text = levelName + " level " + levelNum + " completed!";
+            levelEndAnimator.SetTrigger("Show");
+        }
+    }
+
+    public void AssignPointers(int index, Transform target)
+    {
+        UIPointer pointer = pointers[index];
+        pointer.gameObject.SetActive(true);
+        pointer.target = target;
+        pointer.isTargeting = true;
+    }
+
+    public void DisablePointers()
+    {
+        foreach (UIPointer p in pointers)
+        {
+            p.isTargeting = false;
+            p.gameObject.SetActive(false);
         }
     }
 }

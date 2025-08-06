@@ -8,10 +8,11 @@ using UnityEngine.Events;
 public class WorldManager : MonoBehaviour
 {
     public static WorldManager Instance;
+    public string worldName;
     public int worldIndex;
-    public AudioClip backgroundMusic;
     public UnityEvent onComplete;
     public UnityEvent onReset;
+    public UnityEvent onFinish;
     public List<Transform> spawnPoints;
     public List<World> worlds;
     public List<NextLevelZone> nextLevelZones;
@@ -37,7 +38,6 @@ public class WorldManager : MonoBehaviour
     }
     void Start()
     {
-        AudioManager.Instance.PlayBackgroundMusic(backgroundMusic);
         currentWorld = worlds[levelIndex];
         InitWorld();
     }
@@ -113,9 +113,8 @@ public class WorldManager : MonoBehaviour
         {
             if (isLastLevel)
             {
-                DropManager.Instance.Burst();
-                DropManager.Instance.DelayBurst(3);
-                DropManager.Instance.DelayBurst(4);
+                HudManager.Instance.AdvanceLevel(worldName, levelIndex + 1);
+                onFinish?.Invoke();
 
                 Invoke(nameof(ActivatePortal), 3f);
                 PlayerManager.Instance.bufferedUnits.Clear();
@@ -123,10 +122,10 @@ public class WorldManager : MonoBehaviour
                     PlayerManager.Instance.bufferedUnits.Add(u._name);
                 foreach (Unit u in EntityManager.Instance.units)
                     u.OnHit(9999);
-                EntityManager.Instance.ClearAggro();
             }
             else
             {
+                HudManager.Instance.AdvanceLevel(worldName, levelIndex + 1);
                 allZombiesSpawned = true;
                 onComplete?.Invoke();
             }
@@ -178,30 +177,19 @@ public class WorldManager : MonoBehaviour
         currentWorld = worlds[levelIndex];
         InitWorld();
         onReset?.Invoke();
-
-
+        HudManager.Instance.AdvanceLevel("hide", 0);
+        HudManager.Instance.DisablePointers();
     }
 
     public void OpenRandomDoor()
     {
         nextLevelZones = RandExt.ShuffleList(nextLevelZones);
-        float rand = Random.Range(0f, 100f);
-        int num = 0;
-        if (nextLevelZones.Count != 2)
-        {
-            if (rand <= 15f) // 1 Door (10%)
-                num = 1;
-            else if (rand <= 40f) // 2 Doors (30%)
-                num = 2;
-            else if (rand <= 70f) // 3 Doors (30%)
-                num = 3;
-            else if (rand <= 100f) // 4 Doors (30%)
-                num = 4;
-        }
-        else num = 2;
+        int num = Random.Range(1, Mathf.Min(4, nextLevelZones.Count));
         for (int i = 0; i < num; i++)
         {
-            nextLevelZones[i].OpenDoor();
+            NextLevelZone zone = nextLevelZones[i];
+            zone.OpenDoor();
+            HudManager.Instance.AssignPointers(i, zone.door);
         }
     }
 }
