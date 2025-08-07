@@ -1,11 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerBody : MonoBehaviour
 {
     public Animator animator;
     public Transform body;
+    public Renderer bodyRenderer;
+    public SpriteRenderer circle;
+    public TrailRenderer trail;
     private Player player;
     void Awake()
     {
@@ -34,5 +38,30 @@ public class PlayerBody : MonoBehaviour
         {
             r.isKinematic = !ragdoll;
         }
+    }
+
+    public void ChangeColor()
+    {
+        Color color = PlayerManager.Instance.GetColor();
+        circle.color = color;
+        trail.material.color = color;
+        bodyRenderer.material.color = color;
+
+        // Modify the gradient on the TrailRenderer
+        Gradient gradient = trail.colorGradient;
+        GradientColorKey[] colorKeys = gradient.colorKeys;
+        GradientAlphaKey[] alphaKeys = gradient.alphaKeys;
+
+        // Update the first color key (start color)
+        colorKeys[0].color = color;
+        // Change last color key to white
+        colorKeys[colorKeys.Length - 1].color = Color.white;
+
+        // Change last alpha key to 0
+        alphaKeys[alphaKeys.Length - 1].alpha = 0f;
+        // Create new gradient with updated color key
+        Gradient newGradient = new Gradient();
+        newGradient.SetKeys(colorKeys, alphaKeys);
+        trail.colorGradient = newGradient;
     }
 }

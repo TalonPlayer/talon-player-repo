@@ -56,14 +56,16 @@ public class EnemyMovement : MonoBehaviour
             ToggleMovement(false);
 
             // If the player is immune, kill the enemy
-            if (enemy.target.name == "Player"
-                && PlayerManager.Instance.player.isImmune
-                && PlayerManager.Instance.player.movement.isDashing)
-                enemy.OnDeath();
+            if (enemy.target.name == "Player")
+            {
+                if (PlayerManager.Instance.player.isImmune
+                || PlayerManager.Instance.player.movement.isDashing)
+                    enemy.OnDeath();
+                // Attack target
+                else
+                    enemy.combat.StartAttack();
+            }
 
-            // Attack target
-            else
-                enemy.combat.StartAttack();
         }
     }
 

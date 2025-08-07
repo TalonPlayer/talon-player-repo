@@ -15,6 +15,10 @@ public class HudManager : MonoBehaviour
     public Animator levelEndAnimator;
     public TextMeshProUGUI levelText;
     public List<UIPointer> pointers;
+    [Header("Gameover Objects")]
+    public Animator overAnimator;
+    public TextMeshProUGUI finalScore, kills, skulls, gems, run, worldLevel;
+    public List<Image> coloredUIElements;
     private int displayedScore = 0;
     private Coroutine scoreRoutine;
     void Awake()
@@ -25,6 +29,8 @@ public class HudManager : MonoBehaviour
     void Start()
     {
         ToggleBlackScreen(false);
+        
+
     }
     public void InitStats(int lives, int dashes, int nukes, int multiplier)
     {
@@ -35,6 +41,14 @@ public class HudManager : MonoBehaviour
         UpdateText(4, 0);
 
         UpdateBar(0, 0f, 100f);
+
+        foreach (Image img in coloredUIElements)
+        {
+            float alpha = img.color.a;
+            Color newColor = PlayerManager.Instance.GetColor();
+            newColor.a = alpha;
+            img.color = newColor;
+        }
     }
 
     public void ToggleBlackScreen(bool on)
@@ -167,5 +181,46 @@ public class HudManager : MonoBehaviour
             p.isTargeting = false;
             p.gameObject.SetActive(false);
         }
+    }
+
+    public PlayerData GameOverStats(PlayerData newData)
+    {
+        PlayerData oldData = SaveSystem.LoadPlayer(newData._name);
+        playerHudObj.SetActive(false);
+        finalScore.text = newData.currentScore.ToString();
+        kills.text = newData.kills.ToString();
+        skulls.text = newData.skulls.ToString();
+        gems.text = newData.gems.ToString();
+        run.text = "Attempt " + newData.attempt;
+        worldLevel.text = newData.world + " level " + newData.level;
+
+        overAnimator.SetTrigger("Play");
+        if (oldData.highScore < newData.currentScore && oldData.highestWorld < newData.worldIndex)
+        {
+            newData.highScore = newData.currentScore;
+            newData.highestWorld = newData.worldIndex;
+            newData.world = WorldManager.Instance.worldName;
+            overAnimator.SetBool("Highscore", true);
+            overAnimator.SetBool("Furthest", true);
+            return newData;
+        }
+
+        if (oldData.highScore < newData.currentScore)
+        {
+            newData.highScore = newData.currentScore;
+            overAnimator.SetBool("Highscore", true);
+            return newData;
+        }
+
+
+        if (oldData.highestWorld < newData.worldIndex)
+        {
+            newData.highestWorld = newData.worldIndex;
+            newData.world = WorldManager.Instance.worldName;
+            overAnimator.SetBool("Furthest", true);
+            return newData;
+        }
+
+        return oldData;
     }
 }

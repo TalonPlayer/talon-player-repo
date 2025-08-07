@@ -90,6 +90,7 @@ public class Enemy : Entity
 
         // Reward player score
         PlayerManager.Instance.AddScore(100);
+        PlayerManager.Instance.player.info.kills++;
 
         // Don't check health since already dead
         EntityManager.healthTick -= CheckHealth;

@@ -7,14 +7,17 @@ public class Player : Entity
 {
     public UnityEvent onRespawn;
     public bool isImmune;
+    public int score;
     [HideInInspector] public PlayerMovement movement;
     [HideInInspector] public PlayerHand hand;
     [HideInInspector] public PlayerBody body;
+    [HideInInspector] public PlayerInfo info;
     void Awake()
     {
         movement = GetComponent<PlayerMovement>();
         hand = GetComponent<PlayerHand>();
         body = GetComponent<PlayerBody>();
+        info = GetComponent<PlayerInfo>();
     }
     void Start()
     {
@@ -38,7 +41,8 @@ public class Player : Entity
 
     public void DelayRespawn(float delay)
     {
-        Invoke(nameof(Respawn), delay);
+        if (PlayerManager.Instance.lives > 0)
+            Invoke(nameof(Respawn), delay);
     }
 
     public void Respawn()

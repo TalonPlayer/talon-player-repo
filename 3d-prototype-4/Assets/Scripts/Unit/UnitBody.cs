@@ -1,11 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UnitBody : MonoBehaviour
 {
     public Animator animator;
     public Transform body;
+    public Renderer bodyRenderer;
+    public SpriteRenderer circle;
+    public TrailRenderer trail;
+    public bool noColorChange = false;
     private Unit unit;
     public List<GameObject> heldItems;
     void Awake()
@@ -14,6 +19,7 @@ public class UnitBody : MonoBehaviour
     }
     void Start()
     {
+        ChangeColor();
     }
     public void Play(string para, float val)
     {
@@ -139,5 +145,35 @@ public class UnitBody : MonoBehaviour
             rb.AddForce(direction * 2f, ForceMode.Impulse);
             rb.AddTorque(torque, ForceMode.Impulse);
         }
+    }
+
+    public void ChangeColor()
+    {
+        Color color = PlayerManager.Instance.GetColor();
+
+        circle.color = color;
+        trail.material.color = color;
+
+        if (!noColorChange) bodyRenderer.material.color = color;
+
+        // Modify the gradient on the TrailRenderer
+        Gradient gradient = trail.colorGradient;
+        GradientColorKey[] colorKeys = gradient.colorKeys;
+        GradientAlphaKey[] alphaKeys = gradient.alphaKeys;
+
+        // Update the first color key (start color)
+        colorKeys[0].color = color;
+
+        // Change last color key to white
+        colorKeys[colorKeys.Length - 1].color = Color.white;
+
+        // Change last alpha key to 0
+        alphaKeys[alphaKeys.Length - 1].alpha = 0f;
+
+
+        // Create new gradient with updated color key
+        Gradient newGradient = new Gradient();
+        newGradient.SetKeys(colorKeys, alphaKeys);
+        trail.colorGradient = newGradient;
     }
 }

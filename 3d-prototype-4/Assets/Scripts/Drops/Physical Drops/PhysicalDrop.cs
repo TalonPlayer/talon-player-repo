@@ -33,14 +33,16 @@ public class PhysicalDrop : MonoBehaviour
             upgrade = WeaponLibrary.Instance.Upgrade(upgrade);
 
         PlayerManager.Instance.player.hand.Equip(upgrade);
+        PlayerManager.Instance.player.info.skulls++;
     }
-    
+
     /// <summary>
     /// Gems increase player's multiplier by a large amount
     /// </summary>
     public void GemPickUp()
     {
         PlayerManager.Instance.AddMultiplier((int)(value * 150f));
+        PlayerManager.Instance.player.info.gems++;
     }
 
     /// <summary>

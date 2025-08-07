@@ -19,11 +19,10 @@ public class UIPointer : MonoBehaviour
             float maxY = Screen.height - minY;
 
             Vector3 pos = Camera.main.WorldToScreenPoint(target.position);
-
             pos.x = Mathf.Clamp(pos.x, minX, maxX);
             pos.y = Mathf.Clamp(pos.y, minY, maxY);
 
-            pointer.transform.position = pos; 
+            pointer.transform.position = pos;
         }
 
     }

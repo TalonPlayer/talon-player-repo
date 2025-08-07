@@ -38,7 +38,7 @@ public class Tower : MonoBehaviour
         if (activeRoutine != null) StopCoroutine(activeRoutine);
 
         animator.SetTrigger("Despawn");
-        Invoke(nameof(DelayDestroy), 5f);
+        Invoke(nameof(DelayDestroy), 2f);
     }
 
     void DelayDestroy()

@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerManager : MonoBehaviour
 {
     public static PlayerManager Instance;
     public Player player;
+    public string colorCode;
     public Transform bulletFolder;
     [Header("In-game Stats")]
     public int lives;
@@ -28,6 +30,7 @@ public class PlayerManager : MonoBehaviour
     public Nuke nuke;
     public List<Drop> rewards;
     public List<string> bufferedUnits;
+    public UnityEvent onGameOver;
     Coroutine immunityRoutine;
     void Awake()
     {
@@ -36,6 +39,14 @@ public class PlayerManager : MonoBehaviour
     void Start()
     {
         lifeScore = extraLifeThreshold;
+        PlayerData data = SaveSystem.LoadPlayer(SaveSystem.selectedPlayerName);
+        player.info._name = data._name;
+        player.info.attempt = data.attempt + 1;
+
+        colorCode = data.colorCode;
+        player.info.colorCode = colorCode;
+        player.body.ChangeColor();
+
         HudManager.Instance.InitStats(lives, dashes, nukes, multiplier);
     }
 
@@ -72,6 +83,7 @@ public class PlayerManager : MonoBehaviour
     {
         score += multiplier * _score;
         HudManager.Instance.UpdateText(4, score);
+        player.info.currentScore = score;
         if (score >= lifeScore)
         {
             lifeScore += extraLifeThreshold;
@@ -134,9 +146,25 @@ public class PlayerManager : MonoBehaviour
     {
         player.OnDeath();
         PlaySound(deathSounds[Random.Range(0, deathSounds.Count)]);
-        lives--;
-        HudManager.Instance.UpdateText(0, lives);
-        immunityRoutine = StartCoroutine(ImmunityRoutine(3f, immunityTime));
+
+
+        if (lives > 0)
+        {
+            lives--;
+            HudManager.Instance.UpdateText(0, lives);
+            immunityRoutine = StartCoroutine(ImmunityRoutine(3f, immunityTime));
+        }
+        else
+        {
+            // End the game
+            foreach (Unit u in EntityManager.Instance.units) u.OnHit(9999);
+            PlayerData newData = new PlayerData(player.info);
+
+            PlayerData data = HudManager.Instance.GameOverStats(newData);
+
+            player.info.CopyPlayer(data);
+            player.info.SavePlayer();
+        }
     }
     public IEnumerator ImmunityRoutine(float first, float secondTime)
     {
@@ -216,6 +244,24 @@ public class PlayerManager : MonoBehaviour
                     break;
             }
         }
+    }
+
+    public void GameOver()
+    {
+
+
+        onGameOver?.Invoke();
+    }
+    
+    public Color GetColor()
+    {
+        Color color;
+        if (!ColorUtility.TryParseHtmlString(colorCode, out color))
+        {
+            Debug.LogWarning("Invalid Hex Code");
+            return new Color();
+        }
+        return color;
     }
 
     /*

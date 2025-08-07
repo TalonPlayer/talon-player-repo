@@ -1095,6 +1095,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 8844694517414989595}
   body: {fileID: 5433490987228370458}
+  bodyRenderer: {fileID: 4778931484968111342}
+  circle: {fileID: 6458763050025719916}
+  trail: {fileID: 3638161223140676389}
+  noColorChange: 0
   heldItems:
   - {fileID: 7019590625947619156}
 --- !u!114 &905056809318708580
@@ -2372,6 +2376,11 @@ CharacterJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!137 &4778931484968111342 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7603786706384944740, guid: 9abd0c5e15f72e7458e523d09f8f6c96, type: 3}
+  m_PrefabInstance: {fileID: 3158218939882615434}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &4799008419484531072 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -1635440122350089462, guid: 9abd0c5e15f72e7458e523d09f8f6c96, type: 3}

@@ -47,6 +47,9 @@ public class WorldManager : MonoBehaviour
     /// </summary>
     public void InitWorld()
     {
+        PlayerManager.Instance.player.info.level = levelIndex + 1;
+        PlayerManager.Instance.player.info.worldIndex = worldIndex;
+        PlayerManager.Instance.player.info.world = worldName;
         EntityManager.Instance.GetStats(
             currentWorld.health,
             currentWorld.minSpeed,
@@ -179,6 +182,7 @@ public class WorldManager : MonoBehaviour
         onReset?.Invoke();
         HudManager.Instance.AdvanceLevel("hide", 0);
         HudManager.Instance.DisablePointers();
+
     }
 
     public void OpenRandomDoor()
