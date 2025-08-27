@@ -422,8 +422,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _name: Warrior
-  health: 2000
-  damage: 75
+  health: 5000
+  damage: 200
   isAlive: 1
   onDeath:
     m_PersistentCalls:
@@ -555,7 +555,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   agent: {fileID: 8220551543916816991}
-  facingThreshold: 0.65
+  facingThreshold: 0.45
   minSpeed: 12
   maxSpeed: 14
   rotationSpeed: 50

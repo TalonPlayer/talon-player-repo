@@ -18,8 +18,8 @@ MonoBehaviour:
   shots: 8
   damage: 45
   collateral: 2
-  reloadTime: 0.75
-  fireRate: 0.25
+  reloadTime: 0.5
+  fireRate: 0.2
   infiniteTime: 1
   lifeTime: 0
   model: {fileID: 3275338736145798714, guid: bdde17ca16057b74e99a5377249d2dd2, type: 3}
@@ -27,6 +27,5 @@ MonoBehaviour:
   ammoColor: {r: 0.9528302, g: 0.7373312, b: 0.33708617, a: 1}
   muzzleFlashPrefab: {fileID: 4500840615125761693, guid: 5f8dd2a7847d23447bc81ed9cdde5d01, type: 3}
   shootSound: {fileID: 8300000, guid: c1dfec927904fc247a3c6c7f3dfe4f7c, type: 3}
-  shootVolume: 0.1
   reloadSound: {fileID: 8300000, guid: 73d8da416fe1cd04e9497a25c68536da, type: 3}
   holdingAnim: {fileID: 9100000, guid: 5c21f05ca4f11b44cb1f27358f50d6aa, type: 2}

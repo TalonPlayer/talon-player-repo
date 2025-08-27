@@ -1,24 +1,47 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     public GameState state;
     public bool debugMode = true;
+    public Toggle tutorialToggle; // If the current world has a tutorial
     void Awake()
     {
         Instance = this;
+
+        // Saves if the tutorial is turned off or on during play
+        bool tutorialOn = PlayerPrefs.GetInt("ToggleTutorial", 0) == 0;
+        tutorialToggle.isOn = tutorialOn;
+        tutorialToggle.onValueChanged.AddListener(SetTutorial);
     }
 
     void Start()
     {
+        // If not debugging, send the player to the first world
         if (!debugMode)
             SceneWorldManager.Instance.TransferToWorld(0);
+        else // Debug mode is on
+        {
+            HudManager.Instance.ToggleBlackScreen(false);
+        }
+    }
+    
+    /// <summary>
+    /// Toggles the tutorial so that its the same throughout play
+    /// </summary>
+    /// <param name="isOn"></param>
+    public void SetTutorial(bool isOn)
+    {
+        PlayerPrefs.SetInt("ToggleTutorial", isOn ? 0 : 1);
+        PlayerPrefs.Save();
     }
 }
 
+// Not Used
 public enum GameState
 {
     Active,

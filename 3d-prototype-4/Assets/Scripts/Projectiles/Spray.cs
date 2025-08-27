@@ -12,17 +12,20 @@ public class Spray : Projectile
         SpawnFragments();
     }
 
+    /// <summary>
+    /// Spawn Fragments in an offset random direction
+    /// </summary>
     void SpawnFragments()
     {
         for (int i = 0; i < fragmentCount; i++)
         {
             // Calculate random spray direction
-            Quaternion randomRotation = Quaternion.Euler(
+            Quaternion rotation = Quaternion.Euler(
                 Random.Range(-spreadAngle, spreadAngle),
                 Random.Range(-spreadAngle, spreadAngle),
                 0f
             );
-            Vector3 sprayDir = randomRotation * direction;
+            Vector3 sprayDir = rotation * direction;
 
             // Instantiate fragment
             SprayFragment frag = Instantiate(fragmentPrefab, transform.position, Quaternion.LookRotation(sprayDir), PlayerManager.Instance.bulletFolder);

@@ -539,10 +539,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 41024
+    m_Bits: 8256
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 384
+    m_Bits: 33152
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -592,8 +592,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _name: Ankle Biter
-  health: 100
-  damage: 50
+  health: 200
+  damage: 75
   isAlive: 1
   onDeath:
     m_PersistentCalls:
@@ -711,7 +711,7 @@ MonoBehaviour:
   canAttack: 1
   isAttacking: 0
   damage: 5
-  attackRange: 0.5
+  attackRange: 1
 --- !u!114 &4015322732678209086
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -725,7 +725,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   agent: {fileID: 3726648768081418376}
-  facingThreshold: 0.65
+  facingThreshold: 0.3
   minSpeed: 3
   maxSpeed: 5
   rotationSpeed: 5

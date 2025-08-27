@@ -12,6 +12,7 @@ public class UnitMovement : MonoBehaviour
     public float rotationSpeed = 5f;
     private Unit unit;
     private float radius;
+    private bool wasMoving = false;
     void Awake()
     {
         unit = GetComponent<Unit>();
@@ -19,7 +20,6 @@ public class UnitMovement : MonoBehaviour
     void Start()
     {
         radius = agent.radius;
-        agent.updateRotation = false;
         float speed = Random.Range(minSpeed, maxSpeed);
         agent.speed = speed;
 
@@ -33,25 +33,15 @@ public class UnitMovement : MonoBehaviour
             return;
         }
 
-
-        agent.radius = agent.isOnOffMeshLink ? .05f : radius;
-
-        bool hasStraightPath = agent.hasPath && agent.pathStatus == NavMeshPathStatus.PathComplete;
-        agent.updateRotation = !hasStraightPath;
-
-        if (hasStraightPath) RotateToTarget();
         agent.destination = unit.target.transform.position;
-
         ToggleMovement(true);
+
 
         float distanceToTarget = Vector3.Distance(transform.position, unit.target.transform.position);
         if (distanceToTarget <= agent.stoppingDistance + unit.combat.attackRange)
         {
-            agent.updateRotation = false;
-            RotateToTarget();
             if (IsFacingTarget())
             {
-                ToggleMovement(false);
                 if (unit.combat.canAttack)
                     unit.combat.StartAttack();
             }
@@ -80,10 +70,14 @@ public class UnitMovement : MonoBehaviour
 
     public void ToggleMovement(bool on)
     {
-        // If on is true, don't stop the movement
+        if (wasMoving == on) return; // Prevent unnecessary toggles
+
         agent.isStopped = !on;
 
-        if (unit.isAlive && !unit.combat.isAttacking) unit.body.PlayRandom("IsChasing", 1, on);
+        if (unit.isAlive && !unit.combat.isAttacking)
+            unit.body.PlayRandom("IsChasing", 1, on);
+
+        wasMoving = on;
     }
 
     private bool IsFacingTarget()

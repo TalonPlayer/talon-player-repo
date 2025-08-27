@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Animations;
 using UnityEngine;
 
 public class Weapon : ScriptableObject
@@ -24,5 +23,5 @@ public class Weapon : ScriptableObject
     public ParticleSystem muzzleFlashPrefab;
     public AudioClip shootSound;
     public AudioClip reloadSound;
-    public AnimatorController holdingAnim;
+    public RuntimeAnimatorController holdingAnim;
 }

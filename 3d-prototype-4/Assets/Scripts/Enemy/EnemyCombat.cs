@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class EnemyCombat : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class EnemyCombat : MonoBehaviour
     public float attackTime;
     public bool canAttack = true;
     public bool isAttacking = false;
+    public UnityEvent onAttack;
     private Enemy enemy;
     private Coroutine attackRoutine;
     void Awake()
@@ -40,14 +42,23 @@ public class EnemyCombat : MonoBehaviour
 
     public IEnumerator AttackRoutine()
     {
+        // Prevents attacks from happening twice
         canAttack = false;
+
         isAttacking = true;
+
+        // Stop the Movement
         enemy.movement.ToggleMovement(false);
         enemy.body.PlayRandom("Attack", 3);
+        
+        // Delay the attack so that the attack animation can look like it connects
         yield return new WaitForSeconds(attackDelay);
+
+        onAttack?.Invoke();
         Attack();
-        yield return new WaitForSeconds(attackTime);
+
         // Continue moving once attack is over
+        yield return new WaitForSeconds(attackTime);
         enemy.movement.ToggleMovement(true);
         canAttack = true;
         isAttacking = false;
@@ -66,8 +77,13 @@ public class EnemyCombat : MonoBehaviour
             if (u.isAlive)
                 u.OnHit(enemy.damage);
         if (p)
-            if (PlayerManager.Instance.player.isAlive && !PlayerManager.Instance.player.isImmune)
-                    PlayerManager.Instance.KillPlayer();
+        {
+            float distance = (transform.position - enemy.target.position).magnitude;
+            if (PlayerManager.Instance.player.isAlive && !PlayerManager.Instance.player.isImmune && distance < enemy.movement.attackRange + 1f)
+            PlayerManager.Instance.KillPlayer();
+        }
+            
+            
     }
 
     /*

@@ -28,20 +28,20 @@ public class RotatingObject : MonoBehaviour
     {
         if (player == null) return;
 
-        // Increase angle over time
+        // Continuously rotate around player
         currentAngle += rotateSpeed * Time.deltaTime;
-
-        // Convert angle to radians
         float rad = currentAngle * Mathf.Deg2Rad;
 
-        // Calculate circular orbit position
+        // Offset the distance from the player
         Vector3 offset = new Vector3(Mathf.Cos(rad), 0f, Mathf.Sin(rad)) * radius;
         transform.position = player.position + offset;
-
-        // Face outward from player
         transform.rotation = Quaternion.LookRotation(transform.position - player.position);
     }
 
+    /// <summary>
+    /// After the lifespan has ended, activate other colliders so it falls on the ground
+    /// </summary>
+    /// <returns></returns>
     IEnumerator LifeTimeRoutine()
     {
         yield return new WaitForSeconds(lifeTime);
@@ -69,6 +69,10 @@ public class RotatingObject : MonoBehaviour
         enabled = false;
     }
 
+    /// <summary>
+    /// Kill only enemies
+    /// </summary>
+    /// <param name="other"></param>
     void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Enemy")

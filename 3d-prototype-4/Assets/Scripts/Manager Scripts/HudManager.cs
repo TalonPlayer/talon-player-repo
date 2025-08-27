@@ -19,6 +19,10 @@ public class HudManager : MonoBehaviour
     public Animator overAnimator;
     public TextMeshProUGUI finalScore, kills, skulls, gems, run, worldLevel;
     public List<Image> coloredUIElements;
+    public GameObject pauseScreen;
+    public Transform dropTextFolder;
+    public GameObject dropTextObject;
+    public bool isPaused = false;
     private int displayedScore = 0;
     private Coroutine scoreRoutine;
     void Awake()
@@ -28,10 +32,35 @@ public class HudManager : MonoBehaviour
 
     void Start()
     {
-        ToggleBlackScreen(false);
-        
 
     }
+
+    void Update()
+    {
+        // Pauses the game
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            isPaused = !isPaused;
+            PlayerManager.Instance.TogglePause(isPaused);
+            AudioListener.pause = isPaused; // Pauses the music too
+            pauseScreen.SetActive(isPaused);
+        }
+    }
+    public void UnPause()
+    {
+        isPaused = false;
+        PlayerManager.Instance.TogglePause(isPaused);
+        AudioListener.pause = isPaused;
+        pauseScreen.SetActive(isPaused);
+    }
+
+    /// <summary>
+    /// Initializes all the stat texts for the UI
+    /// </summary>
+    /// <param name="lives"></param>
+    /// <param name="dashes"></param>
+    /// <param name="nukes"></param>
+    /// <param name="multiplier"></param>
     public void InitStats(int lives, int dashes, int nukes, int multiplier)
     {
         UpdateText(0, lives);
@@ -40,8 +69,10 @@ public class HudManager : MonoBehaviour
         UpdateText(3, multiplier);
         UpdateText(4, 0);
 
+        // Multiplier bar is set to 0
         UpdateBar(0, 0f, 100f);
 
+        // Sets the UI elements to the player's color
         foreach (Image img in coloredUIElements)
         {
             float alpha = img.color.a;
@@ -51,9 +82,13 @@ public class HudManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Toggles the black screen
+    /// </summary>
+    /// <param name="on"></param>
     public void ToggleBlackScreen(bool on)
     {
-        Debug.Log("Toggle Black Screen: " + on);
+        // Debug.Log("Toggle Black Screen: " + on);
         blackScreen.SetBool("FadeIn", on);
     }
 
@@ -90,6 +125,13 @@ public class HudManager : MonoBehaviour
                 break;
         }
     }
+
+    /// <summary>
+    /// Interpolates the score
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="duration"></param>
+    /// <returns></returns>
     private IEnumerator LerpScore(int target, float duration)
     {
         int start = displayedScore;
@@ -134,6 +176,11 @@ public class HudManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Changes the bar color
+    /// </summary>
+    /// <param name="barNum"></param>
+    /// <param name="color"></param>
     public void UpdateBarColor(int barNum, Color color)
     {
         switch (barNum)
@@ -153,6 +200,11 @@ public class HudManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Shows level text when completing a level
+    /// </summary>
+    /// <param name="levelName"></param>
+    /// <param name="levelNum"></param>
     public void AdvanceLevel(string levelName, int levelNum)
     {
         if (levelName == "hide")
@@ -166,6 +218,28 @@ public class HudManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Shows the world name when completing a challenge world
+    /// </summary>
+    /// <param name="levelName"></param>
+    public void AdvanceLevel(string levelName)
+    {
+        if (levelName == "hide")
+        {
+            levelEndAnimator.SetTrigger("Hide");
+        }
+        else
+        {
+            levelText.text = levelName + " completed!";
+            levelEndAnimator.SetTrigger("Show");
+        }
+    }
+
+    /// <summary>
+    /// Assigns the pointers to a target
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="target"></param>
     public void AssignPointers(int index, Transform target)
     {
         UIPointer pointer = pointers[index];
@@ -174,6 +248,9 @@ public class HudManager : MonoBehaviour
         pointer.isTargeting = true;
     }
 
+    /// <summary>
+    /// Turns off the pointers
+    /// </summary>
     public void DisablePointers()
     {
         foreach (UIPointer p in pointers)
@@ -183,6 +260,11 @@ public class HudManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Shows the player stats at the end of the game
+    /// </summary>
+    /// <param name="newData"></param>
+    /// <returns></returns>
     public PlayerData GameOverStats(PlayerData newData)
     {
         PlayerData oldData = SaveSystem.LoadPlayer(newData._name);
@@ -192,9 +274,19 @@ public class HudManager : MonoBehaviour
         skulls.text = newData.skulls.ToString();
         gems.text = newData.gems.ToString();
         run.text = "Attempt " + newData.attempt;
-        worldLevel.text = newData.world + " level " + newData.level;
+
+        // If it's a challenge world, display different text
+        if (WorldManager.Instance.isChallenge)
+        {
+            worldLevel.text = "Challenge World: " + newData.world;
+            newData.level = 5;
+        }
+        else
+            worldLevel.text = newData.world + " level " + newData.level;
 
         overAnimator.SetTrigger("Play");
+
+        // High score + Furthest Run
         if (oldData.highScore < newData.currentScore && oldData.highestWorld < newData.worldIndex)
         {
             newData.highScore = newData.currentScore;
@@ -205,6 +297,7 @@ public class HudManager : MonoBehaviour
             return newData;
         }
 
+        // Highscore
         if (oldData.highScore < newData.currentScore)
         {
             newData.highScore = newData.currentScore;
@@ -212,7 +305,7 @@ public class HudManager : MonoBehaviour
             return newData;
         }
 
-
+        // Furthest Run
         if (oldData.highestWorld < newData.worldIndex)
         {
             newData.highestWorld = newData.worldIndex;
@@ -221,6 +314,19 @@ public class HudManager : MonoBehaviour
             return newData;
         }
 
+        oldData.attempt = newData.attempt;
         return oldData;
+    }
+
+    /// <summary>
+    /// Text that appears at the bottom left of the screen showing what powerup was picked up
+    /// </summary>
+    /// <param name="text"></param>
+    public void DropText(string text)
+    {
+        Vector2 pos = new Vector2(Random.Range(15f, 50f), Random.Range(15f, 35f));
+        GameObject obj = Instantiate(dropTextObject, pos, Quaternion.identity, dropTextFolder);
+        TextMeshProUGUI t = obj.GetComponentInChildren<TextMeshProUGUI>();
+        t.text = " + " + text;
     }
 }

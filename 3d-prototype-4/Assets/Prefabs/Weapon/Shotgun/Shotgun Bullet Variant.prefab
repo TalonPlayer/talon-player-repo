@@ -18,15 +18,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3552209319636075345, guid: 3f4cb4a73ff058f4ab6c5c318f3abb79, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1
+      value: 10.054164
       objectReference: {fileID: 0}
     - target: {fileID: 3552209319636075345, guid: 3f4cb4a73ff058f4ab6c5c318f3abb79, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3552209319636075345, guid: 3f4cb4a73ff058f4ab6c5c318f3abb79, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1
+      value: 6.3465014
       objectReference: {fileID: 0}
     - target: {fileID: 3552209319636075345, guid: 3f4cb4a73ff058f4ab6c5c318f3abb79, type: 3}
       propertyPath: m_LocalRotation.w
@@ -83,12 +83,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 85
-  lifetime: 2
+  lifetime: 1.5
   collateral: 5
   rb: {fileID: 3458628005000515619}
   fragmentPrefab: {fileID: 6457096322646516016, guid: 57ad6f257e45be1498bf416ee559f12e, type: 3}
   fragmentCount: 5
-  spreadAngle: 35
+  spreadAngle: 20
 --- !u!54 &3458628005000515619 stripped
 Rigidbody:
   m_CorrespondingSourceObject: {fileID: -6056174794503030167, guid: 3f4cb4a73ff058f4ab6c5c318f3abb79, type: 3}

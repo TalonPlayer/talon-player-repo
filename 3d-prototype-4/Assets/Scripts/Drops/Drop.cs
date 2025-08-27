@@ -6,7 +6,7 @@ public class Drop : ScriptableObject
 {
     [Header("Stats")]
     public string _name;
-    public int rarity; // 1 (common) - 5 (rare)
+    public int rarity; // 1 (common) - 100 (rare)
 
     [Header("Drop Visuals")]
     public ParticleSystem sparklePrefab;

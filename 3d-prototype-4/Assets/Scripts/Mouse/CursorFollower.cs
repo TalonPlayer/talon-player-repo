@@ -8,7 +8,7 @@ public class CursorFollower : MonoBehaviour
     void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
-        Cursor.visible = false; // Optional: hide the default OS cursor
+        Cursor.visible = false;
     }
 
     void Update()

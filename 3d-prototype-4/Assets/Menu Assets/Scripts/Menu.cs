@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class Menu : MonoBehaviour
 {
     public Animator menuAnimator;
+    public Animator jumpscare;
     public SceneField universalGameplay;
     public PlayerModel playerPrefab;
     public PlayerModel modelInstance;
@@ -20,11 +21,28 @@ public class Menu : MonoBehaviour
     public Transform customizePoint;
     public Transform defaultPoint;
     public Button savesButton;
+    public Button startButton;
     public Button continueButton;
     public Renderer door;
     public List<Image> uiElements;
     [SerializeField] private PlayerInfo playerInfo;
     public string selectedColorCode;
+
+    [Header("Toggles")]
+    public Toggle tutorialToggle;
+    void Awake()
+    {
+        Cursor.visible = true; 
+
+        bool tutorialOn = PlayerPrefs.GetInt("ToggleTutorial", 0) == 0;
+        tutorialToggle.isOn = tutorialOn;
+        tutorialToggle.onValueChanged.AddListener(SetTutorial);
+    }
+    public void SetTutorial(bool isOn)
+    {
+        PlayerPrefs.SetInt("ToggleTutorial", isOn ? 0 : 1);
+        PlayerPrefs.Save();
+    }
     void Start()
     {
         players = SaveSystem.LoadPlayerList();
@@ -55,16 +73,58 @@ public class Menu : MonoBehaviour
 
             saveButtonTexts[i].text = data._name;
 
-            infoTexts[i].text =
-                "\nAttempts: " + data.attempt +
-                "\nHighscore: " + data.highScore +
-                "\n" + data.world + " level " + data.level +
-                "\n" + data.kills + " kills" +
-                "\n" + data.skulls + " skulls " +
-                "\n" + data.gems + " gems";
+            if (data.level > 5)
+            {
+                infoTexts[i].text =
+                    "\nAttempts: " + data.attempt +
+                    "\nHighscore: " + data.highScore +
+                    "\n" + data.world + " level " + data.level +
+                    "\n" + data.kills + " kills" +
+                    "\n" + data.skulls + " skulls " +
+                    "\n" + data.gems + " gems";
+            }
+            else
+            {
+                infoTexts[i].text =
+                    "\nAttempts: " + data.attempt +
+                    "\nHighscore: " + data.highScore +
+                    "\n" + data.world +
+                    "\n" + data.kills + " kills" +
+                    "\n" + data.skulls + " skulls " +
+                    "\n" + data.gems + " gems";
+            }
+
+        }
+
+        if (players.Count > 4)
+        {
+            savesButton.interactable = false;
         }
 
         Invoke(nameof(EnableContinue), 5.0f);
+
+        if (players.Count == 0)
+        {
+            continueButton.interactable = false;
+            PlayerPrefs.SetString("SelectedPlayer", null);
+        }
+        else
+        {
+            SaveSystem.LoadSelectedPlayerName();
+
+            if (!string.IsNullOrEmpty(SaveSystem.selectedPlayerName))
+            {
+                SelectColorByCode(SaveSystem.LoadPlayer(SaveSystem.selectedPlayerName).colorCode);
+                continueButton.interactable = true;
+            }
+            else
+            {
+                PlayerData currentData = SaveSystem.LoadPlayer(players[0]);
+                SelectColorByCode(currentData.colorCode);
+                PlayerPrefs.SetString("SelectedPlayer", currentData._name);
+            }
+        }
+        PlayerPrefs.Save();
     }
 
     void EnableContinue()
@@ -117,7 +177,8 @@ public class Menu : MonoBehaviour
     public void MenuGoTo(string name)
     {
         menuAnimator.SetTrigger("GoTo" + name);
-
+        if (Random.Range(0, 101) == 0)
+            jumpscare.SetTrigger("Play");
         switch (name)
         {
             case "Start":
@@ -127,6 +188,7 @@ public class Menu : MonoBehaviour
                 StartCoroutine(OpenGame());
                 break;
             case "Continue":
+
                 break;
             case "Customize":
                 Invoke(nameof(DelayCustomize), 1f);
@@ -135,16 +197,12 @@ public class Menu : MonoBehaviour
                 Invoke(nameof(DelayTeleport), 1f);
                 break;
             case "HowToPlay":
-                Debug.Log("How To Play");
                 break;
             case "Options":
-                Debug.Log("Options");
                 break;
             case "Credits":
-                Debug.Log("Credits");
                 break;
             case "Exit":
-                Debug.Log("Exit");
                 break;
         }
     }
@@ -171,6 +229,8 @@ public class Menu : MonoBehaviour
         SelectColorByCode(data.colorCode);
         continueButton.interactable = true;
         SaveSystem.selectedPlayerName = data._name;
+        PlayerPrefs.SetString("SelectedPlayer", data._name);
+        PlayerPrefs.Save();
     }
 
     public void CreateCharacter(string name)
@@ -179,6 +239,32 @@ public class Menu : MonoBehaviour
         playerInfo.CopyPlayer(data);
         SaveSystem.SavePlayer(playerInfo);
         SaveSystem.selectedPlayerName = data._name;
+        PlayerPrefs.SetString("SelectedPlayer", data._name);
+        PlayerPrefs.Save();
+    }
 
+    public void DeleteCharacter(int index)
+    {
+        if (!players.Contains(players[index])) return;
+        SaveSystem.DeletePlayer(players[index]);
+
+        Destroy(modelPoints[index].GetChild(1).gameObject);
+
+        saveButtons[index].interactable = false;
+        infoTexts[index].text = "";
+        saveButtonTexts[index].text = "Empty";
+        Image img = saveButtons[index].GetComponent<Image>();
+        img.color = Color.black;
+
+        if (PlayerPrefs.GetString("SelectedPlayer") == players[index])
+        {
+            PlayerPrefs.SetString("SelectedPlayer", null);
+        }
+        savesButton.interactable = true;
+    }
+
+    public void ExitGame()
+    {
+        Application.Quit();
     }
 }

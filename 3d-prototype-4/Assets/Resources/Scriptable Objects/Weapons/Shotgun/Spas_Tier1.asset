@@ -15,17 +15,17 @@ MonoBehaviour:
   _name: Spas
   id: ID_040
   infiniteAmmo: 0
-  shots: 8
-  damage: 25
-  collateral: 5
-  reloadTime: 0.75
-  fireRate: 0.5
+  shots: 20
+  damage: 75
+  collateral: 7
+  reloadTime: 0.5
+  fireRate: 0.3
   infiniteTime: 0
-  lifeTime: 10
+  lifeTime: 25
   model: {fileID: 1210994881293886300, guid: 33054d9de1cafa544bd12c09094e0422, type: 3}
   projectilePrefab: {fileID: 5692490307125188112, guid: c1d5229b6c0715c41bfd7f80325d0e20, type: 3}
   ammoColor: {r: 0.9528302, g: 0.7373312, b: 0.33708617, a: 1}
   muzzleFlashPrefab: {fileID: 4500840615125761693, guid: 2f6d2f28624eebd45a277fa501d3345f, type: 3}
-  shootSound: {fileID: 8300000, guid: c1dfec927904fc247a3c6c7f3dfe4f7c, type: 3}
-  reloadSound: {fileID: 8300000, guid: 73d8da416fe1cd04e9497a25c68536da, type: 3}
+  shootSound: {fileID: 8300000, guid: 49d4345b7ba2d1745b0fdff6245ab618, type: 3}
+  reloadSound: {fileID: 8300000, guid: d607826a8244f214ca30f44ba9b31e06, type: 3}
   holdingAnim: {fileID: 9100000, guid: f793be4511ea0174089ec06e35b2163d, type: 2}

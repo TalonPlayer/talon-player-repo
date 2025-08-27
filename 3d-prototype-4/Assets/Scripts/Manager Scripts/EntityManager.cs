@@ -6,33 +6,43 @@ using UnityEngine.AI;
 public class EntityManager : MonoBehaviour
 {
     public static EntityManager Instance;
-    public List<Enemy> enemies;
-    public List<Unit> units;
+    [HideInInspector] public List<Enemy> enemies;
+    [HideInInspector] public List<Unit> units;
     public List<GameObject> enemyPrefabs;
+
+    [Header("Folders")]
     public Transform enemyFolder;
     public Transform unitFolder;
     public Transform ragdollFolder;
     public Transform itemFolder;
     public Transform skullFolder;
+
+    [Header("Skill Logic")]
     public PhysicalDrop skullPrefab;
     public float skullChance = 90;
     public float spawnTime = 3f;
+
+    // Ticks
     public delegate void DamageTick();
     public static event DamageTick damageTick;
     public delegate void CheckHealth();
     public static event CheckHealth healthTick;
     public delegate void AggroClosest();
     public static event AggroClosest aggroTick;
+
+    // The maximum amount of ragdolls that can exist in a scene before some get cleared
+    public int maxRagdollCount = 65;
     private int health;
     private int minSpeed;
     private int maxSpeed;
+    Coroutine ambientRoutine;
     void Awake()
     {
         Instance = this;
     }
     void Start()
     {
-
+        StartCoroutine(AmbientRoutine(Random.Range(2f, 8f)));
     }
 
     void Update()
@@ -52,6 +62,29 @@ public class EntityManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Make a random enemy make a random noise
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    IEnumerator AmbientRoutine(float time)
+    {
+        yield return new WaitForSeconds(time);
+
+        if (enemies.Count > 0)
+        {
+            enemies[Random.Range(0, enemies.Count)].PlayZombieNoise(false);
+        }
+
+        StartCoroutine(AmbientRoutine(Random.Range(2f, 8f)));
+    }
+    
+    /// <summary>
+    /// Get the information from WorldManager
+    /// </summary>
+    /// <param name="_health"></param>
+    /// <param name="_minSpeed"></param>
+    /// <param name="_maxSpeed"></param>
     public void GetStats(int _health, int _minSpeed, int _maxSpeed)
     {
         health = _health;
@@ -80,6 +113,52 @@ public class EntityManager : MonoBehaviour
         enemies.Add(e);
     }
 
+    /// <summary>
+    /// Spawns the specified enemy
+    /// </summary>
+    public void SpawnEnemy(Transform spawn, Enemy enemy)
+    {
+        Vector3 pos = RandExt.RandomPosition(spawn);
+        pos.y += 2f;
+        pos = SnapToGround(pos);
+        Enemy e = Instantiate(
+            enemy,
+            pos,
+            spawn.rotation,
+            enemyFolder
+            );
+
+        e.Spawn(spawnTime);
+        e.Init(health, minSpeed, maxSpeed);
+        enemies.Add(e);
+    }
+
+    /// <summary>
+    /// Spawns the specified enemy with specific stats
+    /// </summary>
+    public void SpawnEnemy(Transform spawn, Enemy enemy, int health, int minSpeed, int maxSpeed, bool contributeToCount)
+    {
+        Vector3 pos = RandExt.RandomPosition(spawn);
+        pos.y += 2f;
+        pos = SnapToGround(pos);
+        Enemy e = Instantiate(
+            enemy,
+            pos,
+            spawn.rotation,
+            enemyFolder
+            );
+
+        e.Spawn(spawnTime);
+        e.Init(health, minSpeed, maxSpeed);
+        e.contributeToCount = contributeToCount;
+        enemies.Add(e);
+    }
+
+    /// <summary>
+    /// Spawns a unit
+    /// </summary>
+    /// <param name="spawn"></param>
+    /// <param name="unit"></param>
     public void SpawnUnit(Vector3 spawn, Unit unit)
     {
         spawn = SnapToGround(spawn);
@@ -94,6 +173,11 @@ public class EntityManager : MonoBehaviour
         units.Add(u);
     }
 
+    /// <summary>
+    /// Snaps the unit to the ground
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <returns></returns>
     public Vector3 SnapToGround(Vector3 pos)
     {
         RaycastHit hit;
@@ -107,9 +191,12 @@ public class EntityManager : MonoBehaviour
         return pos;
     }
 
+    /// <summary>
+    /// Clears Ragdolls
+    /// </summary>
     public void RecycleRagdolls()
     {
-        if (ragdollFolder.childCount >= 65)
+        if (ragdollFolder.childCount >= maxRagdollCount)
         {
             List<Transform> delete = new List<Transform>();
             for (int i = 0; i < Random.Range(1, 5); i++)
@@ -124,6 +211,9 @@ public class EntityManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Clears Drops
+    /// </summary>
     public void RecycleDrops()
     {
         if (itemFolder.childCount >= 65)
@@ -141,6 +231,9 @@ public class EntityManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Clean up everything
+    /// </summary>
     public void CleanUp()
     {
         foreach (Transform child in itemFolder)
@@ -150,6 +243,10 @@ public class EntityManager : MonoBehaviour
         foreach (Transform child in skullFolder)
             Destroy(child.gameObject);
     }
+
+    /// <summary>
+    /// Make the units spawn around the player
+    /// </summary>
     public void UnitSnapToPlayer()
     {
         Vector3 playerPos = PlayerManager.Instance.player.transform.position;
@@ -183,6 +280,10 @@ public class EntityManager : MonoBehaviour
         StartCoroutine(ReEnableAgentsNextFrame());
     }
 
+    /// <summary>
+    /// Units can move after a certain time after units teleport to player
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator ReEnableAgentsNextFrame()
     {
         yield return new WaitForSeconds(.5f); // wait one frame
@@ -199,7 +300,10 @@ public class EntityManager : MonoBehaviour
     }
 
 
-
+    /// <summary>
+    /// Attempt to spawn a skull
+    /// </summary>
+    /// <param name="pos"></param>
     public void SpawnSkull(Vector3 pos)
     {
         float rand = Random.Range(0f, 100f);
@@ -210,8 +314,22 @@ public class EntityManager : MonoBehaviour
         skull.LaunchUp();
     }
 
+    /// <summary>
+    /// Clears all target checks for entities
+    /// </summary>
     public void ClearAggro()
     {
         aggroTick = null;
+    }
+    
+    /// <summary>
+    /// Kill all the enemies
+    /// </summary>
+    public void KillAllEnemies()
+    {
+        foreach (Enemy e in enemies)
+        {
+            e.OnHit(9999);
+        }
     }
 }

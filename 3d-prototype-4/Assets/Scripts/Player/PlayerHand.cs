@@ -10,6 +10,7 @@ public class PlayerHand : MonoBehaviour
     public List<Projectile> projPool = new List<Projectile>();
     public int currentRounds;
     public int poolSize;
+    public Transform cameraTransform;
     private bool isReloading = false;
     private float fireCooldown = 0f;
     private ParticleSystem muzzleFlash;
@@ -24,10 +25,15 @@ public class PlayerHand : MonoBehaviour
     void Awake()
     {
         player = GetComponent<Player>();
+
+        if (!cameraTransform && Camera.main) cameraTransform = Camera.main.transform;
     }
     void Start()
     {
+        // Equip the default weapon
         Equip(hand);
+
+        // Create an object pool
         CreateProjectilePool();
         currentRounds = hand.shots;
     }
@@ -38,13 +44,16 @@ public class PlayerHand : MonoBehaviour
 
         if (hand != null)
         {
-            if (Input.GetKeyDown(KeyCode.B) && hand.name != "1911")
+            // Discard the current weapon if it's not the default weapon
+            if (Input.GetKeyDown(KeyCode.B) && hand.name != defaultWeapon.name)
             {
                 Equip(defaultWeapon);
             }
+            
+            // Is able to shoot when not reloading
             if (!isReloading)
             {
-                if (Input.GetMouseButton(0) && currentRounds > 0 && fireCooldown <= 0f)
+                if ((Input.GetMouseButton(0) || 0.5f <= Input.GetAxis("Shoot")) && currentRounds > 0 && fireCooldown <= 0f)
                 {
                     Shoot();
                     player.body.Play("IsShooting", true);
@@ -65,12 +74,18 @@ public class PlayerHand : MonoBehaviour
 
     void FixedUpdate()
     {
-        LookAtMouse();
+        if (player.controllerDetected)
+            ControllerRotation();
+        else
+            LookAtMouse();
     }
 
+    /// <summary>
+    /// Creates the object pool for projectiles
+    /// </summary>
     void CreateProjectilePool()
     {
-        poolSize = hand.shots;
+        poolSize = hand.shots * 2; // Increase pool size so that the player always has enough bullets
 
         for (int i = 0; i < poolSize; i++)
         {
@@ -80,14 +95,23 @@ public class PlayerHand : MonoBehaviour
             projPool.Add(p);
         }
     }
-
+    
+    /// <summary>
+    /// Shoot a projectile
+    /// </summary>
     void Shoot()
     {
         fireCooldown = hand.fireRate;
 
-        Vector3 shootDirection = GetAimDirection();
+        // Send the projectile in a direction
+        Vector3 shootDirection;
+        shootDirection = GetAimDirection();
+
+        // Get a projectile thats available
         Projectile proj = projPool[currentRounds - 1];
 
+        // Projectile comes out of the muzzle point of the gun
+        // The projectile also has the same rotation in the direction
         proj.transform.position = muzzlePoint.position + shootDirection.normalized; // offset forward
         proj.transform.rotation = Quaternion.LookRotation(shootDirection);
         proj.gameObject.SetActive(true);
@@ -97,9 +121,11 @@ public class PlayerHand : MonoBehaviour
 
         currentRounds--;
 
+        // Update the ammo bar if the gun doesn't has infinite ammo
         if (!hand.infiniteAmmo)
-            HudManager.Instance.UpdateBar(1, currentRounds, poolSize);
+            HudManager.Instance.UpdateBar(1, currentRounds, hand.shots);
 
+        // If player runs out of bullets, reload unless infinite ammo
         if (currentRounds <= 0)
         {
             if (!hand.infiniteAmmo)
@@ -108,20 +134,35 @@ public class PlayerHand : MonoBehaviour
                 currentRounds = hand.shots;
         }
 
+        // Play muzzleflash
         if (muzzleFlash != null)
         {
             muzzleFlash.Play();
         }
     }
 
-
+    /// <summary>
+    /// Get the direction of where the player is aiming
+    /// </summary>
+    /// <returns></returns>
     Vector3 GetAimDirection()
     {
-        Vector3 mouseWorldPos = MouseWorld.GetMouseWorldPosition(1 << 6);
-        Vector3 dir = (mouseWorldPos - muzzlePoint.position).normalized;
+        Vector3 enemyPos;
+        Vector3 dir = Vector3.zero;
+        if (player.controllerDetected)
+        {
+            // Attempt to find an enemy in front of the player
+            enemyPos = MouseWorld.GetControllerWorldPosition(1 << 8, transform);
+            dir = transform.forward;
+        }
+        else
+        {
+            // Attempt to find an enemy that the cursor is hovering over
+            Vector3 mouseWorldPos = MouseWorld.GetMouseWorldPosition(1 << 6);
+            dir = (mouseWorldPos - muzzlePoint.position).normalized;
+            enemyPos = MouseWorld.GetControllerWorldPosition(1 << 8, transform);
+        }
 
-
-        Vector3 enemyPos = MouseWorld.GetMouseWorldPosition(1 << 8);
         if (enemyPos != Vector3.zero)
             dir = (enemyPos - muzzlePoint.position).normalized;
         else
@@ -130,6 +171,10 @@ public class PlayerHand : MonoBehaviour
         return dir;
     }
 
+    /// <summary>
+    /// Sets up the weapon for the player to use
+    /// </summary>
+    /// <param name="newWeapon"></param>
     public void Equip(Weapon newWeapon)
     {
         if (newWeapon == null) return;
@@ -178,12 +223,17 @@ public class PlayerHand : MonoBehaviour
             weaponLifeRoutine = StartCoroutine(WeaponTimer(hand.lifeTime));
         }
 
-        HudManager.Instance.UpdateBar(1, currentRounds, poolSize);
+        HudManager.Instance.UpdateBar(1, currentRounds, hand.shots);
 
         player.body.Play("Reload");
         playerAudio.PlayOneShot(hand.reloadSound, Random.Range(.8f, 1.2f));
     }
 
+    /// <summary>
+    /// Weapon has limited duration
+    /// </summary>
+    /// <param name="duration"></param>
+    /// <returns></returns>
     public IEnumerator WeaponTimer(float duration)
     {
         float elapsed = duration;
@@ -199,12 +249,19 @@ public class PlayerHand : MonoBehaviour
         Equip(w);
     }
 
-
+    /// <summary>
+    /// Returns projectile back to player
+    /// </summary>
+    /// <param name="p"></param>
     public void ReturnToPool(Projectile p)
     {
         p.gameObject.SetActive(false);
     }
 
+    /// <summary>
+    /// Player reloads
+    /// </summary>
+    /// <returns></returns>
     IEnumerator StartReloading()
     {
         isReloading = true;
@@ -213,9 +270,12 @@ public class PlayerHand : MonoBehaviour
         yield return new WaitForSeconds(hand.reloadTime);
         isReloading = false;
         currentRounds = hand.shots;
-        HudManager.Instance.UpdateBar(1, currentRounds, poolSize);
+        HudManager.Instance.UpdateBar(1, currentRounds, hand.shots);
     }
 
+    /// <summary>
+    /// Player rotates towards mouse if there is no controller detected
+    /// </summary>
     public void LookAtMouse()
     {
         Vector3 mouseWorldPos = MouseWorld.GetMouseWorldPosition(1 << 6);
@@ -229,6 +289,42 @@ public class PlayerHand : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Player rotates based off of controller usage
+    /// </summary>
+    public void ControllerRotation()
+    {
+        float x = Input.GetAxis("RightStickX");
+        float y = Input.GetAxis("RightStickY");
+
+        // deadzone
+        Vector2 v = new Vector2(x, y);
+        if (v.sqrMagnitude < 0.15f * 0.15f) return;
+
+        v = new Vector2(
+            v.x * Mathf.Sqrt(1f - 0.5f * v.y * v.y),
+            v.y * Mathf.Sqrt(1f - 0.5f * v.x * v.x)
+        );
+
+        // build world-space look direction (camera-relative)
+        Vector3 f = Vector3.forward;
+        Vector3 r = Vector3.right;
+        if (cameraTransform)
+        {
+            f = cameraTransform.forward; f.y = 0; f.Normalize();
+            r = cameraTransform.right; r.y = 0; r.Normalize();
+        }
+
+        Vector3 lookDir = (r * v.x + f * v.y);
+        if (lookDir.sqrMagnitude < 1e-6f) return;
+
+        Quaternion target = Quaternion.LookRotation(lookDir);
+        transform.rotation = Quaternion.Slerp(transform.rotation, target, 20f * Time.deltaTime);
+    }
+
+    /// <summary>
+    /// Allows the current weapon to be heald on for longer
+    /// </summary>
     public void PickUpAmmo()
     {
         if (isHoldingAmmo)

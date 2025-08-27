@@ -11,6 +11,10 @@ public class Projectile : MonoBehaviour
     protected Vector3 direction;
     protected PlayerHand owner;
     protected Coroutine lifeRoutine;
+    /// <summary>
+    /// Give the projectile a direction to move towards
+    /// </summary>
+    /// <param name="dir"></param>
     public virtual void Launch(Vector3 dir)
     {
         collateral = 0;
@@ -19,11 +23,19 @@ public class Projectile : MonoBehaviour
         StartCoroutine(LifeTime());
     }
 
+    /// <summary>
+    /// Set the owner to the player
+    /// </summary>
+    /// <param name="ownerHand"></param>
     public void SetOwner(PlayerHand ownerHand)
     {
         owner = ownerHand;
     }
 
+    /// <summary>
+    /// Projectiles have a lifespan
+    /// </summary>
+    /// <returns></returns>
     public virtual IEnumerator LifeTime()
     {
         yield return new WaitForSeconds(lifetime);
@@ -33,11 +45,13 @@ public class Projectile : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Enemy"))
+        if (other.CompareTag("Enemy")) // Enemy hit
         {
             Enemy e = other.GetComponent<Enemy>();
             e.OnHit(owner.hand.damage);
             collateral++;
+
+            // Projectile can no longer pass through enemies
             if (collateral >= owner.hand.collateral)
             {
                 rb.velocity = Vector3.zero;
@@ -46,6 +60,8 @@ public class Projectile : MonoBehaviour
                     owner.ReturnToPool(this);
             }
         }
+
+        // Wall or ground is hit, stop the projectile
         else if (other.CompareTag("Wall") || other.CompareTag("Ground"))
         {
             rb.velocity = Vector3.zero;

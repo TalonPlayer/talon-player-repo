@@ -10,7 +10,7 @@ public class SpawnUnit : Powerup
     {
         base.OnPickUp();
 
-        // Spawns the unit around the player
+        // Spawns the unit nearby the player
         for (int i = 0; i < spawns; i++)
         {
             Vector3 pos = PlayerManager.Instance.player.transform.position;

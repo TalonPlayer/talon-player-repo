@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Unit : Entity
 {
+    // Unit logic works similarly to Enemy Logic
     public Transform target;
     public bool isAggro;
     public bool isSpawning;
@@ -69,7 +70,7 @@ public class Unit : Entity
         body.Play("RandomFloat", Random.Range(.8f, 1.5f));
         isAggro = false;
 
-        cc.excludeLayers += deathLayer;
+        // cc.excludeLayers += deathLayer;
 
         onDeath?.Invoke();
     }
@@ -108,6 +109,9 @@ public class Unit : Entity
 
     }
 
+    /// <summary>
+    /// Checks for a new enemy target
+    /// </summary>
     public void CheckTarget()
     {
         if (target == null) isAggro = false;

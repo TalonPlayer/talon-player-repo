@@ -5,7 +5,16 @@ using UnityEngine;
 public class Powerup : Drop
 {
     public AudioSource loopSound;
+    /// <summary>
+    /// Pick Up Text
+    /// </summary>
+    public override void OnPickUp()
+    {
+        base.OnPickUp();
+        AudioManager.Instance.PlayDropSound(pickUpSound);
 
+        HudManager.Instance.DropText(_name);
+    }
     /// <summary>
     /// Creates a looping sound for powerups
     /// </summary>

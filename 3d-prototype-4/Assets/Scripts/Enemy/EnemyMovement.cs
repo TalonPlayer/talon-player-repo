@@ -7,6 +7,7 @@ public class EnemyMovement : MonoBehaviour
 {
     public NavMeshAgent agent;
     public float facingThreshold = .65f; // value must be between 0 and 1
+    public float attackRange = 0.5f;
     private Enemy enemy;
     private float radius;
     void Awake()
@@ -40,17 +41,10 @@ public class EnemyMovement : MonoBehaviour
             ToggleMovement(false);
             return;
         }
-
-        // If the enemy is on a mesh link, reduce agent radius so that others can get on it
-        if (agent.isOnOffMeshLink)
-            agent.radius = .05f;
-        else
-            agent.radius = radius;
-
         ToggleMovement(true);
         agent.destination = enemy.target.transform.position;
         float distanceToTarget = Vector3.Distance(transform.position, enemy.target.transform.position);
-        if (IsFacingTarget() && distanceToTarget <= agent.stoppingDistance + 0.1f)
+        if (IsFacingTarget() && distanceToTarget <= agent.stoppingDistance + attackRange)
         {
             // Don't move if close to target
             ToggleMovement(false);
@@ -61,11 +55,8 @@ public class EnemyMovement : MonoBehaviour
                 if (PlayerManager.Instance.player.isImmune
                 || PlayerManager.Instance.player.movement.isDashing)
                     enemy.OnDeath();
-                // Attack target
-                else
-                    enemy.combat.StartAttack();
             }
-
+            enemy.combat.StartAttack();
         }
     }
 
@@ -95,7 +86,7 @@ public class EnemyMovement : MonoBehaviour
 
         float dot = Vector3.Dot(transform.forward, toTarget);
 
-        return dot > facingThreshold; // You can adjust the threshold (1 = perfect alignment)
+        return dot > facingThreshold;
     }
 
     public void AlterSpeed(float multiplier)

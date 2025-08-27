@@ -2,16 +2,37 @@ using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Enemy : Entity
 {
-    public Transform target;
+    public Transform target; // The Target
+
+    // Boolean Checks
     public bool isAggro;
     public bool isSpawning;
+
+    // Components
     private CapsuleCollider cc;
     public Rigidbody rb;
     public LayerMask deathLayer;
     public ParticleSystem bloodParticles;
+    public int killValue = 100;
+    public int deathSoundChance = 4; // 1 is guaranteed, 4 means 33% chance
+    public bool contributeToCount = true; // Contributes to the zombie count
+    public bool immortal = false; // Is killable?
+    [Header("Sounds")]
+    public List<AudioClip> deathSounds;
+    public List<AudioClip> damageSounds;
+    public List<AudioClip> ambientSounds;
+    public AudioClip skullSpawn;
+    public AudioSource audioSource;
+    public AudioSource damageAudio;
+    [Header("Explosive Type")]
+    public ParticleSystem explosiveParticles;
+    public float explosionRadius = 3f;
+    public int explosionDamage = 65;
+    [Header("Child Components")]
     [HideInInspector] public EnemyMovement movement;
     [HideInInspector] public EnemyCombat combat;
     [HideInInspector] public EnemyBody body;
@@ -25,6 +46,7 @@ public class Enemy : Entity
     }
     void Start()
     {
+        // Check the enemy's health at the health tick
         EntityManager.healthTick += CheckHealth;
     }
 
@@ -38,6 +60,10 @@ public class Enemy : Entity
         body.PlayRandom("IsSpawning", 1, true);
         cc.excludeLayers += 1 << 8;
         isSpawning = true;
+
+        if (Random.Range(0, 11) == 0)
+            PlayZombieNoise(false);
+
         Invoke(nameof(EndSpawn), spawnTime);
     }
 
@@ -63,6 +89,19 @@ public class Enemy : Entity
         movement.Init(_min, _max);
     }
 
+    /// <summary>
+    /// Plays a random zombie noise
+    /// </summary>
+    /// <param name="isDeath">Plays Death Noise</param>
+    public void PlayZombieNoise(bool isDeath)
+    {
+        audioSource.pitch = Random.Range(.65f, 1.6f);
+        if (isDeath)
+            audioSource.PlayOneShot(RandExt.RandomElement(deathSounds));
+        else
+            audioSource.PlayOneShot(RandExt.RandomElement(ambientSounds));
+    }
+
     void Update()
     {
     }
@@ -74,7 +113,6 @@ public class Enemy : Entity
     {
         if (health <= 0.0f)
         {
-            isAlive = false;
             OnDeath();
         }
     }
@@ -84,22 +122,32 @@ public class Enemy : Entity
     /// </summary>
     public void OnDeath()
     {
+        if (immortal) return;
+        isAlive = false;
+        if (Random.Range(0, deathSoundChance) == 0)
+            PlayZombieNoise(true);
         // Don't allow enemy to check their target
         EntityManager.aggroTick -= CheckTarget;
+
         EntityManager.Instance.enemies.Remove(this);
 
+        // Clean up scene
+        EntityManager.Instance.RecycleRagdolls();
+        EntityManager.Instance.RecycleDrops();
+
         // Reward player score
-        PlayerManager.Instance.AddScore(100);
+        PlayerManager.Instance.AddScore(killValue);
         PlayerManager.Instance.player.info.kills++;
 
-        // Don't check health since already dead
+        // Don't check health since already dead    
         EntityManager.healthTick -= CheckHealth;
 
         // Attempt to spawn a skull
         EntityManager.Instance.SpawnSkull(transform.position);
 
-        // Changet the count of zombies
-        WorldManager.Instance.UpdateCount();
+        // Update the count of zombies if it contributes
+        if (contributeToCount)
+            WorldManager.Instance.UpdateCount();
 
         // Death animation
         body.PlayRandom("IsDead", 8, true);
@@ -108,12 +156,58 @@ public class Enemy : Entity
 
         // Ignore some layers when dying
         cc.excludeLayers += deathLayer;
+        gameObject.layer = 1 << 2;
 
         onDeath?.Invoke();
     }
 
+
     /// <summary>
-    /// Delay the destroy
+    /// Enemy Explodes and damages within the radius
+    /// </summary>
+    public void Explode()
+    {
+        explosiveParticles.Play();
+
+        // Get the radius
+        float r2 = explosionRadius * explosionRadius;
+
+        // If the player is within the radius
+        if ((PlayerManager.Instance.player.transform.position - transform.position).sqrMagnitude <= r2)
+            if (!PlayerManager.Instance.player.isImmune && PlayerManager.Instance.player.isAlive)
+                PlayerManager.Instance.KillPlayer();
+
+        // Enemy and Unit Layers
+        int layerMask = (1 << 8) | (1 << 15);
+
+        // Detect what Enemy and Units are within the radius
+        Collider[] hits = Physics.OverlapSphere(transform.position, explosionRadius, layerMask);
+
+        // Damage the Colliders if they are an enemy or unit
+        foreach (var h in hits)
+        {
+            if (h == null) continue;
+
+            // Try Enemy
+            Enemy e = h.GetComponentInParent<Enemy>();
+            if (e != null && e != this && e.isAlive)
+            {
+                e.OnHit(explosionDamage);
+                continue;
+            }
+
+            // Try Unit
+            Unit u = h.GetComponentInParent<Unit>();
+            if (u != null && u.isAlive)
+            {
+                u.OnHit(explosionDamage);
+                continue;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Delay the destroy so that death animations and sounds can play
     /// </summary>
     /// <param name="time"></param>
     public void DestroySelf(float time)
@@ -136,7 +230,9 @@ public class Enemy : Entity
         {
             bloodParticles.Play();
         }
+        damageAudio.PlayOneShot(RandExt.RandomElement(damageSounds));
 
+        // Subscribe the damage taken so that all damage can happen on the same tick
         EntityManager.damageTick += () =>
         {
             health -= damage;

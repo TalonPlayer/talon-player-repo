@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class WeightedDrop
+public class WeightedDrop // A class to hold Drop Instance information that a list can't hold
 {
     public Drop drop;
     public string name;
@@ -27,6 +27,7 @@ public class DropManager : MonoBehaviour
     public Transform collectLocation;
     public DropObject dropPrefab;
     public Animator dropAreaAnimator;
+    public int batchAmount = 3;
 
     [Header("Numbers")]
     public float spawnIntervalMin = 2; // Minimum time between spawning batches
@@ -80,18 +81,23 @@ public class DropManager : MonoBehaviour
             float weight = w.weight;
             weight = Mathf.Round(weight * 10000f) / 100f;
 
-            Debug.Log(w.name + ": " + weight + "%");
+            // Debug.Log(w.name + ": " + weight + "%");
         }
     }
 
-
+    /// <summary>
+    /// A Batch Spawn that happens at the start of a level
+    /// </summary>
     public void StartSpawnRoutine()
     {
-        int batch = Random.Range(1, dropLocations.Count + 1);
+        int batch = Random.Range(1, batchAmount);
         float waitTime = Random.Range(spawnIntervalMin, spawnIntervalMax);
         spawnRoutine = StartCoroutine(SpawnRoutine(waitTime, batch, false, true));
     }
 
+    /// <summary>
+    /// Stops the spawn of drops
+    /// </summary>
     public void StopSpawn()
     {
         if (spawnRoutine != null)
@@ -101,17 +107,32 @@ public class DropManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Stops the current drop spawns and automatically spawn a burst
+    /// </summary>
     public void Burst()
     {
         StopSpawn();
         spawnRoutine = StartCoroutine(SpawnRoutine(1f, Random.Range(2, 5), true, false));
     }
 
+    /// <summary>
+    /// Delays the burst
+    /// </summary>
+    /// <param name="time"></param>
     public void DelayBurst(float time)
     {
         Invoke(nameof(Burst), time);
     }
 
+    /// <summary>
+    /// The loop for drops to spawn during a level
+    /// </summary>
+    /// <param name="time">How long until the next Batch</param>
+    /// <param name="batch">How many times a batch of drops will be spawned</param>
+    /// <param name="fast">The drop locations are more random</param>
+    /// <param name="repeat">Determines if the routine loops with these parameters</param>
+    /// <returns></returns>
     IEnumerator SpawnRoutine(float time, int batch, bool fast, bool repeat)
     {
         if (fast) dropAreaAnimator.speed = Random.Range(8f, 12f);
@@ -132,6 +153,11 @@ public class DropManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Spawns the number of batches
+    /// </summary>
+    /// <param name="num"></param>
+    /// <returns></returns>
     IEnumerator SpawnBatch(int num)
     {
         dropAreaAnimator.speed = 0f;
@@ -153,7 +179,10 @@ public class DropManager : MonoBehaviour
         dropAreaAnimator.speed = 1f;
     }
 
-
+    /// <summary>
+    /// Spawns a random drop
+    /// </summary>
+    /// <param name="location"></param>
     public void SpawnDrop(Transform location)
     {
         if (weightedDrops.Count == 0) return;
@@ -189,6 +218,11 @@ public class DropManager : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Assigns a Drop to a Drop Object
+    /// </summary>
+    /// <param name="drop"></param>
+    /// <param name="location"></param>
     public void SpawnDropObject(Drop drop, Transform location)
     {
         Vector3 pos = RandExt.RandomPosition(location);
@@ -199,6 +233,8 @@ public class DropManager : MonoBehaviour
             dropFolder);
 
         obj.drop = drop;
+
+        // Places the drop in a random position so that the axis of spinning is random
         Vector3 randDirection = RandExt.RandomDirection(0f, 360f);
         randDirection *= .15f;
         randDirection += obj.transform.position;
@@ -212,6 +248,12 @@ public class DropManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Spawns a specific drop at a location
+    /// </summary>
+    /// <param name="drop"></param>
+    /// <param name="pos"></param>
+    /// <returns></returns>
     public DropObject SpawnDropObject(Drop drop, Vector3 pos)
     {
         DropObject obj = Instantiate(
@@ -233,6 +275,10 @@ public class DropManager : MonoBehaviour
         return obj;
     }
 
+    /// <summary>
+    /// Check if the drop has already been spawned in the scene
+    /// </summary>
+    /// <param name="drop"></param>
     public void CheckDrop(Drop drop)
     {
         if (dropToWeight.TryGetValue(drop, out WeightedDrop wd))
@@ -241,6 +287,9 @@ public class DropManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Clear all of the drops on the scene
+    /// </summary>
     public void CleanUp()
     {
         foreach (Transform child in dropFolder)

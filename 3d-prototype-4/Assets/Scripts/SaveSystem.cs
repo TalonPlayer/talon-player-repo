@@ -5,12 +5,14 @@ using System.Collections.Generic;
 
 public static class SaveSystem
 {
+    // The saving system
     public static string selectedPlayerName;
     private static string playerListPath = Application.persistentDataPath + "/players.data";
     public static void SavePlayer(PlayerInfo player)
     {
         BinaryFormatter formatter = new BinaryFormatter();
         string path = Application.persistentDataPath + "/player_" + player._name + ".data";
+        Debug.Log(path);
         FileStream stream = new FileStream(path, FileMode.Create);
 
         PlayerData data = new PlayerData(player);
@@ -71,5 +73,39 @@ public static class SaveSystem
         FileStream stream = new FileStream(playerListPath, FileMode.Create);
         formatter.Serialize(stream, players);
         stream.Close();
+    }
+
+    public static void DeletePlayer(string name)
+    {
+        // Delete the player data file
+        string path = Application.persistentDataPath + "/player_" + name + ".data";
+        if (File.Exists(path))
+        {
+            File.Delete(path);
+        }
+        else
+        {
+            Debug.LogWarning("Player data file not found: " + path);
+        }
+
+        // Remove the name from the list
+        List<string> players = LoadPlayerList();
+        if (players.Contains(name))
+        {
+            players.Remove(name);
+            SavePlayerList(players);
+        }
+    }
+
+    public static void LoadSelectedPlayerName()
+    {
+        if (PlayerPrefs.HasKey("SelectedPlayer"))
+        {
+            selectedPlayerName = PlayerPrefs.GetString("SelectedPlayer");
+        }
+        else
+        {
+            selectedPlayerName = null;
+        }
     }
 }

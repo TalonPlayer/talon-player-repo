@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 using UnityEngine.Events;
 
 public class Player : Entity
@@ -12,6 +13,7 @@ public class Player : Entity
     [HideInInspector] public PlayerHand hand;
     [HideInInspector] public PlayerBody body;
     [HideInInspector] public PlayerInfo info;
+    public bool controllerDetected;
     void Awake()
     {
         movement = GetComponent<PlayerMovement>();
@@ -21,12 +23,48 @@ public class Player : Entity
     }
     void Start()
     {
-
+        
     }
 
     void Update()
     {
+        CheckForControllers();
+    }
 
+    /// <summary>
+    /// Always check for a controller
+    /// </summary>
+    void CheckForControllers()
+    {
+        string[] joystickNames = Input.GetJoystickNames();
+
+        if (joystickNames.Length > 0 && joystickNames.Any(name => !string.IsNullOrEmpty(name)))
+        {
+            foreach (string name in joystickNames)
+            {
+                if (!string.IsNullOrEmpty(name))
+                {
+                    controllerDetected = true;
+                    return;
+                }
+            }
+        }
+        controllerDetected = false;
+    }
+
+
+    void OnEnable()
+    {
+        movement.enabled = true;
+        hand.enabled = true;
+        body.enabled = true;
+    }
+
+    void OnDisable()
+    {
+        movement.enabled = false;
+        hand.enabled = false;
+        body.enabled = false;
     }
 
     public void OnDeath()

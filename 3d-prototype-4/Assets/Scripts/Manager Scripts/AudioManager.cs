@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
+    // Deprecated
     public static AudioManager Instance;
     public AudioSource dropAudio;
     public AudioSource bgAudio;

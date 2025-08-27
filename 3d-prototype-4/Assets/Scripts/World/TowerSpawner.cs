@@ -9,7 +9,15 @@ public class TowerSpawner : MonoBehaviour
     public List<Transform> spawns;
     public List<Tower> towers;
     public int towerCount;
-    void Start()
+    void Awake()
+    {
+        SpawnTowers();
+    }
+
+    /// <summary>
+    /// Spawns the towers
+    /// </summary>
+    public void SpawnTowers()
     {
         for (int i = 0; i < towerCount; i++)
         {
@@ -17,6 +25,10 @@ public class TowerSpawner : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Spawn a tower in a random position at a transform
+    /// </summary>
+    /// <param name="location"></param>
     void SpawnTower(Transform location)
     {
         Vector3 pos = RandExt.RandomPosition(location);
@@ -28,6 +40,9 @@ public class TowerSpawner : MonoBehaviour
         towers.Add(t);
     }
 
+    /// <summary>
+    /// Despawn all the towers
+    /// </summary>
     public void DespawnTowers()
     {
         foreach (Tower t in towers)
@@ -36,6 +51,11 @@ public class TowerSpawner : MonoBehaviour
         towers.Clear();
     }
 
+    /// <summary>
+    /// Snap the tower to the floor
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <returns></returns>
     public Vector3 SnapToGround(Vector3 pos)
     {
         RaycastHit hit;

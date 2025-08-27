@@ -19,6 +19,9 @@ public class Extra : Powerup
             case ExtraDrop.Speed:
                 Speed();
                 break;
+            case ExtraDrop.Shield:
+                Shield();
+                break;
         }
     }
 
@@ -32,21 +35,27 @@ public class Extra : Powerup
     }
 
     /// <summary>
-    /// 50/50 chance to give speed buff to enemies or player
+    /// Increase speed of current on screen but also permanently increase player movespeed by percentage
     /// </summary>
     public void Speed()
     {
-        int rand = Random.Range(0, 3);
-        if (rand == 0)
-            foreach (Enemy e in EntityManager.Instance.enemies)
-                e.movement.AlterSpeed(2f);
-        else
-            PlayerManager.Instance.player.movement.SpeedBoost(2f, 25f);
+        foreach (Enemy e in EntityManager.Instance.enemies)
+            e.movement.AlterSpeed(1.5f);
+        PlayerManager.Instance.player.movement.AlterSpeed(.05f);
+    }
+
+    /// <summary>
+    /// Give the player a shield
+    /// </summary>
+    public void Shield()
+    {
+        PlayerManager.Instance.GrantShield();
     }
 
     public enum ExtraDrop
     {
         Sleep,
         Speed,
+        Shield
     }
 }

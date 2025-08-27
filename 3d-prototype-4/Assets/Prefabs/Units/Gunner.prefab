@@ -1001,8 +1001,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _name: Gunner
-  health: 1000
-  damage: 50
+  health: 2000
+  damage: 100
   isAlive: 1
   onDeath:
     m_PersistentCalls:
@@ -1119,7 +1119,7 @@ MonoBehaviour:
   canAttack: 1
   isAttacking: 0
   damage: 25
-  attackRange: 8
+  attackRange: 15
 --- !u!114 &7721879282783893756
 MonoBehaviour:
   m_ObjectHideFlags: 0

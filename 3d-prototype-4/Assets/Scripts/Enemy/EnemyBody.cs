@@ -6,6 +6,7 @@ public class EnemyBody : MonoBehaviour
 {
     public Animator animator;
     public Transform body;
+    public bool itemDropGravity = true;
     private Enemy enemy;
     public List<GameObject> heldItems;
     void Awake()
@@ -140,7 +141,7 @@ public class EnemyBody : MonoBehaviour
 
             item.SetActive(false);
 
-            rb.useGravity = true;
+            rb.useGravity = itemDropGravity;
             rb.constraints = RigidbodyConstraints.None;
 
             if (bc) bc.enabled = true;
@@ -179,7 +180,7 @@ public class EnemyBody : MonoBehaviour
 
             item.SetActive(false);
 
-            rb.useGravity = true;
+            rb.useGravity = itemDropGravity;
             rb.constraints = RigidbodyConstraints.None;
 
             if (bc) bc.enabled = true;

@@ -16,10 +16,8 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 currentVelocity;
     private Player player;
     public bool isDashing = false;
-    private bool isBoosted = false;
     private float defaultSpeed;
     private Coroutine dashRoutine;
-    private Coroutine boostRoutine;
 
     void Awake()
     {
@@ -44,12 +42,15 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!isDashing)
         {
-            SnapToGround();
             Movement();
         }
+        SnapToGround();
         UpdateAnimation();
     }
 
+    /// <summary>
+    /// Input from the player
+    /// </summary>
     public void MyInput()
     {
         float x = Input.GetAxisRaw("Horizontal");
@@ -57,7 +58,8 @@ public class PlayerMovement : MonoBehaviour
 
         inputDirection = new Vector3(x, 0, y).normalized;
 
-        if (Input.GetKeyDown(KeyCode.R) && !isDashing && PlayerManager.Instance.CanDash())
+        // Dash logic
+        if ((Input.GetKeyDown(KeyCode.R) || 0.5f <= Input.GetAxis("Dash")) && !isDashing && PlayerManager.Instance.CanDash())
         {
             if (dashRoutine != null)
                 StopCoroutine(dashRoutine);
@@ -66,16 +68,24 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Accelerate the player in the aimed direction
+    /// </summary>
+    /// <param name="dir"></param>
+    /// <returns></returns>
     IEnumerator Dash(Vector3 dir)
     {
         isDashing = true;
         rb.velocity = dir.normalized * dashSpeed;
-
+        PlayerManager.Instance.NukeImmunity();
         yield return new WaitForSeconds(dashDuration);
 
         isDashing = false;
     }
 
+    /// <summary>
+    /// Movement logic
+    /// </summary>
     public void Movement()
     {
         if (inputDirection.magnitude > 0)
@@ -101,6 +111,9 @@ public class PlayerMovement : MonoBehaviour
         rb.velocity = new Vector3(horizontalVelocity.x, rb.velocity.y, horizontalVelocity.z);
     }
 
+    /// <summary>
+    /// Snap the player to the ground. It also prevents the player from sliding down slopes
+    /// </summary>
     public void SnapToGround()
     {
         RaycastHit hit;
@@ -116,6 +129,10 @@ public class PlayerMovement : MonoBehaviour
         }
         else onSlope = false;
     }
+
+    /// <summary>
+    /// Updates the player's animations based on movement
+    /// </summary>
     void UpdateAnimation()
     {
         Vector3 velocity = rb.velocity;
@@ -138,33 +155,12 @@ public class PlayerMovement : MonoBehaviour
         player.body.Play("Strafe", strafeAmount);
     }
 
-    public void AlterSpeed(float multiplier)
-    {
-        maxSpeed *= multiplier;
-    }
     /// <summary>
-    /// Change player's move speed for the given duration
+    /// Change the player's speed given the percentage
     /// </summary>
-    /// <param name="multiplier"></param>
-    /// <param name="duration"></param>
-    public void SpeedBoost(float multiplier, float duration)
+    /// <param name="percentage"></param>
+    public void AlterSpeed(float percentage)
     {
-        if (!isBoosted) // Keep the default speed
-        {
-            isBoosted = true;
-            defaultSpeed = maxSpeed;
-        }
-        else // If already boosted, stop the current one
-            if (boostRoutine != null) StopCoroutine(boostRoutine);
-
-        boostRoutine = StartCoroutine(SpeedRoutine(duration));
-        AlterSpeed(multiplier);
-    }
-
-    IEnumerator SpeedRoutine(float time)
-    {
-        yield return new WaitForSeconds(time);
-        isBoosted = false;
-        maxSpeed = defaultSpeed;
+        maxSpeed += maxSpeed * percentage;
     }
 }

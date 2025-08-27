@@ -10,20 +10,24 @@ public class WorldManager : MonoBehaviour
     public static WorldManager Instance;
     public string worldName;
     public int worldIndex;
+    public UnityEvent onInit;
     public UnityEvent onComplete;
     public UnityEvent onReset;
     public UnityEvent onFinish;
-    public List<Transform> spawnPoints;
+    public List<Transform> spawnPoints; // zombie spawn points
     public List<World> worlds;
-    public List<NextLevelZone> nextLevelZones;
+    public List<NextLevelZone> nextLevelZones; // zones that take the player to the next zone
     public GameObject portal;
+    public GameObject redRoomDoor;
     public Transform worldCenter;
     public World currentWorld;
     public float spawnInterval = .5f;
     public float waveCheckTime = 5f;
     public int maxOnScreen = 24; // maximum on screen zombies
-    private Transform currentSpawn;
+    public Transform currentSpawn;
     public int levelIndex = 0;
+    public bool saveIndex = true;
+    public bool isChallenge = false;
     private bool allZombiesSpawned = false;
     private bool isLastLevel;
 
@@ -38,6 +42,7 @@ public class WorldManager : MonoBehaviour
     }
     void Start()
     {
+        onInit?.Invoke();
         currentWorld = worlds[levelIndex];
         InitWorld();
     }
@@ -47,9 +52,12 @@ public class WorldManager : MonoBehaviour
     /// </summary>
     public void InitWorld()
     {
+
         PlayerManager.Instance.player.info.level = levelIndex + 1;
         PlayerManager.Instance.player.info.worldIndex = worldIndex;
         PlayerManager.Instance.player.info.world = worldName;
+
+        if (saveIndex) PlayerManager.Instance.currentWorldIndex = worldIndex;
         EntityManager.Instance.GetStats(
             currentWorld.health,
             currentWorld.minSpeed,
@@ -111,36 +119,37 @@ public class WorldManager : MonoBehaviour
 
         // The current count of zombies decreases by 1 (Used to determine how many should be spawned within a wave)
         currentCount--;
-        
+
         if (totalCount <= 0)
         {
             if (isLastLevel)
             {
-                HudManager.Instance.AdvanceLevel(worldName, levelIndex + 1);
+                if (isChallenge)
+                    HudManager.Instance.AdvanceLevel(worldName);
+                else
+                    HudManager.Instance.AdvanceLevel(worldName, levelIndex + 1);
                 onFinish?.Invoke();
 
                 Invoke(nameof(ActivatePortal), 3f);
-                PlayerManager.Instance.bufferedUnits.Clear();
-                foreach (Unit u in EntityManager.Instance.units)
-                    PlayerManager.Instance.bufferedUnits.Add(u._name);
-                foreach (Unit u in EntityManager.Instance.units)
-                    u.OnHit(9999);
             }
             else
             {
-                HudManager.Instance.AdvanceLevel(worldName, levelIndex + 1);
+                if (isChallenge)
+                    HudManager.Instance.AdvanceLevel(worldName);
+                else
+                    HudManager.Instance.AdvanceLevel(worldName, levelIndex + 1);
                 allZombiesSpawned = true;
                 onComplete?.Invoke();
             }
         }
 
-        EntityManager.Instance.RecycleRagdolls();
-        EntityManager.Instance.RecycleDrops();
+
     }
 
     public void ActivatePortal()
     {
         portal.SetActive(true);
+        HudManager.Instance.AssignPointers(0, portal.transform);
     }
 
     public IEnumerator WaveCheckRoutine(float timer)
@@ -172,7 +181,9 @@ public class WorldManager : MonoBehaviour
             waveRoutine = StartCoroutine(WaveCheckRoutine(waveCheckTime));
     }
 
-
+    /// <summary>
+    /// Advances the player to the next level
+    /// </summary>
     public void Advance()
     {
         HudManager.Instance.ToggleBlackScreen(true);
@@ -185,6 +196,9 @@ public class WorldManager : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Open a random door
+    /// </summary>
     public void OpenRandomDoor()
     {
         nextLevelZones = RandExt.ShuffleList(nextLevelZones);
@@ -195,5 +209,67 @@ public class WorldManager : MonoBehaviour
             zone.OpenDoor();
             HudManager.Instance.AssignPointers(i, zone.door);
         }
+    }
+
+    /// <summary>
+    /// Change the gravity of world, example Space Station
+    /// </summary>
+    /// <param name="scale"></param>
+    public void ChangeGravity(float scale)
+    {
+        Physics.gravity = new Vector3(0, -9.81f * scale, 0);
+    }
+
+    /// <summary>
+    /// Set the gravity back to normal
+    /// </summary>
+    public void ResetGravity()
+    {
+        Physics.gravity = new Vector3(0, -9.81f, 0);
+    }
+
+    /// <summary>
+    /// Change the player's default weapon
+    /// </summary>
+    /// <param name="weapon"></param>
+    public void ChangeDefaultWeapon(Weapon weapon)
+    {
+        PlayerManager.Instance.player.hand.defaultWeapon = weapon;
+        PlayerManager.Instance.player.hand.Equip(weapon);
+    }
+
+    /// <summary>
+    /// Remove Fog if a previous world changed it
+    /// </summary>
+    public void RemoveFog()
+    {
+        RenderSettings.fog = false;
+    }
+
+    /// <summary>
+    /// Change the player speed
+    /// </summary>
+    /// <param name="newSpeed"></param>
+    public void ChangePlayerSpeed(float newSpeed)
+    {
+        PlayerManager.Instance.player.movement.maxSpeed = newSpeed;
+        PlayerManager.Instance.player.movement.moveSpeed = newSpeed;
+    }
+
+    /// <summary>
+    /// Attempt to spawn the Slaughterhouse door if it's activated
+    /// </summary>
+    public void AttemptRedRoomDoor()
+    {
+        if (PlayerManager.Instance.activeRedRoom)
+            redRoomDoor.SetActive(true);
+    }
+
+    /// <summary>
+    /// Allow the Slaughterhouse door to be spawned
+    /// </summary>
+    public void ActivateRedRoom()
+    {
+        PlayerManager.Instance.activeRedRoom = true;
     }
 }

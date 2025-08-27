@@ -5,6 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class PlayerData
 {
+    // Player Data that gets saved
     public string _name;
     public int highScore;
     public int currentScore;

@@ -6,10 +6,13 @@ using UnityEngine.SceneManagement;
 public class SceneWorldManager : MonoBehaviour
 {
     public static SceneWorldManager Instance;
+    public SceneField menuScene;
     public SceneField universalGameplay;
+    public SceneField slaughterhouse;
     public List<SceneField> worldScenes;
     private List<AsyncOperation> scenesToload = new List<AsyncOperation>();
     public int prevIndex = -1;
+    public bool loadedRedRoom = false;
     void Awake()
     {
         Instance = this;
@@ -23,9 +26,18 @@ public class SceneWorldManager : MonoBehaviour
     {
         if (prevIndex != -1)
         {
-            scenesToload.Clear();
+            // If you're coming back from Slaughterhouse, unload that instead
+            if (loadedRedRoom)
+            {
+                loadedRedRoom = false;
+                SceneManager.UnloadSceneAsync(slaughterhouse);
+            }
+            else
+            {
+                scenesToload.Clear();
 
-            SceneManager.UnloadSceneAsync(worldScenes[prevIndex]);
+                EndScene(prevIndex);
+            }
         }
         scenesToload.Add(SceneManager.LoadSceneAsync(worldScenes[index], LoadSceneMode.Additive));
         StartCoroutine(ProgressLoadingBar(index));
@@ -33,6 +45,46 @@ public class SceneWorldManager : MonoBehaviour
         prevIndex = index;
     }
 
+    /// <summary>
+    /// Transfers the player to Slaughterhouse
+    /// </summary>
+    public void TransferToRedRoom()
+    {
+        if (prevIndex != -1)
+        {
+            scenesToload.Clear();
+
+            EndScene(prevIndex);
+        }
+        loadedRedRoom = true;
+        scenesToload.Add(SceneManager.LoadSceneAsync(slaughterhouse, LoadSceneMode.Additive));
+        StartCoroutine(ProgressLoadingBar(0));
+
+    }
+
+    /// <summary>
+    /// Ends the scene
+    /// </summary>
+    /// <param name="index"></param>
+    public void EndScene(int index)
+    {
+        scenesToload.Clear();
+        SceneManager.UnloadSceneAsync(worldScenes[index]);
+    }
+
+    /// <summary>
+    /// Transfers to the menu
+    /// </summary>
+    public void TransferToMenu()
+    {
+        SceneManager.LoadScene(menuScene);
+    }
+
+    /// <summary>
+    /// Loading bar
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns></returns>
     private IEnumerator ProgressLoadingBar(int index)
     {
 
@@ -59,10 +111,10 @@ public class SceneWorldManager : MonoBehaviour
 
             if (allDone) break;
 
-            yield return new WaitForSeconds(1f); // Wait 1 frame, smooth update
+            yield return new WaitForSeconds(2f); // Wait 1 frame, smooth update
             PlayerManager.Instance.TeleportPlayer(WorldManager.Instance.worldCenter);
 
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(2f);
             HudManager.Instance.ToggleBlackScreen(false);
 
             PlayerManager.Instance.SpawnBufferedUnits();

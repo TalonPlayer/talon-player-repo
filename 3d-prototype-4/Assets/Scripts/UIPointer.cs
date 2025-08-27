@@ -12,6 +12,7 @@ public class UIPointer : MonoBehaviour
     {
         if (isTargeting)
         {
+            // Pointer will attempt to hover above the objective
             float minX = pointer.GetPixelAdjustedRect().width / 2;
             float maxX = Screen.width - minX;
 

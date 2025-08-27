@@ -51,7 +51,6 @@ public class BGMusic : MonoBehaviour
         audioToggle = 1 - audioToggle;
 
         loopIndex = (loopIndex + 1) % loopedClips.Count;
-        Debug.Log(loopIndex);
         SetCurrentClip(loopedClips[loopIndex]);
     }
 
@@ -61,6 +60,9 @@ public class BGMusic : MonoBehaviour
         currentClip = clip;
     }
 
+    /// <summary>
+    /// Plays the outro part of the song
+    /// </summary>
     public void PlayOutro()
     {
         foreach (AudioSource audio in audioSources)

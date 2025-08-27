@@ -9,13 +9,45 @@ public class PhysicalDrop : MonoBehaviour
     public float value;
     public float lifeTime = 25f;
     public Rigidbody rb;
+    public MeshRenderer mr;
     void Start()
     {
         value = Random.Range(.75f, 1.25f);
         transform.localScale *= value; // Value of drop changes the size
         StartCoroutine(LifeTime());
+
+        // If the drop has a mesh renderer attached, randomly change the color.
+        // This is for gems
+        if (mr)
+        {
+            int rand = Random.Range(0, 5);
+            switch (rand)
+            {
+                case 0:
+                    mr.material.color = Color.red;
+                    break;
+                case 1:
+                    mr.material.color = Color.blue;
+                    break;
+                case 2:
+                    mr.material.color = Color.yellow;
+                    break;
+                case 3:
+                    mr.material.color = Color.white;
+                    break;
+                case 4:
+                    mr.material.color = Color.green;
+                    break;
+
+            }
+
+        }
     }
 
+    /// <summary>
+    /// Destroy after a certain time, usually 25 seconds
+    /// </summary>
+    /// <returns></returns>
     IEnumerator LifeTime()
     {
         yield return new WaitForSeconds(lifeTime);

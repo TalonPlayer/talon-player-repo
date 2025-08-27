@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public static class RandExt
+public static class RandExt // Helper Static Class
 {
     /// <summary>
     /// Returns a normalized Vector3 in a random direction
@@ -76,5 +76,33 @@ public static class RandExt
     {
         System.Random random = new System.Random();
         return param.OrderBy(x => random.Next()).ToList();
+    }
+
+    /// <summary>
+    /// Returns random element from list
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="list"></param>
+    /// <returns></returns>
+    public static T RandomElement<T>(List<T> list)
+    {
+        return list[Random.Range(0, list.Count)];
+    }
+
+    /// <summary>
+    /// Returns a list of children Transforms, excludes the parent
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="t"></param>
+    /// <returns></returns>
+    public static List<Transform> GetChildren(Transform t)
+    {
+        List<Transform> list = new List<Transform>();
+        for (int i = 0; i < t.childCount; i++)
+        {
+            list.Add(t.GetChild(i));
+        }
+
+        return list;
     }
 }
