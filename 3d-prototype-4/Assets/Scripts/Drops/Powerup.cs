@@ -8,9 +8,9 @@ public class Powerup : Drop
     /// <summary>
     /// Pick Up Text
     /// </summary>
-    public override void OnPickUp()
+    public override void OnPickUp(Player player)
     {
-        base.OnPickUp();
+        base.OnPickUp(player);
         AudioManager.Instance.PlayDropSound(pickUpSound);
 
         HudManager.Instance.DropText(_name);

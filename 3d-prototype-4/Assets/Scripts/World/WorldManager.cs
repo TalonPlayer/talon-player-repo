@@ -52,10 +52,13 @@ public class WorldManager : MonoBehaviour
     /// </summary>
     public void InitWorld()
     {
+        foreach (Player player in PlayerManager.Instance.players)
+        {
+            player.info.level = levelIndex + 1;
+            player.info.worldIndex = worldIndex;
+            player.info.world = worldName;
+        }
 
-        PlayerManager.Instance.player.info.level = levelIndex + 1;
-        PlayerManager.Instance.player.info.worldIndex = worldIndex;
-        PlayerManager.Instance.player.info.world = worldName;
 
         if (saveIndex) PlayerManager.Instance.currentWorldIndex = worldIndex;
         EntityManager.Instance.GetStats(
@@ -141,6 +144,7 @@ public class WorldManager : MonoBehaviour
                 allZombiesSpawned = true;
                 onComplete?.Invoke();
             }
+            Achievement();
         }
 
 
@@ -150,6 +154,15 @@ public class WorldManager : MonoBehaviour
     {
         portal.SetActive(true);
         HudManager.Instance.AssignPointers(0, portal.transform);
+
+        foreach (Player player in PlayerManager.Instance.players)
+        {
+            if (player.stats.lives <= 0 && !player.isAlive)
+            {
+                player.Respawn();
+                player.stats.lives = 0;
+            }
+        }
     }
 
     public IEnumerator WaveCheckRoutine(float timer)
@@ -194,6 +207,8 @@ public class WorldManager : MonoBehaviour
         HudManager.Instance.AdvanceLevel("hide", 0);
         HudManager.Instance.DisablePointers();
 
+
+
     }
 
     /// <summary>
@@ -208,6 +223,15 @@ public class WorldManager : MonoBehaviour
             NextLevelZone zone = nextLevelZones[i];
             zone.OpenDoor();
             HudManager.Instance.AssignPointers(i, zone.door);
+        }
+
+        foreach (Player player in PlayerManager.Instance.players)
+        {
+            if (player.stats.lives <= 0 && !player.isAlive)
+            {
+                player.Respawn();
+                player.stats.lives = 0;
+            }
         }
     }
 
@@ -232,10 +256,10 @@ public class WorldManager : MonoBehaviour
     /// Change the player's default weapon
     /// </summary>
     /// <param name="weapon"></param>
-    public void ChangeDefaultWeapon(Weapon weapon)
+    public void ChangeDefaultWeapon(Player player, Weapon weapon)
     {
-        PlayerManager.Instance.player.hand.defaultWeapon = weapon;
-        PlayerManager.Instance.player.hand.Equip(weapon);
+        player.hand.defaultWeapon = weapon;
+        player.hand.Equip(weapon);
     }
 
     /// <summary>
@@ -250,10 +274,10 @@ public class WorldManager : MonoBehaviour
     /// Change the player speed
     /// </summary>
     /// <param name="newSpeed"></param>
-    public void ChangePlayerSpeed(float newSpeed)
+    public void ChangePlayerSpeed(Player player, float newSpeed)
     {
-        PlayerManager.Instance.player.movement.maxSpeed = newSpeed;
-        PlayerManager.Instance.player.movement.moveSpeed = newSpeed;
+        player.movement.maxSpeed = newSpeed;
+        player.movement.moveSpeed = newSpeed;
     }
 
     /// <summary>
@@ -271,5 +295,15 @@ public class WorldManager : MonoBehaviour
     public void ActivateRedRoom()
     {
         PlayerManager.Instance.activeRedRoom = true;
+    }
+
+    public void Achievement()
+    {
+        GlobalSaveSystem.AddAchievementProgress("complete_" + worldIndex, 1);
+    }
+
+    public void AchievementBeatGame()
+    {
+        GlobalSaveSystem.AddAchievementProgress("complete_Demo", 1);
     }
 }

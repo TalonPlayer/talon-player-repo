@@ -8,6 +8,7 @@ public class NextLevelZone : MonoBehaviour
     public Transform playerEnterPoint;
     public Transform door;
     public bool isPortal = false;
+    public bool active = true;
     private Zone zone;
     void Awake()
     {
@@ -39,21 +40,23 @@ public class NextLevelZone : MonoBehaviour
     public void Spawn()
     {
         HudManager.Instance.ToggleBlackScreen(false);
-        PlayerManager.Instance.TeleportPlayer(playerEnterPoint);
+
+        foreach (Player player in PlayerManager.Instance.players)
+        {
+            player.TeleportPlayer(playerEnterPoint);
+        }
     }
 
     public void DelaySpawn(float delay)
     {
-        PlayerManager.Instance.player.movement.enabled = false;
-        PlayerManager.Instance.player.hand.enabled = false;
+        DisableInput();
         Invoke(nameof(Spawn), delay);
     }
 
     public void DelayTransfer(float delay)
     {
         HudManager.Instance.ToggleBlackScreen(true);
-        PlayerManager.Instance.player.movement.enabled = false;
-        PlayerManager.Instance.player.hand.enabled = false;
+        DisableInput();
         Invoke(nameof(TransferToNewWorld), delay);
     }
 
@@ -65,8 +68,7 @@ public class NextLevelZone : MonoBehaviour
     public void DelayReset()
     {
         HudManager.Instance.ToggleBlackScreen(true);
-        PlayerManager.Instance.player.movement.enabled = false;
-        PlayerManager.Instance.player.hand.enabled = false;
+        DisableInput();
         Invoke(nameof(ResumeWorld), 2f);
     }
 
@@ -75,11 +77,19 @@ public class NextLevelZone : MonoBehaviour
     /// </summary>
     public void TransferToNewWorld()
     {
-        PlayerManager.Instance.bufferedUnits.Clear();
-        
-        // Allow units to be transferred to next world
-        foreach (Unit u in EntityManager.Instance.units)
-            PlayerManager.Instance.bufferedUnits.Add(u._name);
+        if (!active) return;
+        active = false;
+        foreach (Player player in PlayerManager.Instance.players)
+        {
+            player.stats.bufferedUnits.Clear();
+
+            List<Unit> units = EntityManager.Instance.units.FindAll(u => u.owner == player);
+
+            foreach (Unit u in units)
+            {
+                player.stats.bufferedUnits.Add(u._name);
+            }
+        }
         foreach (Unit u in EntityManager.Instance.units)
             u.OnHit(9999);
         EntityManager.Instance.ClearAggro();
@@ -95,9 +105,19 @@ public class NextLevelZone : MonoBehaviour
     /// </summary>
     public void ResumeWorld()
     {
-        PlayerManager.Instance.bufferedUnits.Clear();
-        foreach (Unit u in EntityManager.Instance.units)
-            PlayerManager.Instance.bufferedUnits.Add(u._name);
+        if (!active) return;
+        active = false;
+        foreach (Player player in PlayerManager.Instance.players)
+        {
+            player.stats.bufferedUnits.Clear();
+
+            List<Unit> units = EntityManager.Instance.units.FindAll(u => u.owner == player);
+
+            foreach (Unit u in units)
+            {
+                player.stats.bufferedUnits.Add(u._name);
+            }
+        }
         foreach (Unit u in EntityManager.Instance.units)
             u.OnHit(9999);
         EntityManager.Instance.ClearAggro();
@@ -113,8 +133,12 @@ public class NextLevelZone : MonoBehaviour
     /// </summary>
     public void RedRoom()
     {
+        if (!active) return;
+        active = false;
         // Units can't help you.
-        PlayerManager.Instance.bufferedUnits.Clear();
+        foreach (Player player in PlayerManager.Instance.players)
+            player.stats.bufferedUnits.Clear();
+
         foreach (Unit u in EntityManager.Instance.units)
             u.OnHit(9999);
         EntityManager.Instance.ClearAggro();
@@ -128,8 +152,17 @@ public class NextLevelZone : MonoBehaviour
     public void DelayRedRoom(float delay)
     {
         HudManager.Instance.ToggleBlackScreen(true);
-        PlayerManager.Instance.player.movement.enabled = false;
-        PlayerManager.Instance.player.hand.enabled = false;
+        DisableInput();
         Invoke(nameof(RedRoom), delay);
     }
+
+    public void DisableInput()
+    {
+        foreach (Player player in PlayerManager.Instance.players)
+        {
+            player.movement.enabled = false;
+            player.hand.enabled = false;
+        }
+    }
 }
+

@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1556f13af427b304391643db147ec183, type: 3}
+  m_Name: Gold_HoneybadgerInfinite_Tier0 1
+  m_EditorClassIdentifier: 
+  _name: Honeybadger Infinite
+  id: ID_020
+  infiniteAmmo: 0
+  shots: 25
+  damage: 40
+  collateral: 3
+  reloadTime: 1
+  fireRate: 0.125
+  infiniteTime: 1
+  lifeTime: 30
+  model: {fileID: 1603096479421670194, guid: 5771a92f7fbccea449660febd49f39cd, type: 3}
+  projectilePrefab: {fileID: 6921153942526054540, guid: 3f4cb4a73ff058f4ab6c5c318f3abb79, type: 3}
+  ammoColor: {r: 0.9528302, g: 0.7373312, b: 0.33708617, a: 0.8627451}
+  muzzleFlashPrefab: {fileID: 4500840615125761693, guid: 5f8dd2a7847d23447bc81ed9cdde5d01, type: 3}
+  shootSound: {fileID: 8300000, guid: 759dd1b6c38c37340b70610549e2dc7b, type: 3}
+  reloadSound: {fileID: 8300000, guid: 73d8da416fe1cd04e9497a25c68536da, type: 3}
+  holdingAnim: {fileID: 9100000, guid: f793be4511ea0174089ec06e35b2163d, type: 2}

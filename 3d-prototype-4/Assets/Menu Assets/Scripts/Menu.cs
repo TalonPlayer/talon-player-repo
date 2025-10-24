@@ -9,6 +9,7 @@ public class Menu : MonoBehaviour
 {
     public Animator menuAnimator;
     public Animator jumpscare;
+    public Animator creditsAnimator;
     public SceneField universalGameplay;
     public PlayerModel playerPrefab;
     public PlayerModel modelInstance;
@@ -27,16 +28,29 @@ public class Menu : MonoBehaviour
     public List<Image> uiElements;
     [SerializeField] private PlayerInfo playerInfo;
     public string selectedColorCode;
+    public int costumeIndex;
 
     [Header("Toggles")]
     public Toggle tutorialToggle;
     void Awake()
     {
-        Cursor.visible = true; 
+        GlobalSaveSystem.trackAchivement = false;
+
+        // GlobalSaveSystem.LoadOrCreate();
+        Cursor.visible = true;
 
         bool tutorialOn = PlayerPrefs.GetInt("ToggleTutorial", 0) == 0;
         tutorialToggle.isOn = tutorialOn;
         tutorialToggle.onValueChanged.AddListener(SetTutorial);
+
+        players = SaveSystem.LoadPlayerList();
+        foreach (string p in players)
+        {
+            playerDatas.Add(SaveSystem.LoadPlayer(p));
+        }
+
+        bool hasSave = players.Contains(PlayerPrefs.GetString("SelectedPlayer"));
+        if (!hasSave) PlayerPrefs.GetString("SelectedPlayer", null);
     }
     public void SetTutorial(bool isOn)
     {
@@ -45,64 +59,6 @@ public class Menu : MonoBehaviour
     }
     void Start()
     {
-        players = SaveSystem.LoadPlayerList();
-        foreach (string p in players)
-        {
-            playerDatas.Add(SaveSystem.LoadPlayer(p));
-        }
-
-        for (int i = 0; i < players.Count; i++)
-        {
-            PlayerData data = playerDatas[i];
-            Transform point = modelPoints[i];
-            PlayerModel p = Instantiate(playerPrefab,
-                point.position,
-                point.rotation,
-                point);
-            p.ChangeColor(data.colorCode);
-            p.SetRandom();
-
-
-            saveButtons[i].interactable = true;
-
-            Image img = saveButtons[i].GetComponent<Image>();
-            float alpha = img.color.a;
-            Color newColor = GetColorByCode(data.colorCode);
-            newColor.a = alpha;
-            img.color = newColor;
-
-            saveButtonTexts[i].text = data._name;
-
-            if (data.level > 5)
-            {
-                infoTexts[i].text =
-                    "\nAttempts: " + data.attempt +
-                    "\nHighscore: " + data.highScore +
-                    "\n" + data.world + " level " + data.level +
-                    "\n" + data.kills + " kills" +
-                    "\n" + data.skulls + " skulls " +
-                    "\n" + data.gems + " gems";
-            }
-            else
-            {
-                infoTexts[i].text =
-                    "\nAttempts: " + data.attempt +
-                    "\nHighscore: " + data.highScore +
-                    "\n" + data.world +
-                    "\n" + data.kills + " kills" +
-                    "\n" + data.skulls + " skulls " +
-                    "\n" + data.gems + " gems";
-            }
-
-        }
-
-        if (players.Count > 4)
-        {
-            savesButton.interactable = false;
-        }
-
-        Invoke(nameof(EnableContinue), 5.0f);
-
         if (players.Count == 0)
         {
             continueButton.interactable = false;
@@ -114,7 +70,10 @@ public class Menu : MonoBehaviour
 
             if (!string.IsNullOrEmpty(SaveSystem.selectedPlayerName))
             {
-                SelectColorByCode(SaveSystem.LoadPlayer(SaveSystem.selectedPlayerName).colorCode);
+                PlayerData data = SaveSystem.LoadPlayer(SaveSystem.selectedPlayerName);
+                SelectColorByCode(data.colorCode);
+                SelectCostume(data.costumeIndex);
+
                 continueButton.interactable = true;
             }
             else
@@ -125,18 +84,6 @@ public class Menu : MonoBehaviour
             }
         }
         PlayerPrefs.Save();
-    }
-
-    void EnableContinue()
-    {
-        menuAnimator.enabled = false;
-
-        if (players.Count == 0) savesButton.interactable = false;
-        else savesButton.interactable = true;
-
-        savesButton.interactable = players.Count != 0;
-        menuAnimator.enabled = true;
-
     }
 
     public void SelectColorByCode(string code)
@@ -156,6 +103,12 @@ public class Menu : MonoBehaviour
 
         door.material.color = color;
         menuAnimator.enabled = true;
+    }
+
+    public void SelectCostume(int index)
+    {
+        costumeIndex = index;
+        modelInstance.ChangeOutfit(index);
     }
 
     public Color GetColorByCode(string code)
@@ -201,6 +154,7 @@ public class Menu : MonoBehaviour
             case "Options":
                 break;
             case "Credits":
+                creditsAnimator.Play("Credits Scroll");
                 break;
             case "Exit":
                 break;
@@ -218,51 +172,50 @@ public class Menu : MonoBehaviour
     }
     public IEnumerator OpenGame()
     {
+
         yield return new WaitForSeconds(7f);
+        if (players.Count == 0)
+        {
+            playerInfo.colorCode = selectedColorCode;
+            playerInfo.costumeIndex = costumeIndex;
+            SaveSystem.SavePlayer(playerInfo);
+            Debug.Log("Menu Player Name: " + playerInfo._name);
+            Debug.Log("Menu Player Info Costume Index: " + playerInfo.costumeIndex);
+        }
+        else
+        {
+            PlayerData data = SaveSystem.LoadPlayer(SaveSystem.selectedPlayerName);
+            playerInfo.CopyPlayer(data);
+            data.colorCode = selectedColorCode;
+            data.costumeIndex = costumeIndex;
+            SaveSystem.SavePlayer(playerInfo);
+        }
 
         SceneManager.LoadScene(universalGameplay);
     }
 
-    public void SelectCharacter(int index)
-    {
-        PlayerData data = playerDatas[index];
-        SelectColorByCode(data.colorCode);
-        continueButton.interactable = true;
-        SaveSystem.selectedPlayerName = data._name;
-        PlayerPrefs.SetString("SelectedPlayer", data._name);
-        PlayerPrefs.Save();
-    }
-
     public void CreateCharacter(string name)
     {
-        PlayerData data = new(name, selectedColorCode);
+        PlayerData data = new(name, selectedColorCode, costumeIndex);
         playerInfo.CopyPlayer(data);
         SaveSystem.SavePlayer(playerInfo);
         SaveSystem.selectedPlayerName = data._name;
+        Debug.Log("Selected Character: " + data._name);
         PlayerPrefs.SetString("SelectedPlayer", data._name);
         PlayerPrefs.Save();
     }
-
-    public void DeleteCharacter(int index)
+    public void CreateCharacterLocal()
     {
-        if (!players.Contains(players[index])) return;
-        SaveSystem.DeletePlayer(players[index]);
-
-        Destroy(modelPoints[index].GetChild(1).gameObject);
-
-        saveButtons[index].interactable = false;
-        infoTexts[index].text = "";
-        saveButtonTexts[index].text = "Empty";
-        Image img = saveButtons[index].GetComponent<Image>();
-        img.color = Color.black;
-
-        if (PlayerPrefs.GetString("SelectedPlayer") == players[index])
+        SaveSystem.currentPlayers.Clear();
+        foreach (PlayerData data in LobbyManager.Instance.players)
         {
-            PlayerPrefs.SetString("SelectedPlayer", null);
+            Debug.Log("data: " + data._name + "," + data.colorCode + ", " + data.costumeIndex);
+            playerInfo.CopyPlayer(data);
+            Debug.Log("info: " + playerInfo._name + "," + playerInfo.colorCode + ", " + playerInfo.costumeIndex);
+            SaveSystem.SavePlayer(playerInfo);
+            SaveSystem.currentPlayers.Add(data);
         }
-        savesButton.interactable = true;
     }
-
     public void ExitGame()
     {
         Application.Quit();

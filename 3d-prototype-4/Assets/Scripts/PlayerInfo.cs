@@ -17,6 +17,7 @@ public class PlayerInfo : MonoBehaviour
     public int attempt = 0;
     public string world = "";
     public string colorCode;
+    public int costumeIndex;
     public void SavePlayer()
     {
         SaveSystem.SavePlayer(this);
@@ -37,6 +38,7 @@ public class PlayerInfo : MonoBehaviour
         attempt = data.attempt;
         world = data.world;
         colorCode = data.colorCode;
+        costumeIndex = data.costumeIndex;
     }
 
     public void CopyPlayer(PlayerData data)
@@ -53,5 +55,6 @@ public class PlayerInfo : MonoBehaviour
         attempt = data.attempt;
         world = data.world;
         colorCode = data.colorCode;
+        costumeIndex = data.costumeIndex;
     }
 }

@@ -10,6 +10,7 @@ public class DropObject : MonoBehaviour
     private Vector3 rotationAxis;
     public AudioSource audioSource;
     public bool isMoving = false;
+    public bool isActive = true;
     public float moveSpeed = .5f;
     public Transform targetLocation;
     Coroutine timerRoutine;
@@ -39,9 +40,11 @@ public class DropObject : MonoBehaviour
     }
     void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Player")
+        if (other.tag == "Player" && isActive)
         {
-            drop.OnPickUp();
+            isActive = false;
+            Player player = other.GetComponent<Player>();
+            drop.OnPickUp(player);
 
             // Move the drop to the top left of the screen
             MoveTo(DropManager.Instance.collectLocation);

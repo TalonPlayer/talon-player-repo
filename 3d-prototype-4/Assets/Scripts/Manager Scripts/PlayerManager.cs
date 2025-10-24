@@ -1,184 +1,180 @@
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.InputSystem;
 
 public class PlayerManager : MonoBehaviour
 {
     public static PlayerManager Instance;
-    public Player player;
+    public List<Player> players;
     public string colorCode;
     public Transform bulletFolder;
-    [Header("In-game Stats")]
-    public int lives;
-    public int dashes;
-    public int nukes;
-    public int multiplier = 1;
-    public int score;
-    public int multiplierValue = 0;
-    public int maxMultiplierValue = 100;
+    public CinemachineVirtualCamera vcam;
+    public CinemachineTargetGroup camTargetGroup;
+
+    public int numOfPlayers = 0;
+
     [Header("Predetermined Stats")]
     public float immunityTime = 5f;
-    public int extraLifeThreshold = 200000;
-    private int lifeScore;
-    [Header("Player Effects")]
-    public AudioSource playerAudio;
-    public List<AudioClip> deathSounds;
-    public ParticleSystem gStartImm;
-    public GameObject gImmune;
-    public GameObject yImmune;
+
+
+    [Header("Universal Player Items")]
     public PhysicalDrop gem;
-    public Animator shield;
     public Nuke nuke;
     public List<Drop> itemRewards;
     public List<Drop> unitRewards;
-    public List<string> bufferedUnits;
+    public List<AudioClip> deathSounds;
     public UnityEvent onGameOver;
     public bool activeRedRoom;
     public int currentWorldIndex;
-    private bool isShielded = false;
-    Coroutine immunityRoutine;
+    public Transform camCenter;
+    PlayerInputManager playerInputManager;
     void Awake()
     {
         Instance = this;
     }
     void Start()
     {
-        lifeScore = extraLifeThreshold;
-
-        SaveSystem.LoadSelectedPlayerName(); // Load the previously selected name
-
-        if (!string.IsNullOrEmpty(SaveSystem.selectedPlayerName))
-        {
-            PlayerData data = SaveSystem.LoadPlayer(SaveSystem.selectedPlayerName);
-            player.info._name = data._name;
-            player.info.attempt = data.attempt + 1;
-
-            colorCode = data.colorCode;
-            player.info.colorCode = colorCode;
-            player.body.ChangeColor();
-        }
-
-
-        HudManager.Instance.InitStats(lives, dashes, nukes, multiplier);
+        playerInputManager = FindObjectOfType<PlayerInputManager>();
+        JoinNewPlayer();
     }
 
     void Update()
     {
-        if ((Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.Joystick1Button4))  && nukes > 0)
+        camCenter.position = PlayerCohesion();
+    }
+
+    public Vector3 PlayerCohesion()
+    {
+        Vector3 center = Vector3.zero;
+        float avgDistance = 0f;
+        int count = 0;
+
+        for (int i = 0; i < players.Count; i++)
         {
-            Vector3 pos = player.transform.position;
-            pos.y += 20f;
-            Instantiate(nuke, pos, Quaternion.identity);
-            nukes--;
-            HudManager.Instance.UpdateText(2, nukes);
+            var a = players[i];
+            if (a == null || !a.isAlive) continue;
+            center += a.transform.position;
+            count++;
+        }
+
+        if (count < 0) return Vector3.zero;
+
+        center /= count;
+
+        for (int i = 0; i < players.Count; i++)
+        {
+            var a = players[i];
+
+            avgDistance += Vector3.Distance(a.transform.position, center);
+        }
+
+        avgDistance /= count;
+
+        if (avgDistance > 9f) center.y += avgDistance - 9f;
+
+        return center;
+    }
+
+    public void JoinNewPlayer()
+    {
+        if (playerInputManager == null)
+        {
+            Debug.LogError("PlayerInputManager reference missing.");
+            return;
+        }
+
+        int desired = SaveSystem.currentPlayers.Count;
+
+        
+        // 1) Try spawn P1 on Keyboard+Mouse (optional)
+        var p1 = playerInputManager.JoinPlayer(
+            playerIndex: numOfPlayers,
+            controlScheme: "Keyboard&Mouse",
+            pairWithDevice: Keyboard.current
+        );
+
+        InitPlayerFromSave(p1, numOfPlayers);
+
+        if (desired == 1) return;
+        
+         numOfPlayers++;
+        // 2) Spawn remaining players on available gamepads
+        foreach (var pad in Gamepad.all)
+        {
+            Debug.Log(pad.name);
+            if (pad.name == "XInputControllerWindows") continue;
+
+            // Join a new player with this device
+            var input = playerInputManager.JoinPlayer(
+                playerIndex: numOfPlayers,               // let Unity assign
+                controlScheme: "Gamepad",
+                pairWithDevice: pad
+            );
+
+            InitPlayerFromSave(input, numOfPlayers);
+
+            numOfPlayers++;
+        }
+
+        if (numOfPlayers < desired)
+        {
+            Debug.LogWarning($"Not enough input devices to spawn all players. Wanted {desired}, joined {numOfPlayers}.");
         }
     }
 
-    public void PlayerIsStuck()
+    private void InitPlayerFromSave(PlayerInput input, int index)
     {
-        TeleportPlayer(WorldManager.Instance.worldCenter);
+        var player = input.GetComponent<Player>();
+        player.playerIndex = index;
+
+
+        for (int i = 0; i < SaveSystem.currentPlayers.Count; i++)
+        {
+            Debug.Log(SaveSystem.currentPlayers[i]._name + " at index " + i);
+        }
+        player.stats.Init(SaveSystem.currentPlayers[index]);
+
+
+        players.Add(player);
+
+        // mark controller presence
+        player.controllerDetected = (input.devices.Count > 0 && input.devices[0] is Gamepad);
+
+        Debug.Log($"Player Joined → Index: {player.playerIndex}, Device: {(player.controllerDetected ? "Gamepad" : "Keyboard&Mouse")}");
     }
 
     public void TogglePause(bool isPaused)
     {
         Time.timeScale = isPaused ? 0 : 1;
-        player.enabled = !isPaused;
+        foreach (Player player in players)
+            player.enabled = !isPaused;
+
         Cursor.visible = isPaused;
     }
 
-    public void AddMultiplier(int value)
+    public void LifeScore(Player player)
     {
-        if (multiplier == 9) return;
-        multiplierValue += value;
-
-
-        if (multiplierValue >= maxMultiplierValue)
+        if (player.stats.score >= player.stats.lifeScore)
         {
-            multiplier++;
-            multiplierValue = multiplierValue - maxMultiplierValue;
-            maxMultiplierValue += 500;
-            HudManager.Instance.UpdateText(3, multiplier);
-        }
-
-        HudManager.Instance.UpdateBar(0, multiplierValue, maxMultiplierValue);
-    }
-
-    public void AddScore(int _score)
-    {
-        score += multiplier * _score;
-        HudManager.Instance.UpdateText(4, score);
-        player.info.currentScore = score;
-        if (score >= lifeScore)
-        {
-            lifeScore += extraLifeThreshold;
-            GiveItemReward(0);
+            player.stats.lifeScore += player.stats.extraLifeThreshold;
+            GiveItemReward(player, 0);
         }
     }
 
-    public bool CanDash()
-    {
-        return dashes > 0;
-    }
-
-    public void Dash()
-    {
-        dashes--;
-        HudManager.Instance.UpdateText(1, dashes);
-    }
-
-    public void GrantLife()
-    {
-        if (lives < 9)
-        {
-            lives++;
-            HudManager.Instance.UpdateText(0, lives);
-        }
-        else
-        {
-            if (Random.Range(0, 2) == 1)
-                GiveUnitReward();
-            else
-                GiveItemReward(Random.Range(1, 3));
-        }
-    }
-    public void GrantDash()
-    {
-        if (dashes < 9)
-        {
-            dashes++;
-            HudManager.Instance.UpdateText(1, dashes);
-        }
-        else
-        {
-            GiveUnitReward();
-        }
-
-    }
-    public void GrantNuke()
-    {
-        if (nukes < 9)
-        {
-            nukes++;
-            HudManager.Instance.UpdateText(2, nukes);
-        }
-        else
-        {
-            GiveUnitReward();
-        }
-
-    }
-    public void GiveUnitReward()
+    public void GiveUnitReward(Player player)
     {
         Vector3 pos = player.transform.position;
         pos.y += 20f;
 
-        DropObject obj = DropManager.Instance.SpawnDropObject(unitRewards[Random.Range(0, unitRewards.Count)], pos);
+        DropObject obj = DropManager.Instance.SpawnDropObject(unitRewards[Random.Range(0, unitRewards.Count - 1)], pos);
 
         obj.MoveTo(player.transform);
         obj.moveSpeed = 2.5f;
     }
-    public void GiveItemReward(int num)
+    public void GiveItemReward(Player player, int num)
     {
         Vector3 pos = player.transform.position;
         pos.y += 20f;
@@ -198,7 +194,7 @@ public class PlayerManager : MonoBehaviour
                     obj.MoveTo(player.transform);
                     obj.moveSpeed = 2.5f;
                 }
-                
+
                 break;
             case 2: // Nuke
                 for (int i = 0; i < 2; i++)
@@ -212,41 +208,13 @@ public class PlayerManager : MonoBehaviour
 
 
     }
-    public void KillPlayer()
+    public void KillPlayer(Player player)
     {
-        if (isShielded)
-        {
-            isShielded = false;
-            shield.SetBool("Active", false);
-            NukeImmunity();
-            return;
-        }
-        player.OnDeath();
-        PlaySound(deathSounds[Random.Range(0, deathSounds.Count)]);
-        StartCoroutine(DropGems(multiplier - 1));
-        multiplier = 1;
-        multiplierValue = 0;
-        maxMultiplierValue = 100;
 
-        if (lives > 0)
-        {
-            lives--;
-            HudManager.Instance.UpdateText(0, lives);
-            HudManager.Instance.UpdateText(3, multiplier);
-            HudManager.Instance.UpdateBar(0, multiplierValue, maxMultiplierValue);
-
-            immunityRoutine = StartCoroutine(ImmunityRoutine(3f, immunityTime));
-        }
-        else
-        {
-            // End the game
-            EndGame();
-        }
     }
 
-    IEnumerator DropGems(int num)
+    public IEnumerator DropGems(Vector3 pos, int num)
     {
-        Vector3 pos = player.transform.position;
 
         pos.y += 3f;
         for (int i = 0; i < num; i++)
@@ -267,12 +235,11 @@ public class PlayerManager : MonoBehaviour
     public void EndGame()
     {
         foreach (Unit u in EntityManager.Instance.units) u.OnHit(9999);
-        PlayerData newData = new PlayerData(player.info);
 
-        PlayerData data = HudManager.Instance.GameOverStats(newData);
+        //PlayerData data = HudManager.Instance.GameOverStats(newData);
 
-        player.info.CopyPlayer(data);
-        player.info.SavePlayer();
+        //player.info.CopyPlayer(data);
+        //player.info.SavePlayer();
 
         StartCoroutine(EndGame(8f, 3f));
     }
@@ -285,58 +252,10 @@ public class PlayerManager : MonoBehaviour
         SceneWorldManager.Instance.EndScene(WorldManager.Instance.worldIndex);
         SceneWorldManager.Instance.TransferToMenu();
     }
-    public IEnumerator ImmunityRoutine(float first, float secondTime)
+    public void SpawnBufferedUnits(Player player)
     {
-        yield return new WaitForSeconds(first);
-        player.isImmune = true;
-        gStartImm.Play();
-        gImmune.SetActive(true);
-        yield return new WaitForSeconds(secondTime);
-        gImmune.SetActive(false);
-        yImmune.SetActive(true);
-        yield return new WaitForSeconds(secondTime);
-        yImmune.SetActive(false);
-        player.isImmune = false;
-    }
-
-    public void NukeImmunity()
-    {
-        if (immunityRoutine != null)
-        {
-            StopCoroutine(immunityRoutine);
-        }
-        immunityRoutine = StartCoroutine(ImmunityRoutine(0f, immunityTime / 2f));
-    }
-
-    public void TeleportPlayer(Transform location)
-    {
-        player.movement.rb.useGravity = false;
-        player.movement.enabled = false;
-        player.hand.enabled = false;
-        player.transform.position = location.position;
-        player.transform.rotation = location.rotation;
-        EntityManager.Instance.UnitSnapToPlayer();
-        Invoke(nameof(EnableMovement), 2f);
-    }
-
-    public void EnableMovement()
-    {
-        player.movement.enabled = true;
-        player.hand.enabled = true;
-        player.movement.rb.useGravity = true;
-    }
-
-    public void PlaySound(AudioClip clip)
-    {
-        playerAudio.PlayOneShot(clip, Random.Range(.8f, 1.4f));
-    }
-
-    public void SpawnBufferedUnits()
-    {
-        bool ankleBiterSpawned = false;
         bool pirateSpawned = false;
-        bool gunnerSpawned = false;
-        foreach (string name in bufferedUnits)
+        foreach (string name in player.stats.bufferedUnits)
         {
             Vector3 pos = player.transform.position;
             pos.y += 20f;
@@ -349,18 +268,14 @@ public class PlayerManager : MonoBehaviour
                     obj.moveSpeed = 2.5f;
                     break;
                 case "Ankle Biter":
-                    if (ankleBiterSpawned) break;
                     obj = DropManager.Instance.SpawnDropObject(unitRewards[1], pos);
                     obj.MoveTo(player.transform);
                     obj.moveSpeed = 2.5f;
-                    ankleBiterSpawned = true;
                     break;
                 case "Gunner":
-                    if (gunnerSpawned) break;
                     obj = DropManager.Instance.SpawnDropObject(unitRewards[2], pos);
                     obj.MoveTo(player.transform);
                     obj.moveSpeed = 2.5f;
-                    gunnerSpawned = true;
                     break;
                 case "Warrior":
                     obj = DropManager.Instance.SpawnDropObject(unitRewards[3], pos);
@@ -377,15 +292,24 @@ public class PlayerManager : MonoBehaviour
             }
         }
     }
+    public bool AllPlayersAlive()
+    {
+        foreach (Player player in players)
+        {
+            if (player.isAlive)
+            {
+                return true;
+            }
+        }
 
+        return false;
+    }
     public void GameOver()
     {
-
-
         onGameOver?.Invoke();
     }
 
-    public Color GetColor()
+    public Color GetColor(string colorCode)
     {
         Color color;
         if (!ColorUtility.TryParseHtmlString(colorCode, out color))
@@ -396,22 +320,11 @@ public class PlayerManager : MonoBehaviour
         return color;
     }
 
-    public void GrantShield()
+    public void Stuck()
     {
-        if (isShielded) return;
-
-        shield.SetBool("Active", true);
-        isShielded = true;
+        foreach(Player player in players)
+        {
+            player.TeleportPlayer(WorldManager.Instance.worldCenter);
+        }
     }
-
-    /*
-        (Info)
-
-        Zombie kills worth 100 points
-        Multiplier goes up by collecting silver, gold, and gems
-        Start game with 3 lives, 2 dashes, 1 nuke
-        Max number for multiplier, lives, dashes, and nukes is 9
-        Every 200,000 points gives extra life
-        If player already had 9 lives, grant them an AI buddy (that's permanent)
-    */
 }

@@ -422,8 +422,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _name: Warrior
-  health: 5000
-  damage: 200
+  health: 3250
+  damage: 500
   isAlive: 1
   onDeath:
     m_PersistentCalls:
@@ -491,6 +491,7 @@ MonoBehaviour:
   target: {fileID: 0}
   isAggro: 0
   isSpawning: 0
+  noTransfer: 0
   rb: {fileID: 1847252574399124971}
   deathLayer:
     serializedVersion: 2
@@ -540,8 +541,11 @@ MonoBehaviour:
   cooldown: 0.1
   canAttack: 1
   isAttacking: 0
-  damage: 75
+  damage: 500
   attackRange: 1
+  isRanged: 0
+  muzzleFlash: {fileID: 0}
+  projectilePrefab: {fileID: 0}
 --- !u!114 &1825895088413204719
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -556,9 +560,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agent: {fileID: 8220551543916816991}
   facingThreshold: 0.45
-  minSpeed: 12
-  maxSpeed: 14
+  minSpeed: 18
+  maxSpeed: 18
   rotationSpeed: 50
+  rotatesToTarget: 0
 --- !u!195 &8220551543916816991
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -3478,6 +3483,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8656014205190971394}
     m_Modifications:
+    - target: {fileID: 1167691300310922889, guid: 2cfcb5db305d40b4e8a62bbd6ec6d14e, type: 3}
+      propertyPath: EmissionModule.m_Bursts.Array.data[0].countCurve.scalar
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1167691300310922889, guid: 2cfcb5db305d40b4e8a62bbd6ec6d14e, type: 3}
+      propertyPath: EmissionModule.m_Bursts.Array.data[1].countCurve.scalar
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2367434746162275241, guid: 2cfcb5db305d40b4e8a62bbd6ec6d14e, type: 3}
       propertyPath: m_Name
       value: Blood Particles

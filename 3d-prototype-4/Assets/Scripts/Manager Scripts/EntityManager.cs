@@ -42,7 +42,7 @@ public class EntityManager : MonoBehaviour
     }
     void Start()
     {
-        StartCoroutine(AmbientRoutine(Random.Range(2f, 8f)));
+        StartCoroutine(AmbientRoutine(Random.Range(8f, 15f)));
     }
 
     void Update()
@@ -51,7 +51,6 @@ public class EntityManager : MonoBehaviour
         {
             damageTick();
             damageTick = null;
-
             if (healthTick != null)
                 healthTick();
         }
@@ -78,7 +77,7 @@ public class EntityManager : MonoBehaviour
 
         StartCoroutine(AmbientRoutine(Random.Range(2f, 8f)));
     }
-    
+
     /// <summary>
     /// Get the information from WorldManager
     /// </summary>
@@ -171,6 +170,44 @@ public class EntityManager : MonoBehaviour
 
         u.Spawn(spawnTime);
         units.Add(u);
+
+        GlobalSaveSystem.AddAchievementProgress("spawn_" + unit._name, 1);
+    }
+
+    public Unit SpawnUnit(Transform spawn, Unit unit)
+    {
+        Vector3 pos = SnapToGround(spawn.position);
+        Unit u = Instantiate(
+            unit,
+            pos,
+            spawn.rotation,
+            unitFolder
+            );
+
+        u.Spawn(spawnTime);
+        units.Add(u);
+
+        GlobalSaveSystem.AddAchievementProgress("spawn_" + unit._name, 1);
+
+        return u;
+    }
+
+    public Unit SpawnUnitReturn(Vector3 spawn, Unit unit)
+    {
+        Vector3 pos = SnapToGround(spawn);
+        Unit u = Instantiate(
+            unit,
+            pos,
+            Quaternion.identity,
+            unitFolder
+            );
+
+        u.Spawn(spawnTime);
+        units.Add(u);
+
+        GlobalSaveSystem.AddAchievementProgress("spawn_" + unit._name, 1);
+
+        return u;
     }
 
     /// <summary>
@@ -200,6 +237,23 @@ public class EntityManager : MonoBehaviour
         {
             List<Transform> delete = new List<Transform>();
             for (int i = 0; i < Random.Range(1, 5); i++)
+            {
+                delete.Add(ragdollFolder.GetChild(i));
+            }
+
+            foreach (Transform obj in delete)
+            {
+                Destroy(obj.gameObject);
+            }
+        }
+    }
+
+    public void RecycleRagdolls(int amount, int maxAmount)
+    {
+        if (ragdollFolder.childCount >= maxAmount)
+        {
+            List<Transform> delete = new List<Transform>();
+            for (int i = 0; i < amount; i++)
             {
                 delete.Add(ragdollFolder.GetChild(i));
             }
@@ -247,9 +301,9 @@ public class EntityManager : MonoBehaviour
     /// <summary>
     /// Make the units spawn around the player
     /// </summary>
-    public void UnitSnapToPlayer()
+    public void UnitSnapToPlayer(Player player)
     {
-        Vector3 playerPos = PlayerManager.Instance.player.transform.position;
+        Vector3 playerPos = player.transform.position;
 
         int unitCount = units.Count;
         if (unitCount == 0) return;
@@ -260,6 +314,7 @@ public class EntityManager : MonoBehaviour
         for (int i = 0; i < unitCount; i++)
         {
             Unit unit = units[i];
+            if (unit.noTransfer) continue;
             NavMeshAgent agent = unit.movement.agent;
             unit.movement.enabled = false;
             // Disable NavMeshAgent and manually teleport the whole root GameObject
@@ -321,7 +376,7 @@ public class EntityManager : MonoBehaviour
     {
         aggroTick = null;
     }
-    
+
     /// <summary>
     /// Kill all the enemies
     /// </summary>

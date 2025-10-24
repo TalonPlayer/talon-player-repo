@@ -8,9 +8,13 @@ public class FinishGameDemo : MonoBehaviour
     public Animator animator;
     public void EndGame()
     {
-        PlayerManager.Instance.player.movement.enabled = false;
-        PlayerManager.Instance.player.hand.enabled = false;
+        foreach (Player player in PlayerManager.Instance.players)
+        {
+            player.movement.enabled = false;
+            player.hand.enabled = false;
+        }
+        
         animator.SetTrigger("Play");
-        PlayerManager.Instance.EndGame();
+        // PlayerManager.Instance.EndGame();
     }
 }

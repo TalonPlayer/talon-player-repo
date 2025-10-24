@@ -26,23 +26,30 @@ public static class MouseWorld
     public static Vector3 GetControllerWorldPosition(LayerMask groundMask, Transform player)
     {
         float distance = 50f;
-        int steps = 19; // Amount of Raycasts
+        int steps = 19;
         float maxOffset = 2f;
+        float horizontalOffset = 0.5f;
 
-        for (int i = 0; i <= steps; i++)
+        for (int side = -1; side <= 1; side++)
         {
+            Vector3 sideOffset = player.right * (side * horizontalOffset);
 
-            float t = (float)i / steps;
-            float offset = Mathf.Lerp(-maxOffset, maxOffset, t);
-
-            Vector3 dir = (player.forward + Vector3.up * offset).normalized;
-
-            Debug.DrawRay(player.position, dir * distance, Color.red, 2f);
-
-            if (Physics.Raycast(player.position, dir, out RaycastHit hit, distance, groundMask))
+            for (int i = 0; i <= steps; i++)
             {
-                Debug.DrawLine(player.position, hit.point, Color.green, 2f);
-                return hit.point;
+                float t = (float)i / steps;
+                float verticalOffset = Mathf.Lerp(-maxOffset, maxOffset, t);
+
+                Vector3 dir = (player.forward + Vector3.up * verticalOffset).normalized;
+
+                Vector3 origin = player.position + sideOffset;
+
+                Debug.DrawRay(origin, dir * distance, Color.red, 2f);
+
+                if (Physics.Raycast(origin, dir, out RaycastHit hit, distance, groundMask))
+                {
+                    Debug.DrawLine(origin, hit.point, Color.green, 2f);
+                    return hit.point;
+                }
             }
         }
 

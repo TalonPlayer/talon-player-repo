@@ -26,7 +26,7 @@ public class SpawnPirates : MonoBehaviour
 
     public IEnumerator WaitTime(Unit u)
     {
-        yield return new WaitForSeconds(.15f);
+        yield return new WaitForSeconds(.075f);
         Vector3 pos = ship.position;
         Vector3 rand = RandExt.RandomDirection(0f, 360f);
         rand.y = 0f;

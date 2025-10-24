@@ -1,0 +1,187 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2744294377765438066
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1922233447063471083}
+  m_Layer: 0
+  m_Name: Z Gojo Hair
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1922233447063471083
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2744294377765438066}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 3789676810187336076}
+  - {fileID: 6480733963039570359}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &3683130339216920167
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1922233447063471083}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 9550ea40f4e6258409ef04df545d4e01, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.3913943
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9550ea40f4e6258409ef04df545d4e01, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.6597773
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9550ea40f4e6258409ef04df545d4e01, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.3913947
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9550ea40f4e6258409ef04df545d4e01, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.000025001635
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9550ea40f4e6258409ef04df545d4e01, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.02415801
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9550ea40f4e6258409ef04df545d4e01, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.0015754858
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9550ea40f4e6258409ef04df545d4e01, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.6806302
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9550ea40f4e6258409ef04df545d4e01, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.73262715
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9550ea40f4e6258409ef04df545d4e01, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.000000037095234
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9550ea40f4e6258409ef04df545d4e01, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.000000035209805
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9550ea40f4e6258409ef04df545d4e01, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9550ea40f4e6258409ef04df545d4e01, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9550ea40f4e6258409ef04df545d4e01, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 9550ea40f4e6258409ef04df545d4e01, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 2efb3473433da9341982c77da39b617b, type: 2}
+    - target: {fileID: 919132149155446097, guid: 9550ea40f4e6258409ef04df545d4e01, type: 3}
+      propertyPath: m_Name
+      value: Gojo Hair
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9550ea40f4e6258409ef04df545d4e01, type: 3}
+--- !u!4 &3789676810187336076 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 9550ea40f4e6258409ef04df545d4e01, type: 3}
+  m_PrefabInstance: {fileID: 3683130339216920167}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &5496560433059106205
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1922233447063471083}
+    m_Modifications:
+    - target: {fileID: 1564866336905819178, guid: 884d9b4422ff56546aec8d7cda2b3240, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2.849406
+      objectReference: {fileID: 0}
+    - target: {fileID: 1564866336905819178, guid: 884d9b4422ff56546aec8d7cda2b3240, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.3609378
+      objectReference: {fileID: 0}
+    - target: {fileID: 1564866336905819178, guid: 884d9b4422ff56546aec8d7cda2b3240, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 3.0832121
+      objectReference: {fileID: 0}
+    - target: {fileID: 1564866336905819178, guid: 884d9b4422ff56546aec8d7cda2b3240, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.0003529994
+      objectReference: {fileID: 0}
+    - target: {fileID: 1564866336905819178, guid: 884d9b4422ff56546aec8d7cda2b3240, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.0016290025
+      objectReference: {fileID: 0}
+    - target: {fileID: 1564866336905819178, guid: 884d9b4422ff56546aec8d7cda2b3240, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.0009110008
+      objectReference: {fileID: 0}
+    - target: {fileID: 1564866336905819178, guid: 884d9b4422ff56546aec8d7cda2b3240, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.058262058
+      objectReference: {fileID: 0}
+    - target: {fileID: 1564866336905819178, guid: 884d9b4422ff56546aec8d7cda2b3240, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.9913992
+      objectReference: {fileID: 0}
+    - target: {fileID: 1564866336905819178, guid: 884d9b4422ff56546aec8d7cda2b3240, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.0114883
+      objectReference: {fileID: 0}
+    - target: {fileID: 1564866336905819178, guid: 884d9b4422ff56546aec8d7cda2b3240, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.11662454
+      objectReference: {fileID: 0}
+    - target: {fileID: 1564866336905819178, guid: 884d9b4422ff56546aec8d7cda2b3240, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 186.479
+      objectReference: {fileID: 0}
+    - target: {fileID: 1564866336905819178, guid: 884d9b4422ff56546aec8d7cda2b3240, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 13.537003
+      objectReference: {fileID: 0}
+    - target: {fileID: 1564866336905819178, guid: 884d9b4422ff56546aec8d7cda2b3240, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -2.0980225
+      objectReference: {fileID: 0}
+    - target: {fileID: 2510788698128780394, guid: 884d9b4422ff56546aec8d7cda2b3240, type: 3}
+      propertyPath: m_Name
+      value: Head Bandana
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 884d9b4422ff56546aec8d7cda2b3240, type: 3}
+--- !u!4 &6480733963039570359 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1564866336905819178, guid: 884d9b4422ff56546aec8d7cda2b3240, type: 3}
+  m_PrefabInstance: {fileID: 5496560433059106205}
+  m_PrefabAsset: {fileID: 0}

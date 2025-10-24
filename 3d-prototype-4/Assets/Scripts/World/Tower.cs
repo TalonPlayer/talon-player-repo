@@ -97,13 +97,16 @@ public class Tower : MonoBehaviour
         {
             Player player = other.GetComponent<Player>();
 
-            if (!player.isImmune)
-                PlayerManager.Instance.KillPlayer();
+            if (!player.stats.isImmune)
+            {
+                player.KillPlayer();
+            }
         }
         else if (other.tag == "Enemy")
         {
             Enemy e = other.GetComponent<Enemy>();
-            e.OnHit(9999);
+
+            if (e) e.OnHit(9999);
         }
         else if (other.tag == "Unit")
         {

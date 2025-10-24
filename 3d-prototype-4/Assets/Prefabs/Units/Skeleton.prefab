@@ -834,8 +834,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _name: Skeleton
-  health: 3000
-  damage: 100
+  health: 2000
+  damage: 200
   isAlive: 1
   onDeath:
     m_PersistentCalls:
@@ -927,6 +927,7 @@ MonoBehaviour:
   target: {fileID: 0}
   isAggro: 0
   isSpawning: 0
+  noTransfer: 0
   rb: {fileID: 6097610893513168942}
   deathLayer:
     serializedVersion: 2
@@ -977,6 +978,9 @@ MonoBehaviour:
   isAttacking: 0
   damage: 25
   attackRange: 0.5
+  isRanged: 0
+  muzzleFlash: {fileID: 0}
+  projectilePrefab: {fileID: 0}
 --- !u!114 &8295757959438145686
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -994,6 +998,7 @@ MonoBehaviour:
   minSpeed: 10
   maxSpeed: 12
   rotationSpeed: 5
+  rotatesToTarget: 0
 --- !u!195 &5718086317476185876
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1233,6 +1238,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3665103682107807562}
     m_Modifications:
+    - target: {fileID: 1167691300310922889, guid: 2cfcb5db305d40b4e8a62bbd6ec6d14e, type: 3}
+      propertyPath: EmissionModule.m_Bursts.Array.data[0].countCurve.scalar
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1167691300310922889, guid: 2cfcb5db305d40b4e8a62bbd6ec6d14e, type: 3}
+      propertyPath: EmissionModule.m_Bursts.Array.data[1].countCurve.scalar
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2367434746162275241, guid: 2cfcb5db305d40b4e8a62bbd6ec6d14e, type: 3}
       propertyPath: m_Name
       value: Blood Particles

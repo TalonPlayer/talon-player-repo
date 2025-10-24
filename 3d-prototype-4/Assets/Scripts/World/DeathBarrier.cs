@@ -5,12 +5,13 @@ using UnityEngine;
 public class DeathBarrier : MonoBehaviour
 {
     // Kills entities that get touch it
+    Player player;
     void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Player")
         {
-
-            PlayerManager.Instance.TeleportPlayer(WorldManager.Instance.worldCenter);
+            player = other.GetComponent<Player>();
+            player.TeleportPlayer(WorldManager.Instance.worldCenter);
 
 
             Invoke(nameof(KillPlayer), 1f);
@@ -26,7 +27,6 @@ public class DeathBarrier : MonoBehaviour
             WorldManager.Instance.currentCount = count;
             e.contributeToCount = false;
             e.OnHit(9999);
-            PlayerManager.Instance.player.info.kills--;
         }
         else if (other.tag == "Unit")
         {
@@ -38,6 +38,6 @@ public class DeathBarrier : MonoBehaviour
 
     void KillPlayer()
     {
-        PlayerManager.Instance.KillPlayer();
+        player.KillPlayer();
     }
 }

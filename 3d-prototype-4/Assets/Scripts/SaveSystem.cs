@@ -8,6 +8,7 @@ public static class SaveSystem
     // The saving system
     public static string selectedPlayerName;
     private static string playerListPath = Application.persistentDataPath + "/players.data";
+    public static List<PlayerData> currentPlayers = new List<PlayerData>();
     public static void SavePlayer(PlayerInfo player)
     {
         BinaryFormatter formatter = new BinaryFormatter();

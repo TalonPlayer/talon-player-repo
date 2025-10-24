@@ -2,17 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SettingsData : MonoBehaviour
+public class GameBoot : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        
+        GlobalSaveSystem.LoadOrCreate();
+        Application.quitting += OnQuit;
     }
 
-    // Update is called once per frame
-    void Update()
+    void OnQuit()
     {
-        
+        GlobalSaveSystem.Save();
     }
 }

@@ -112,12 +112,20 @@ public class SceneWorldManager : MonoBehaviour
             if (allDone) break;
 
             yield return new WaitForSeconds(2f); // Wait 1 frame, smooth update
-            PlayerManager.Instance.TeleportPlayer(WorldManager.Instance.worldCenter);
+
+            foreach (Player player in PlayerManager.Instance.players)
+            {
+                player.TeleportPlayer(WorldManager.Instance.worldCenter);
+            }
 
             yield return new WaitForSeconds(2f);
             HudManager.Instance.ToggleBlackScreen(false);
 
-            PlayerManager.Instance.SpawnBufferedUnits();
+            foreach (Player player in PlayerManager.Instance.players)
+            {
+                PlayerManager.Instance.SpawnBufferedUnits(player);
+            }
+
         }
 
     }

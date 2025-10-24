@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1556f13af427b304391643db147ec183, type: 3}
+  m_Name: Gold_1911_Tier1
+  m_EditorClassIdentifier: 
+  _name: 1911
+  id: ID_010
+  infiniteAmmo: 0
+  shots: 8
+  damage: 45
+  collateral: 2
+  reloadTime: 0.5
+  fireRate: 0.2
+  infiniteTime: 1
+  lifeTime: 0
+  model: {fileID: 1172409146880928894, guid: ad63a9cb38540c44692d5207ad930588, type: 3}
+  projectilePrefab: {fileID: 6921153942526054540, guid: 3f4cb4a73ff058f4ab6c5c318f3abb79, type: 3}
+  ammoColor: {r: 0.9528302, g: 0.7373312, b: 0.33708617, a: 1}
+  muzzleFlashPrefab: {fileID: 4500840615125761693, guid: 5f8dd2a7847d23447bc81ed9cdde5d01, type: 3}
+  shootSound: {fileID: 8300000, guid: c1dfec927904fc247a3c6c7f3dfe4f7c, type: 3}
+  reloadSound: {fileID: 8300000, guid: 73d8da416fe1cd04e9497a25c68536da, type: 3}
+  holdingAnim: {fileID: 9100000, guid: 5c21f05ca4f11b44cb1f27358f50d6aa, type: 2}

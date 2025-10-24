@@ -10,6 +10,7 @@ public class PhysicalDrop : MonoBehaviour
     public float lifeTime = 25f;
     public Rigidbody rb;
     public MeshRenderer mr;
+    private Player player;
     void Start()
     {
         value = Random.Range(.75f, 1.25f);
@@ -59,13 +60,13 @@ public class PhysicalDrop : MonoBehaviour
     /// </summary>
     public void SkullPickUp()
     {
-        Weapon w = PlayerManager.Instance.player.hand.hand;
-        Weapon upgrade = WeaponLibrary.Instance.Upgrade(w);
+        Weapon w = player.hand.hand;
+        Weapon upgrade = WeaponLibrary.Instance.Upgrade(player, w);
         if (value >= 1.225f) // if value is above 1.225f, double upgrade
-            upgrade = WeaponLibrary.Instance.Upgrade(upgrade);
+            upgrade = WeaponLibrary.Instance.Upgrade(player, upgrade);
 
-        PlayerManager.Instance.player.hand.Equip(upgrade);
-        PlayerManager.Instance.player.info.skulls++;
+        player.hand.Equip(upgrade);
+        player.info.skulls++;
     }
 
     /// <summary>
@@ -73,8 +74,8 @@ public class PhysicalDrop : MonoBehaviour
     /// </summary>
     public void GemPickUp()
     {
-        PlayerManager.Instance.AddMultiplier((int)(value * 150f));
-        PlayerManager.Instance.player.info.gems++;
+        player.stats.AddMultiplier((int)(value * 150f));
+        player.info.gems++;
     }
 
     /// <summary>
@@ -94,6 +95,7 @@ public class PhysicalDrop : MonoBehaviour
     {
         if (other.tag == "Player") // Player picked up drop
         {
+            player = other.GetComponent<Player>();
             onPickUp?.Invoke();
             Destroy(gameObject);
         }

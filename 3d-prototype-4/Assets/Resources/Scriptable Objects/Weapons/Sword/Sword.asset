@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1556f13af427b304391643db147ec183, type: 3}
+  m_Name: Sword
+  m_EditorClassIdentifier: 
+  _name: Sword
+  id: ID_070
+  infiniteAmmo: 1
+  shots: 8
+  damage: 500
+  collateral: 20
+  reloadTime: 1
+  fireRate: 0.25
+  infiniteTime: 0
+  lifeTime: 15
+  model: {fileID: 3913418479805253411, guid: aeff1a90b80bc71468f8d639347a4fa3, type: 3}
+  projectilePrefab: {fileID: 6957175042431382426, guid: 597ceaab3a886de45807827b73408dae, type: 3}
+  ammoColor: {r: 0.5283019, g: 0.0055319564, b: 0, a: 1}
+  muzzleFlashPrefab: {fileID: 2198946420147636446, guid: 6bd164f8bdeef5b46854448e6981e45e, type: 3}
+  shootSound: {fileID: 8300000, guid: b1b4e01e4c073a54c8945a2cb0feff4c, type: 3}
+  reloadSound: {fileID: 8300000, guid: eb92498d5903c9e4091a87d20629f816, type: 3}
+  holdingAnim: {fileID: 9100000, guid: 9cd9f33f22c18034e9bbd0ddf41f97b0, type: 2}

@@ -21,6 +21,7 @@ public class Enemy : Entity
     public int deathSoundChance = 4; // 1 is guaranteed, 4 means 33% chance
     public bool contributeToCount = true; // Contributes to the zombie count
     public bool immortal = false; // Is killable?
+    public bool isTargeted = false;
     [Header("Sounds")]
     public List<AudioClip> deathSounds;
     public List<AudioClip> damageSounds;
@@ -36,6 +37,7 @@ public class Enemy : Entity
     [HideInInspector] public EnemyMovement movement;
     [HideInInspector] public EnemyCombat combat;
     [HideInInspector] public EnemyBody body;
+    Player killedBy;
     void Awake()
     {
         movement = GetComponent<EnemyMovement>();
@@ -105,7 +107,7 @@ public class Enemy : Entity
     void Update()
     {
     }
-    
+
     /// <summary>
     /// Check to see if the enemy is alive
     /// </summary>
@@ -135,9 +137,13 @@ public class Enemy : Entity
         EntityManager.Instance.RecycleRagdolls();
         EntityManager.Instance.RecycleDrops();
 
-        // Reward player score
-        PlayerManager.Instance.AddScore(killValue);
-        PlayerManager.Instance.player.info.kills++;
+        if (killedBy != null)
+        {
+            // Reward player score
+            killedBy.stats.AddScore(killValue);
+            killedBy.info.kills++;
+        }
+
 
         // Don't check health since already dead    
         EntityManager.healthTick -= CheckHealth;
@@ -149,6 +155,10 @@ public class Enemy : Entity
         if (contributeToCount)
             WorldManager.Instance.UpdateCount();
 
+        if (_name == "Entity")
+            GlobalSaveSystem.AddAchievementProgress("entity_kills", 1);
+
+
         // Death animation
         body.PlayRandom("IsDead", 8, true);
         body.Play("RandomFloat", Random.Range(.8f, 1.5f));
@@ -156,11 +166,12 @@ public class Enemy : Entity
 
         // Ignore some layers when dying
         cc.excludeLayers += deathLayer;
+        cc.enabled = false;
+        rb.useGravity = false;
         gameObject.layer = 1 << 2;
 
         onDeath?.Invoke();
     }
-
 
     /// <summary>
     /// Enemy Explodes and damages within the radius
@@ -172,13 +183,8 @@ public class Enemy : Entity
         // Get the radius
         float r2 = explosionRadius * explosionRadius;
 
-        // If the player is within the radius
-        if ((PlayerManager.Instance.player.transform.position - transform.position).sqrMagnitude <= r2)
-            if (!PlayerManager.Instance.player.isImmune && PlayerManager.Instance.player.isAlive)
-                PlayerManager.Instance.KillPlayer();
-
         // Enemy and Unit Layers
-        int layerMask = (1 << 8) | (1 << 15);
+        int layerMask = (1 << 8) | (1 << 15) | (1 << 7);
 
         // Detect what Enemy and Units are within the radius
         Collider[] hits = Physics.OverlapSphere(transform.position, explosionRadius, layerMask);
@@ -188,11 +194,17 @@ public class Enemy : Entity
         {
             if (h == null) continue;
 
+            Player p = h.GetComponent<Player>();
+            if (!p.stats.isImmune && p.isAlive)
+                p.KillPlayer();
+
             // Try Enemy
             Enemy e = h.GetComponentInParent<Enemy>();
             if (e != null && e != this && e.isAlive)
             {
                 e.OnHit(explosionDamage);
+                if (e.health < explosionDamage)
+                    GlobalSaveSystem.AddAchievementProgress("electric_kills", 1);
                 continue;
             }
 
@@ -240,6 +252,23 @@ public class Enemy : Entity
     }
 
     /// <summary>
+    /// Checks if the enemy will die to the damage
+    /// </summary>
+    /// <param name="damage"></param>
+    /// <returns></returns>
+    public bool IsKilled(int damage, string owner)
+    {
+        Debug.Log(owner);
+        if (health <= damage)
+        {
+            killedBy = PlayerManager.Instance.players.Find(p => p._name == owner);
+            Debug.Log(killedBy._name);
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>
     /// Aggro to a specific target
     /// </summary>
     /// <param name="_target"></param>
@@ -266,9 +295,20 @@ public class Enemy : Entity
         if (EntityManager.Instance.units.Count == 0 && isAggro || !isAlive) return;
 
         // Default closest is the player
-        Transform closest = PlayerManager.Instance.player.transform;
+        Transform closest = null;
         Vector3 currentPos = transform.position;
-        float closestDistanceSqr = (closest.position - currentPos).sqrMagnitude;
+        float closestDistanceSqr = Mathf.Infinity;
+        foreach (Player p in PlayerManager.Instance.players)
+        {
+            if (p == null || !p.isAlive) continue;
+
+            float distSqr = (p.transform.position - currentPos).sqrMagnitude;
+            if (distSqr < closestDistanceSqr)
+            {
+                closestDistanceSqr = distSqr;
+                closest = p.transform;
+            }
+        }
 
         // Check to see if there are any units that are closer than the player
         foreach (Unit u in EntityManager.Instance.units)

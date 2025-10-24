@@ -6,9 +6,9 @@ public class Extra : Powerup
 {
     public ExtraDrop drop;
 
-    public override void OnPickUp()
+    public override void OnPickUp(Player player)
     {
-        base.OnPickUp();
+        base.OnPickUp(player);
 
         // Extra drop gimmicks so that way I dont have to create lots of scripts
         switch (drop)
@@ -22,6 +22,9 @@ public class Extra : Powerup
             case ExtraDrop.Shield:
                 Shield();
                 break;
+            case ExtraDrop.Magnet:
+                Magnet();
+                break;
         }
     }
 
@@ -30,6 +33,7 @@ public class Extra : Powerup
     /// </summary>
     public void Sleep()
     {
+        GlobalSaveSystem.AddAchievementProgress("jess_knife", 1);
         foreach (Enemy e in EntityManager.Instance.enemies)
             e.OnHit(9999);
     }
@@ -41,7 +45,7 @@ public class Extra : Powerup
     {
         foreach (Enemy e in EntityManager.Instance.enemies)
             e.movement.AlterSpeed(1.5f);
-        PlayerManager.Instance.player.movement.AlterSpeed(.05f);
+        player.movement.AlterSpeed(.1f);
     }
 
     /// <summary>
@@ -49,13 +53,19 @@ public class Extra : Powerup
     /// </summary>
     public void Shield()
     {
-        PlayerManager.Instance.GrantShield();
+        player.stats.GrantShield();
+    }
+
+    public void Magnet()
+    {
+        player.stats.GrantMagnet();
     }
 
     public enum ExtraDrop
     {
         Sleep,
         Speed,
-        Shield
+        Shield,
+        Magnet
     }
 }

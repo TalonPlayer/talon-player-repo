@@ -6,7 +6,9 @@ using UnityEngine.UI;
 public class PlayerBody : MonoBehaviour
 {
     public Animator animator;
+    public GameObject currentCostume;
     public Transform body;
+    public Transform head;
     public Renderer bodyRenderer;
     public SpriteRenderer circle;
     public TrailRenderer trail;
@@ -40,9 +42,14 @@ public class PlayerBody : MonoBehaviour
         }
     }
 
+    public void SetCostume()
+    {
+        currentCostume = PlayerCostumeManager.Instance.ChangeCostume(player.info.costumeIndex, head, currentCostume);
+    }
+
     public void ChangeColor()
     {
-        Color color = PlayerManager.Instance.GetColor();
+        Color color = PlayerManager.Instance.GetColor(player.colorCode);
         circle.color = color;
         trail.material.color = color;
         bodyRenderer.material.color = color;

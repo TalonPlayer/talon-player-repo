@@ -24,4 +24,9 @@ public class Weapon : ScriptableObject
     public AudioClip shootSound;
     public AudioClip reloadSound;
     public RuntimeAnimatorController holdingAnim;
+
+    public virtual void Secondary()
+    {
+        // Nothing
+    }
 }

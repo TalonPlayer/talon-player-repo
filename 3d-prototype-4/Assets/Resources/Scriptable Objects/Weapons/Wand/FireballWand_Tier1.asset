@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1556f13af427b304391643db147ec183, type: 3}
+  m_Name: FireballWand_Tier1
+  m_EditorClassIdentifier: 
+  _name: Fireball Wand
+  id: ID_060
+  infiniteAmmo: 0
+  shots: 12
+  damage: 150
+  collateral: 0
+  reloadTime: 1
+  fireRate: 0.25
+  infiniteTime: 0
+  lifeTime: 20
+  model: {fileID: 2227323073328520907, guid: 4d51e75f85ec5a74d8b924cf075c08c5, type: 3}
+  projectilePrefab: {fileID: 1865133234345323389, guid: 280f7a3e93fedd64ba8c22e240da14bf, type: 3}
+  ammoColor: {r: 0.9528302, g: 0.7373312, b: 0.33708617, a: 0.8627451}
+  muzzleFlashPrefab: {fileID: 6160200343942436696, guid: 4ab60947388650a4cbf5ae3cafe13f8b, type: 3}
+  shootSound: {fileID: 8300000, guid: c699c6fd728daff468b97f7799ab86fd, type: 3}
+  reloadSound: {fileID: 8300000, guid: c699c6fd728daff468b97f7799ab86fd, type: 3}
+  holdingAnim: {fileID: 9100000, guid: 943461d1fd0eac44cbb16a2a0a5b2a65, type: 2}

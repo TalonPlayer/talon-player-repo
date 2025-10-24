@@ -11,6 +11,9 @@ public class UnitCombat : MonoBehaviour
     public bool isAttacking = false;
     public int damage;
     public float attackRange = 0.5f;
+    public bool isRanged = false;
+    public ParticleSystem muzzleFlash;
+    public Projectile projectilePrefab;
     private Unit unit;
     private Coroutine attackRoutine;
     void Awake()
@@ -38,20 +41,23 @@ public class UnitCombat : MonoBehaviour
     {
         attackRoutine = StartCoroutine(AttackRoutine());
     }
-
     public IEnumerator AttackRoutine()
     {
         canAttack = false;
         isAttacking = true;
         unit.movement.ToggleMovement(false);
-        unit.body.PlayRandom("Attack", unit.attackCount);
-        unit.body.Play("IsAttacking", true);
 
+        if (!isRanged)
+        {
+            unit.body.PlayRandom("Attack", unit.attackCount);
+            unit.body.Play("IsAttacking", true);
+        }
         yield return new WaitForSeconds(attackDelay);
 
-        Attack();
-
-
+        if (isRanged)
+            Shoot();
+        else
+            Attack();
         yield return new WaitForSeconds(attackTime);
         isAttacking = false;
         yield return new WaitForSeconds(cooldown);
@@ -59,13 +65,38 @@ public class UnitCombat : MonoBehaviour
         unit.body.Play("IsAttacking", false);
     }
 
+    private void Shoot()
+    {
+        RaycastHit hit;
+        Vector3 pos = muzzleFlash.transform.parent.position;
+        LayerMask layer = (1 << 13) | (1 << 6) | (1 << 8);
+        Debug.DrawRay(pos, transform.forward * attackRange, Color.cyan, 2f);
+        if (Physics.Raycast(pos, transform.forward, out hit, attackRange, layer))
+        {
+            if (!hit.collider.CompareTag("Enemy")) return;
+            Projectile proj = Instantiate(projectilePrefab,
+            muzzleFlash.transform.parent.position,
+            Quaternion.LookRotation(transform.forward),
+            PlayerManager.Instance.bulletFolder);
 
+            proj.Launch(transform.forward, damage, unit._name);
+            muzzleFlash.Play();
+
+            unit.body.PlayRandom("Attack", unit.attackCount);
+            unit.body.Play("IsAttacking", true);
+        }
+    }
     private void Attack()
     {
         if (unit.target == null) return;
 
         Enemy e = unit.target.GetComponent<Enemy>();
         if (e && e.isAlive)
+        {
+            //if (e.IsKilled(damage, unit.owner._name))
+                //GlobalSaveSystem.AddAchievementProgress(unit.owner._name + "_kills", 1);
             e.OnHit(damage);
+        }
+
     }
 }

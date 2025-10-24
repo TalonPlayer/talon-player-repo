@@ -7,26 +7,31 @@ public class PlayerHand : MonoBehaviour
     public Weapon hand;
     public Transform handObj;
     public LayerMask groundLayer;
-    public List<Projectile> projPool = new List<Projectile>();
     public int currentRounds;
-    public int poolSize;
-    public Transform cameraTransform;
     private bool isReloading = false;
+    private bool isFiring = false;
     private float fireCooldown = 0f;
     private ParticleSystem muzzleFlash;
     private Transform muzzlePoint;
     Coroutine reloadRoutine;
     Coroutine weaponLifeRoutine;
     Coroutine ammoRoutine;
-    private Player player;
+    public List<RotatingTurret> turrets;
     public AudioSource playerAudio;
     public Weapon defaultWeapon;
     public bool isHoldingAmmo = false;
+    private Player player;
+    private PlayerMovement movement;
+    private PlayerBody body;
+    private PlayerLobbyInfo stats;
+    public bool isRotating = false;
+    public Vector3 rot;
     void Awake()
     {
         player = GetComponent<Player>();
-
-        if (!cameraTransform && Camera.main) cameraTransform = Camera.main.transform;
+        movement = GetComponent<PlayerMovement>();
+        body = GetComponent<PlayerBody>();
+        stats = GetComponent<PlayerLobbyInfo>();
     }
     void Start()
     {
@@ -34,8 +39,12 @@ public class PlayerHand : MonoBehaviour
         Equip(hand);
 
         // Create an object pool
-        CreateProjectilePool();
         currentRounds = hand.shots;
+    }
+
+    public void IsFiring(bool firing)
+    {
+        isFiring = firing;
     }
 
     void Update()
@@ -49,53 +58,41 @@ public class PlayerHand : MonoBehaviour
             {
                 Equip(defaultWeapon);
             }
-            
-            // Is able to shoot when not reloading
-            if (!isReloading)
+
+            // Is able to shoot when not reloading or dashing
+            if (!isReloading || !movement.isDashing)
             {
-                if ((Input.GetMouseButton(0) || 0.5f <= Input.GetAxis("Shoot")) && currentRounds > 0 && fireCooldown <= 0f)
+                if (isFiring && currentRounds > 0 && fireCooldown <= 0f)
                 {
                     Shoot();
-                    player.body.Play("IsShooting", true);
+                    body.Play("IsShooting", true);
                 }
                 else
                 {
-                    player.body.Play("IsShooting", false);
+                    body.Play("IsShooting", false);
                 }
             }
         }
 
         else
         {
-            player.body.Play("IsShooting", false);
+            body.Play("IsShooting", false);
         }
     }
 
 
     void FixedUpdate()
     {
-        if (player.controllerDetected)
-            ControllerRotation();
-        else
-            LookAtMouse();
-    }
-
-    /// <summary>
-    /// Creates the object pool for projectiles
-    /// </summary>
-    void CreateProjectilePool()
-    {
-        poolSize = hand.shots * 2; // Increase pool size so that the player always has enough bullets
-
-        for (int i = 0; i < poolSize; i++)
+        if (!player.controllerDetected)
         {
-            Projectile p = Instantiate(hand.projectilePrefab, PlayerManager.Instance.bulletFolder);
-            p.gameObject.SetActive(false);
-            p.SetOwner(this);
-            projPool.Add(p);
+            LookAtMouse();
+        }
+        else if (player.controllerDetected)
+        {
+            if (isRotating) ControllerRotation(rot);
         }
     }
-    
+
     /// <summary>
     /// Shoot a projectile
     /// </summary>
@@ -107,15 +104,16 @@ public class PlayerHand : MonoBehaviour
         Vector3 shootDirection;
         shootDirection = GetAimDirection();
 
-        // Get a projectile thats available
-        Projectile proj = projPool[currentRounds - 1];
+        Projectile proj = Instantiate(hand.projectilePrefab,
+        muzzlePoint.position + shootDirection.normalized,
+        Quaternion.LookRotation(shootDirection),
+        PlayerManager.Instance.bulletFolder);
 
-        // Projectile comes out of the muzzle point of the gun
-        // The projectile also has the same rotation in the direction
-        proj.transform.position = muzzlePoint.position + shootDirection.normalized; // offset forward
-        proj.transform.rotation = Quaternion.LookRotation(shootDirection);
-        proj.gameObject.SetActive(true);
-        proj.Launch(shootDirection);
+        proj.Launch(shootDirection, hand.damage, player._name);
+        proj.maxCollateral = hand.collateral;
+
+        foreach (RotatingTurret turret in turrets)
+            turret.Shoot(hand.projectilePrefab, shootDirection, hand.damage, hand.collateral);
 
         playerAudio.PlayOneShot(hand.shootSound, Random.Range(.6f, 1.4f));
 
@@ -123,7 +121,7 @@ public class PlayerHand : MonoBehaviour
 
         // Update the ammo bar if the gun doesn't has infinite ammo
         if (!hand.infiniteAmmo)
-            HudManager.Instance.UpdateBar(1, currentRounds, hand.shots);
+            HudManager.Instance.UpdateBar(player.playerIndex, 1, currentRounds, hand.shots);
 
         // If player runs out of bullets, reload unless infinite ammo
         if (currentRounds <= 0)
@@ -167,7 +165,7 @@ public class PlayerHand : MonoBehaviour
             dir = (enemyPos - muzzlePoint.position).normalized;
         else
             dir.y = 0f;
-            
+
         return dir;
     }
 
@@ -181,12 +179,6 @@ public class PlayerHand : MonoBehaviour
         hand = newWeapon;
         currentRounds = hand.shots;
         muzzlePoint = null;
-        foreach (Projectile p in projPool)
-            Destroy(p.gameObject);
-
-        projPool.Clear();
-
-        CreateProjectilePool();
 
         if (hand.model != null)
         {
@@ -201,7 +193,7 @@ public class PlayerHand : MonoBehaviour
 
             muzzlePoint = newModel.transform.GetChild(0);
 
-            player.body.animator.runtimeAnimatorController = hand.holdingAnim;
+            body.animator.runtimeAnimatorController = hand.holdingAnim;
         }
 
         if (hand.muzzleFlashPrefab != null && muzzlePoint != null)
@@ -210,23 +202,28 @@ public class PlayerHand : MonoBehaviour
             muzzleFlash.transform.position = muzzlePoint.transform.position;
             muzzleFlash.transform.rotation = muzzlePoint.transform.rotation;
         }
-        HudManager.Instance.UpdateBarColor(1, hand.ammoColor);
+        HudManager.Instance.UpdateBarColor(player.playerIndex, 1, hand.ammoColor);
 
         if (hand.infiniteTime)
-            HudManager.Instance.UpdateBarColor(2, Color.black);
+            HudManager.Instance.UpdateBarColor(player.playerIndex, 2, Color.black);
         else
         {
-            HudManager.Instance.UpdateBarColor(2, Color.white);
+            HudManager.Instance.UpdateBarColor(player.playerIndex, 2, Color.white);
 
             if (weaponLifeRoutine != null)
                 StopCoroutine(weaponLifeRoutine);
             weaponLifeRoutine = StartCoroutine(WeaponTimer(hand.lifeTime));
         }
 
-        HudManager.Instance.UpdateBar(1, currentRounds, hand.shots);
+        HudManager.Instance.UpdateBar(player.playerIndex, 1, currentRounds, hand.shots);
 
-        player.body.Play("Reload");
+        body.Play("Reload");
         playerAudio.PlayOneShot(hand.reloadSound, Random.Range(.8f, 1.2f));
+
+        if (stats.isRampage && newWeapon._name != "Sword")
+        {
+            player.stats.CancelRampage();
+        }
     }
 
     /// <summary>
@@ -241,11 +238,11 @@ public class PlayerHand : MonoBehaviour
         while (elapsed > 0f)
         {
             if (!isHoldingAmmo) elapsed -= Time.deltaTime;
-            HudManager.Instance.UpdateBar(2, elapsed, duration);
+            HudManager.Instance.UpdateBar(player.playerIndex, 2, elapsed, duration);
             yield return null;
         }
 
-        Weapon w = WeaponLibrary.Instance.Downgrade(hand);
+        Weapon w = WeaponLibrary.Instance.Downgrade(player, hand);
         Equip(w);
     }
 
@@ -265,12 +262,12 @@ public class PlayerHand : MonoBehaviour
     IEnumerator StartReloading()
     {
         isReloading = true;
-        player.body.Play("Reload");
+        body.Play("Reload");
         playerAudio.PlayOneShot(hand.reloadSound, Random.Range(.8f, 1.2f));
         yield return new WaitForSeconds(hand.reloadTime);
         isReloading = false;
         currentRounds = hand.shots;
-        HudManager.Instance.UpdateBar(1, currentRounds, hand.shots);
+        HudManager.Instance.UpdateBar(player.playerIndex, 1, currentRounds, hand.shots);
     }
 
     /// <summary>
@@ -289,37 +286,39 @@ public class PlayerHand : MonoBehaviour
         }
     }
 
+    public void JoystickRotation(Vector2 input)
+    {
+        isRotating = input.magnitude > .00001f;
+        rot = input;
+    }
+
     /// <summary>
     /// Player rotates based off of controller usage
     /// </summary>
-    public void ControllerRotation()
+    public void ControllerRotation(Vector2 input)
     {
-        float x = Input.GetAxis("RightStickX");
-        float y = Input.GetAxis("RightStickY");
-
-        // deadzone
-        Vector2 v = new Vector2(x, y);
-        if (v.sqrMagnitude < 0.15f * 0.15f) return;
-
-        v = new Vector2(
-            v.x * Mathf.Sqrt(1f - 0.5f * v.y * v.y),
-            v.y * Mathf.Sqrt(1f - 0.5f * v.x * v.x)
-        );
-
-        // build world-space look direction (camera-relative)
+        // read input you stored earlier
+        Vector3 targetDirection = new Vector3(input.x, 0f, input.y);
         Vector3 f = Vector3.forward;
         Vector3 r = Vector3.right;
+        Transform cameraTransform = Camera.main.transform;
         if (cameraTransform)
         {
             f = cameraTransform.forward; f.y = 0; f.Normalize();
             r = cameraTransform.right; r.y = 0; r.Normalize();
         }
+        targetDirection = (r * targetDirection.x) + (f * targetDirection.z);
+        // The step size is equal to speed times frame time.
+        float singleStep = 180f * Time.deltaTime;
 
-        Vector3 lookDir = (r * v.x + f * v.y);
-        if (lookDir.sqrMagnitude < 1e-6f) return;
+        // Rotate the forward vector towards the target direction by one step
+        Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, singleStep, 0.0f);
 
-        Quaternion target = Quaternion.LookRotation(lookDir);
-        transform.rotation = Quaternion.Slerp(transform.rotation, target, 20f * Time.deltaTime);
+        // Draw a ray pointing at our target in
+        Debug.DrawRay(transform.position, newDirection, Color.red);
+
+        // Calculate a rotation a step closer to the target and applies rotation to this object
+        transform.rotation = Quaternion.LookRotation(newDirection);
     }
 
     /// <summary>
@@ -334,7 +333,7 @@ public class PlayerHand : MonoBehaviour
                 StopCoroutine(ammoRoutine);
             }
 
-            Weapon w = WeaponLibrary.Instance.Upgrade(hand);
+            Weapon w = WeaponLibrary.Instance.Upgrade(player, hand);
 
             Equip(w);
         }

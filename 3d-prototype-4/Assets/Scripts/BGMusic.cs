@@ -25,7 +25,7 @@ public class BGMusic : MonoBehaviour
 
     }
 
-    void StartDelay()
+    protected virtual void StartDelay()
     {
         goalTime = AudioSettings.dspTime + 0.1f;
         SetCurrentClip(introClip);
@@ -33,14 +33,13 @@ public class BGMusic : MonoBehaviour
         enable = true;
     }
 
-    void Update()
+    protected virtual void Update()
     {
-        if (enable && AudioSettings.dspTime > goalTime - 1) PlayScheduledClip();
+        if (enable && AudioSettings.dspTime > goalTime - .25) PlayScheduledClip();
     }
 
-    private void PlayScheduledClip()
+    protected void PlayScheduledClip()
     {
-
         audioSources[audioToggle].clip = currentClip;
         audioSources[audioToggle].PlayScheduled(goalTime);
 
@@ -55,7 +54,7 @@ public class BGMusic : MonoBehaviour
     }
 
 
-    public void SetCurrentClip(AudioClip clip)
+    public virtual void SetCurrentClip(AudioClip clip)
     {
         currentClip = clip;
     }

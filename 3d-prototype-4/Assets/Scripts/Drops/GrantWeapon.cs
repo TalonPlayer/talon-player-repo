@@ -5,18 +5,18 @@ using UnityEngine;
 public class GrantWeapon : Powerup
 {
     public Weapon weapon;
-    public override void OnPickUp()
+    public override void OnPickUp(Player player)
     {
-        base.OnPickUp();
-
+        base.OnPickUp(player);
+        Weapon newWeapon = WeaponLibrary.Instance.ReplaceWeapon(weapon);
         // Gives the player a weapon, if the player is currently holding the same weapon, upgrade it
-        if (weapon._name == PlayerManager.Instance.player.hand.hand._name)
+        if (newWeapon._name == player.hand.hand._name)
         {
-            Weapon w = WeaponLibrary.Instance.Upgrade(PlayerManager.Instance.player.hand.hand);
-            PlayerManager.Instance.player.hand.Equip(w);
+            Weapon w = WeaponLibrary.Instance.Upgrade(player, player.hand.hand);
+            player.hand.Equip(w);
         }
         else
-            PlayerManager.Instance.player.hand.Equip(weapon);
+            player.hand.Equip(newWeapon);
 
     }
 }

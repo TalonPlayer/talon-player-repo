@@ -592,8 +592,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _name: Ankle Biter
-  health: 200
-  damage: 75
+  health: 750
+  damage: 125
   isAlive: 1
   onDeath:
     m_PersistentCalls:
@@ -710,8 +710,11 @@ MonoBehaviour:
   cooldown: 0.5
   canAttack: 1
   isAttacking: 0
-  damage: 5
+  damage: 50
   attackRange: 1
+  isRanged: 0
+  muzzleFlash: {fileID: 0}
+  projectilePrefab: {fileID: 0}
 --- !u!114 &4015322732678209086
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -726,9 +729,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agent: {fileID: 3726648768081418376}
   facingThreshold: 0.3
-  minSpeed: 3
-  maxSpeed: 5
+  minSpeed: 6
+  maxSpeed: 8
   rotationSpeed: 5
+  rotatesToTarget: 0
 --- !u!195 &3726648768081418376
 NavMeshAgent:
   m_ObjectHideFlags: 0

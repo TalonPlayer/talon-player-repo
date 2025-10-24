@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
         Instance = this;
 
         // Saves if the tutorial is turned off or on during play
-        bool tutorialOn = PlayerPrefs.GetInt("ToggleTutorial", 0) == 0;
+        bool tutorialOn = PlayerPrefs.GetInt("ToggleTutorial", 0) == 3;
         tutorialToggle.isOn = tutorialOn;
         tutorialToggle.onValueChanged.AddListener(SetTutorial);
     }
@@ -23,9 +23,13 @@ public class GameManager : MonoBehaviour
     {
         // If not debugging, send the player to the first world
         if (!debugMode)
-            SceneWorldManager.Instance.TransferToWorld(0);
+        {
+            GlobalSaveSystem.trackAchivement = true;
+            SceneWorldManager.Instance.TransferToWorld(5);
+        }
         else // Debug mode is on
         {
+            GlobalSaveSystem.trackAchivement = false;
             HudManager.Instance.ToggleBlackScreen(false);
         }
     }

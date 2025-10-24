@@ -19,7 +19,7 @@ public class UnitBody : MonoBehaviour
     }
     void Start()
     {
-        ChangeColor();
+        // ChangeColor();
     }
     public void Play(string para, float val)
     {
@@ -77,6 +77,19 @@ public class UnitBody : MonoBehaviour
             r.isKinematic = false;
         }
     }
+
+    public void RagDoll(Transform body)
+    {
+        if (animator) animator.enabled = false;
+        Rigidbody[] rigidbodies = body.GetComponentsInChildren<Rigidbody>();
+        body.transform.parent = EntityManager.Instance.ragdollFolder;
+        unit.rb.isKinematic = false;
+        foreach (Rigidbody r in rigidbodies)
+        {
+            r.isKinematic = false;
+        }
+    }
+
 
     public void DelayDropRandom(float time)
     {
@@ -149,12 +162,15 @@ public class UnitBody : MonoBehaviour
 
     public void ChangeColor()
     {
-        Color color = PlayerManager.Instance.GetColor();
+        Color color = PlayerManager.Instance.GetColor(unit.owner.colorCode);
 
-        circle.color = color;
-        trail.material.color = color;
+        if (circle != null) circle.color = color;
 
         if (!noColorChange) bodyRenderer.material.color = color;
+
+        if (trail == null) return;
+
+        trail.material.color = color;
 
         // Modify the gradient on the TrailRenderer
         Gradient gradient = trail.colorGradient;

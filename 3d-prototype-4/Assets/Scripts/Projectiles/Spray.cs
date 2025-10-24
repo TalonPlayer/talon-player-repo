@@ -6,9 +6,9 @@ public class Spray : Projectile
     public int fragmentCount = 5;
     public float spreadAngle = 15f;
 
-    public override void Launch(Vector3 dir)
+    public override void Launch(Vector3 dir, int dmg, string name = "None")
     {
-        base.Launch(dir);
+        base.Launch(dir, dmg, name);
         SpawnFragments();
     }
 
@@ -30,9 +30,9 @@ public class Spray : Projectile
             // Instantiate fragment
             SprayFragment frag = Instantiate(fragmentPrefab, transform.position, Quaternion.LookRotation(sprayDir), PlayerManager.Instance.bulletFolder);
 
-            frag.Launch(sprayDir);
+            frag.Launch(sprayDir, damage, owner);
             frag.collateral = collateral;
-            frag.damage = owner.hand.damage;
+            frag.damage = damage;
         }
     }
 }

@@ -47,6 +47,7 @@ public class DropManager : MonoBehaviour
     }
     void Start()
     {
+        batchAmount += PlayerManager.Instance.numOfPlayers;
         StartRound();
     }
 

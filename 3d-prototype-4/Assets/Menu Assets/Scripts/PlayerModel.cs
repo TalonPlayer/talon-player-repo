@@ -6,18 +6,26 @@ public class PlayerModel : MonoBehaviour
 {
     [SerializeField] private Renderer obj;
     [SerializeField] private Animator animator;
+    public Transform head;
+    public GameObject costume;
 
     public void ChangeColor(string colorCode)
     {
         Color color;
+        var mat = obj.material;
         if (ColorUtility.TryParseHtmlString(colorCode, out color))
         {
-            obj.material.color = color;
+            mat.color = color; 
         }
         else
         {
             Debug.LogWarning("Invalid Hex Code");
         }
+    }
+
+    public void ChangeOutfit(int index)
+    {
+        costume = PlayerCostumeManager.Instance.ChangeCostume(index, head, costume);
     }
 
     public void SetNormal()

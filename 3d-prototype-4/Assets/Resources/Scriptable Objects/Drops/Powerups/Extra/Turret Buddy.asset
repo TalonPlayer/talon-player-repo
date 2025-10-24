@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11c6d2e0f5f36064586ed38bdaf75071, type: 3}
+  m_Name: Turret Buddy
+  m_EditorClassIdentifier: 
+  _name: Turret Buddy
+  rarity: 50
+  sparklePrefab: {fileID: 7972145161350723157, guid: 56ad7eab6ad429c449c5191a5ad8bc2c, type: 3}
+  model: {fileID: 4602129656790564670, guid: d13aa76bcf8e0344c85ba0d329e42682, type: 3}
+  pickUpSound: {fileID: 8300000, guid: fbdccc1176476d6449ee2b4f848ce47d, type: 3}
+  spawnSound: {fileID: 8300000, guid: 774862505db2a6149b6056f962e4e618, type: 3}
+  loopSound: {fileID: 5418912909068469172, guid: d5539ff63a86a6342bbbce0886935d30, type: 3}
+  turretPrefab: {fileID: 5982140055692752193, guid: 15d27d80f2702eb4eae60fcaaf6ac400, type: 3}

@@ -1,0 +1,368 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3680293790535221301
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5226318428887631943}
+  - component: {fileID: 1723003757735477289}
+  - component: {fileID: 1902834379090850867}
+  - component: {fileID: 2134211338315602869}
+  - component: {fileID: 5518139832339662525}
+  - component: {fileID: 3960298475185605110}
+  - component: {fileID: 3541937593447246255}
+  - component: {fileID: 3645923941841074462}
+  - component: {fileID: 2107968447862496052}
+  - component: {fileID: 8919186965959596051}
+  m_Layer: 6
+  m_Name: Human Soldier
+  m_TagString: Human
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5226318428887631943
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3680293790535221301}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0.7637115, z: 0, w: 0.6455577}
+  m_LocalPosition: {x: -69.95, y: -2.42, z: 8.31}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 99.585, z: 0}
+--- !u!114 &1723003757735477289
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3680293790535221301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 974b49f5684ca8840812cd7d9e3a14ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  entityName: 
+  entityID: 
+  group:
+    groupName: 
+    leader: {fileID: 0}
+    members: []
+    currentObjective: {fileID: 0}
+    groupImage: {fileID: 0}
+    target: {fileID: 0}
+  friends: []
+  isAlive: 1
+  threatLevel: 50
+  speed: 0
+  stamina: 0
+  brain: {fileID: 1902834379090850867}
+  movement: {fileID: 2134211338315602869}
+  body: {fileID: 0}
+  combat: {fileID: 5518139832339662525}
+  rb: {fileID: 2107968447862496052}
+  cc: {fileID: 0}
+  outline: {fileID: 8919186965959596051}
+  onDeath:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1902834379090850867}
+        m_TargetAssemblyTypeName: EntityBrain, Assembly-CSharp
+        m_MethodName: OnDeath
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2134211338315602869}
+        m_TargetAssemblyTypeName: EntityMovement, Assembly-CSharp
+        m_MethodName: OnDeath
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: EntityBody, Assembly-CSharp
+        m_MethodName: RagDoll
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: EntityBody, Assembly-CSharp
+        m_MethodName: OnDeath
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0.25
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: EntityBody, Assembly-CSharp
+        m_MethodName: DelayDropAll
+        m_Mode: 4
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1723003757735477289}
+        m_TargetAssemblyTypeName: Entity, Assembly-CSharp
+        m_MethodName: DelayDestroy
+        m_Mode: 4
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0.25
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &1902834379090850867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3680293790535221301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34e1e90306f445f4c943bdad49ac3565, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  visibleEnemies: []
+  nearbyAllies: []
+  target: {fileID: 0}
+  facingTarget: {fileID: 0}
+  closestSafeZone: {fileID: 0}
+  objectiveTarget: {fileID: 0}
+  isHuman: 1
+  isLeader: 0
+  hasGroup: 0
+  hasFriends: 0
+  inTempGroup: 0
+  isAggro: 0
+  atObjective: 0
+  knowsObjective: 1
+  isDefending: 0
+  isFleeing: 0
+  inDanger: 0
+  isVigilant: 0
+  isReady: 0
+  isCharging: 0
+  inSafeZone: 0
+  inFormation: 0
+  isWandering: 0
+  situation: 0
+  fleeThreshold: 175
+  expLvl: 0
+  roleType: 1
+  objType: 0
+  socialType: 0
+  behaviorType: 0
+  scoutLookInterval: {x: 0.8, y: 2}
+  clan:
+    groupName: 
+    leader: {fileID: 0}
+    members: []
+    currentObjective: {fileID: 0}
+    groupImage: {fileID: 0}
+    target: {fileID: 0}
+--- !u!114 &2134211338315602869
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3680293790535221301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a75258b8a393e88419467793f36ff152, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  agent: {fileID: 3960298475185605110}
+  targetPos: {x: 0, y: 0, z: 0}
+  randomDirection: {x: 0, y: 0, z: 0}
+  isMoving: 1
+  isAiming: 0
+  blocked: 0
+  moveType: 1
+  walkSpeed: 8
+  jogSpeed: 10
+  sprintSpeed: 13
+  panicSpeed: 15
+  speedMultiplier: 0
+  fleeDistance: 5
+  strafeSide: 0
+--- !u!114 &5518139832339662525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3680293790535221301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72932c9c3495fc84ab61f28d4367ce18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackRange: 15
+  attackDelay: 0
+  attackTimeMin: 0.25
+  attackTimeMax: 1
+  isAttacking: 0
+  isThrowing: 0
+  canAttack: 1
+  weapon: {fileID: 7782242105510038654, guid: 0bd232bc9b5cb1f438dea3809912d18b, type: 3}
+  throwablePrefabs:
+  - {fileID: 1471346260587916539, guid: b77a84ebb2c57804b9165dedebb537ee, type: 3}
+  - {fileID: 5954716756910897831, guid: e80d7c1b28d2438488cf51408f79e01b, type: 3}
+  - {fileID: 2869372882796599597, guid: 0736cbb235851f344af95d9c492788c9, type: 3}
+  maxAmmoCount: 1
+  currentAmmoCount: 0
+  throwableCount: 3
+  maxThrowableCount: 3
+  currentMags: 3
+  maxMagCount: 3
+  isReloading: 0
+  hasAmmo: 1
+  reloadTime: 1
+  body: {fileID: 0}
+--- !u!195 &3960298475185605110
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3680293790535221301}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.35
+  m_Speed: 0
+  m_Acceleration: 45
+  avoidancePriority: 99
+  m_AngularSpeed: 1080
+  m_StoppingDistance: 0.25
+  m_AutoTraverseOffMeshLink: 0
+  m_AutoBraking: 0
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!136 &3541937593447246255
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3680293790535221301}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 67648
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 63410
+  m_LayerOverridePriority: 1
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.25
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 1, z: 0}
+--- !u!135 &3645923941841074462
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3680293790535221301}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 130999
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 45
+  m_Center: {x: 0, y: 1, z: 0}
+--- !u!54 &2107968447862496052
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3680293790535221301}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 1
+  m_Constraints: 126
+  m_CollisionDetection: 1
+--- !u!114 &8919186965959596051
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3680293790535221301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4538a66bbffe41e498597b2fcad5da5e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineLayer: 2
+  renderers: []
+  originalLayerMask: 0

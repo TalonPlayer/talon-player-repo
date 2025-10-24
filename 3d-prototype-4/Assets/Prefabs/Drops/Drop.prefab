@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8574207995911985642}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Model Holder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44,9 +44,9 @@ GameObject:
   - component: {fileID: 6945879800196066234}
   - component: {fileID: 8911128333098234134}
   - component: {fileID: 5514958644356251604}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Drop
-  m_TagString: Untagged
+  m_TagString: Drop
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -80,7 +80,7 @@ SphereCollider:
     m_Bits: 128
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 32639
+    m_Bits: 32638
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
@@ -104,6 +104,9 @@ MonoBehaviour:
   modelObj: {fileID: 1718241687051824906}
   rotateSpeed: 0
   audioSource: {fileID: 8911128333098234134}
+  isMoving: 0
+  moveSpeed: 0.5
+  targetLocation: {fileID: 0}
 --- !u!82 &8911128333098234134
 AudioSource:
   m_ObjectHideFlags: 0

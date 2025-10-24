@@ -76,11 +76,18 @@ public class EnemyCombat : MonoBehaviour
         if (u)
             if (u.isAlive)
                 u.OnHit(enemy.damage);
+                
         if (p)
         {
             float distance = (transform.position - enemy.target.position).magnitude;
-            if (PlayerManager.Instance.player.isAlive && !PlayerManager.Instance.player.isImmune && distance < enemy.movement.attackRange + 1f)
-            PlayerManager.Instance.KillPlayer();
+            
+            if (p.isAlive &&
+            !p.stats.isImmune &&
+            distance < enemy.movement.attackRange + 1f &&
+            enemy.movement.IsFacingTarget())
+            {
+                p.KillPlayer();
+            }
         }
             
             

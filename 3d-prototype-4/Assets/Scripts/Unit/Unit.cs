@@ -6,8 +6,11 @@ public class Unit : Entity
 {
     // Unit logic works similarly to Enemy Logic
     public Transform target;
+    public Player owner;
+    private Enemy targetedEnemy;
     public bool isAggro;
     public bool isSpawning;
+    public bool noTransfer = false;
     private CapsuleCollider cc;
     public Rigidbody rb;
     public LayerMask deathLayer;
@@ -70,6 +73,9 @@ public class Unit : Entity
         body.Play("RandomFloat", Random.Range(.8f, 1.5f));
         isAggro = false;
 
+
+        GlobalSaveSystem.AddAchievementProgress("spawn_" + _name, -1);
+
         // cc.excludeLayers += deathLayer;
 
         onDeath?.Invoke();
@@ -122,13 +128,25 @@ public class Unit : Entity
 
         foreach (Enemy e in EntityManager.Instance.enemies)
         {
-            if (e == null || !e.isAlive) continue;
+            if (e == null || !e.isAlive || e.isTargeted) continue;
 
             float distSqr = (e.transform.position - currentPos).sqrMagnitude;
             if (distSqr < closestDistanceSqr)
             {
                 closestDistanceSqr = distSqr;
                 closest = e.transform;
+
+                if (targetedEnemy != null)
+                {
+                    if (targetedEnemy != e)
+                    {
+                        targetedEnemy.isTargeted = false;
+                        targetedEnemy = e;
+                    }
+                }
+                else
+                    targetedEnemy = e;
+
             }
         }
 

@@ -15,27 +15,31 @@ public class SlaughterhouseWorld : MonoBehaviour
     public int health = 50;
     public int minSpeed = 12;
     public int maxSpeed = 14;
-    private float initialSpeed;
-    private int numOfNukes;
-    private Player player;
+    private List<float> initialSpeed;
+    private List<int> numOfNukes;
+    private List<int> numOfDashes;
     private bool active = true;
     Coroutine spawnRoutine;
     void Start()
     {
-        player = PlayerManager.Instance.player;
+        foreach (Player player in PlayerManager.Instance.players)
+        {
+            // Save some stats before the player enters
+            // So if they fail, they get it back
+            initialSpeed.Add(player.movement.maxSpeed);
+            WorldManager.Instance.ChangePlayerSpeed(player, 9f);
 
-        // Save some stats before the player enters
-        // So if they fail, they get it back
-        initialSpeed = player.movement.maxSpeed;
-        numOfNukes = PlayerManager.Instance.nukes;
-        PlayerManager.Instance.nukes = 0;
-        HudManager.Instance.UpdateText(2, 0);
-        for (int i = 0; i < numOfNukes; i++)
-            rewards.Add(nuke);
+
+            numOfNukes.Add(player.stats.nukes);
+            numOfDashes.Add(player.stats.dashes);
+            player.stats.nukes = 0;
+            player.stats.dashes = 2;
+            HudManager.Instance.UpdateText(player.playerIndex, 2, 0);
+        }
     }
     void Update()
     {
-        if (!player.isAlive && active)
+        if (!PlayerManager.Instance.AllPlayersAlive() && active)
         {
             active = false;
             Fail();
@@ -102,17 +106,20 @@ public class SlaughterhouseWorld : MonoBehaviour
     /// <returns></returns>
     IEnumerator Rewards()
     {
-        Transform player = PlayerManager.Instance.player.transform;
-        PlayerManager.Instance.multiplier += 3;
-        Vector3 pos = player.position;
-        pos.y += 20f;
-        foreach (Drop drop in rewards)
+        foreach (Player player in PlayerManager.Instance.players)
         {
-            DropObject obj = DropManager.Instance.SpawnDropObject(drop, pos);
-            obj.MoveTo(player);
-            obj.moveSpeed = 2.5f;
-            yield return new WaitForSeconds(.15f);
+            player.stats.multiplier += 3;
+            Vector3 pos = player.transform.position;
+            pos.y += 20f;
+            foreach (Drop drop in rewards)
+            {
+                DropObject obj = DropManager.Instance.SpawnDropObject(drop, pos);
+                obj.MoveTo(player.transform);
+                obj.moveSpeed = 2.5f;
+                yield return new WaitForSeconds(.15f);
+            }
         }
+
     }
 
     /// <summary>
@@ -121,7 +128,7 @@ public class SlaughterhouseWorld : MonoBehaviour
     public void Complete()
     {
         HudManager.Instance.AdvanceLevel("Slaughterhouse");
-        KillAllEnemies();
+        EntityManager.Instance.KillAllEnemies();
         animator.enabled = false;
         PlayerManager.Instance.activeRedRoom = false;
     }
@@ -131,7 +138,8 @@ public class SlaughterhouseWorld : MonoBehaviour
     /// </summary>
     public void KillAllEnemies()
     {
-        EntityManager.Instance.KillAllEnemies();
+        foreach (Enemy e in EntityManager.Instance.enemies)
+            e.OnHit(500);
     }
 
     /// <summary>
@@ -143,11 +151,18 @@ public class SlaughterhouseWorld : MonoBehaviour
         animator.enabled = false;
         HudManager.Instance.AdvanceLevel("hide");
         StopSong();
-        KillAllEnemies();
-        PlayerManager.Instance.nukes = numOfNukes;
-        HudManager.Instance.UpdateText(2, numOfNukes);
-        player.movement.maxSpeed = initialSpeed;
-        player.movement.moveSpeed = initialSpeed;
+        WorldManager.Instance.onFinish.Invoke();
+
+        for (int i = 0; i < PlayerManager.Instance.players.Count; i++)
+        {
+            Player player = PlayerManager.Instance.players[i];
+            player.stats.dashes = numOfDashes[i];
+            HudManager.Instance.UpdateText(player.playerIndex, 1, numOfDashes[i]);
+            player.stats.nukes = numOfNukes[i];
+            HudManager.Instance.UpdateText(player.playerIndex, 2, numOfNukes[i]);
+            WorldManager.Instance.ChangePlayerSpeed(player, initialSpeed[i]);
+        }
+
     }
 
     public void StopSong()

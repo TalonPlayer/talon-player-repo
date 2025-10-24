@@ -6,21 +6,21 @@ using UnityEngine;
 public class GrantStat : Powerup
 {
     public Type type;
-    public override void OnPickUp()
+    public override void OnPickUp(Player player)
     {
-        base.OnPickUp();
+        base.OnPickUp(player);
 
         // Gives the player the type of stat
         switch (type)
         {
             case Type.life:
-                PlayerManager.Instance.GrantLife();
+                player.stats.GrantLife();
                 break;
             case Type.dash:
-                PlayerManager.Instance.GrantDash();
+                player.stats.GrantDash();
                 break;
             case Type.nuke:
-                PlayerManager.Instance.GrantNuke();
+                player.stats.GrantNuke();
                 break;
         }
     }

@@ -5,12 +5,12 @@ using UnityEngine;
 public class AnimatedDrop : Powerup
 {
     public Animator animator;
-    public override void OnPickUp()
+    public override void OnPickUp(Player player)
     {
-        base.OnPickUp();
+        base.OnPickUp(player);
 
         // This drop plays an animation after it gets picked up
-        Animator a = Instantiate(animator, PlayerManager.Instance.player.transform.position, PlayerManager.Instance.player.transform.rotation);
+        Animator a = Instantiate(animator, player.transform.position, player.transform.rotation);
         a.SetTrigger("Play");
     }
 }

@@ -553,7 +553,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _name: Pirate
   health: 500
-  damage: 25
+  damage: 125
   isAlive: 1
   onDeath:
     m_PersistentCalls:
@@ -621,6 +621,7 @@ MonoBehaviour:
   target: {fileID: 0}
   isAggro: 0
   isSpawning: 0
+  noTransfer: 0
   rb: {fileID: 3932651028253238552}
   deathLayer:
     serializedVersion: 2
@@ -670,8 +671,11 @@ MonoBehaviour:
   cooldown: 0.15
   canAttack: 1
   isAttacking: 0
-  damage: 25
+  damage: 100
   attackRange: 1
+  isRanged: 0
+  muzzleFlash: {fileID: 0}
+  projectilePrefab: {fileID: 0}
 --- !u!114 &7816701542318519550
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -686,9 +690,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agent: {fileID: 8121726040892530894}
   facingThreshold: 0.6
-  minSpeed: 8
-  maxSpeed: 12
+  minSpeed: 5
+  maxSpeed: 16
   rotationSpeed: 6
+  rotatesToTarget: 0
 --- !u!195 &8121726040892530894
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -698,7 +703,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 5900583374926423924}
   m_Enabled: 1
   m_AgentTypeID: -1372625422
-  m_Radius: 0.3
+  m_Radius: 0.35
   m_Speed: 5
   m_Acceleration: 90
   avoidancePriority: 50
@@ -1093,6 +1098,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2029273008420758760}
     m_Modifications:
+    - target: {fileID: 1167691300310922889, guid: 2cfcb5db305d40b4e8a62bbd6ec6d14e, type: 3}
+      propertyPath: EmissionModule.m_Bursts.Array.data[0].countCurve.scalar
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1167691300310922889, guid: 2cfcb5db305d40b4e8a62bbd6ec6d14e, type: 3}
+      propertyPath: EmissionModule.m_Bursts.Array.data[1].countCurve.scalar
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2367434746162275241, guid: 2cfcb5db305d40b4e8a62bbd6ec6d14e, type: 3}
       propertyPath: m_Name
       value: Blood Particles
@@ -1163,11 +1176,23 @@ PrefabInstance:
     - target: {fileID: 1565490878320419069, guid: c2339309170eccc4fbc08f7212d2884e, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 3eb822044eb300f4eb05ad00e8bac6ee, type: 2}
+      objectReference: {fileID: 2100000, guid: 5fb73d9792ebf6b45b403efe3a146513, type: 2}
     - target: {fileID: 1565490878320419069, guid: c2339309170eccc4fbc08f7212d2884e, type: 3}
       propertyPath: m_Materials.Array.data[1]
       value: 
-      objectReference: {fileID: 2100000, guid: c63b904a687a8394ca9da7f7e6a21782, type: 2}
+      objectReference: {fileID: 2100000, guid: 4c31fea70456b5e45a6337c236a118f7, type: 2}
+    - target: {fileID: 1565490878320419069, guid: c2339309170eccc4fbc08f7212d2884e, type: 3}
+      propertyPath: m_Materials.Array.data[2]
+      value: 
+      objectReference: {fileID: 2100000, guid: 4c31fea70456b5e45a6337c236a118f7, type: 2}
+    - target: {fileID: 1565490878320419069, guid: c2339309170eccc4fbc08f7212d2884e, type: 3}
+      propertyPath: m_Materials.Array.data[3]
+      value: 
+      objectReference: {fileID: 2100000, guid: 4c31fea70456b5e45a6337c236a118f7, type: 2}
+    - target: {fileID: 1565490878320419069, guid: c2339309170eccc4fbc08f7212d2884e, type: 3}
+      propertyPath: m_Materials.Array.data[4]
+      value: 
+      objectReference: {fileID: 2100000, guid: 4c31fea70456b5e45a6337c236a118f7, type: 2}
     - target: {fileID: 1808912017832384867, guid: c2339309170eccc4fbc08f7212d2884e, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.0072599635

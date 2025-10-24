@@ -18,11 +18,12 @@ public class PlayerData
     public int attempt;
     public string world;
     public string colorCode;
+    public int costumeIndex;
 
     public float masterVolume;
     public float sfxVolume;
     public float musicVolume;
-
+    public PlayerData(){}
     public PlayerData(PlayerInfo player)
     {
         _name = player._name;
@@ -37,12 +38,14 @@ public class PlayerData
         attempt = player.attempt;
         world = player.world;
         colorCode = player.colorCode;
+        costumeIndex = player.costumeIndex;
     }
 
-    public PlayerData(string name, string _colorCode)
+    public PlayerData(string name, string _colorCode, int _costumeIndex)
     {
         _name = name;
         colorCode = _colorCode;
+        costumeIndex = _costumeIndex;
         highScore = 0;
         attempt = 0;
         highestWorld = -1;

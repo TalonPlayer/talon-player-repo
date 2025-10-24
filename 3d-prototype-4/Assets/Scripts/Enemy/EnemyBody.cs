@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.Rendering;
 public class EnemyBody : MonoBehaviour
 {
     public Animator animator;
@@ -9,12 +9,44 @@ public class EnemyBody : MonoBehaviour
     public bool itemDropGravity = true;
     private Enemy enemy;
     public List<GameObject> heldItems;
+    public SkinnedMeshRenderer smr;
     void Awake()
     {
         enemy = GetComponent<Enemy>();
     }
     void Start()
     {
+    }
+    public void DelayOnDeath(float time)
+    {
+        Invoke(nameof(OnDeath), time);
+    }
+    public void OnDeath()
+    {
+        Material mat = smr.material;
+        mat.SetFloat("_Surface", 1f);
+        mat.SetFloat("_AlphaClip", 0f);
+        mat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+        mat.DisableKeyword("_ALPHATEST_ON");
+        mat.SetFloat("_Blend", 1f);
+        mat.SetInt("_SrcBlend", (int)BlendMode.One);
+        mat.SetInt("_DstBlend", (int)BlendMode.OneMinusSrcAlpha);
+        mat.EnableKeyword("_ALPHAPREMULTIPLY_ON");
+        mat.renderQueue = (int) RenderQueue.Transparent;
+        mat.SetFloat("_ZWriteControl", 2f);
+        mat.SetInt("_ZWrite", 0);
+        if (mat.HasProperty("_BaseColor"))
+        {
+            Color c = mat.GetColor("_BaseColor");
+            c.a = .3f;
+            mat.SetColor("_BaseColor", c);
+        }
+        else if (mat.HasProperty("_Color"))
+        {
+            var c = mat.color;
+            c.a = .3f;
+            mat.color = c;
+        }
     }
 
     #region Animations

@@ -13,12 +13,14 @@ public class Drop : ScriptableObject
     public GameObject model;
     public AudioClip pickUpSound;
     public AudioClip spawnSound;
+    protected Player player;
 
     /// <summary>
-    /// When the player picks up object, play the pick up sound
+    /// When a player picks up object, play the pick up sound
     /// </summary>
-    public virtual void OnPickUp()
+    public virtual void OnPickUp(Player player)
     {
+        this.player = player;
         AudioManager.Instance.PlayDropSound(pickUpSound);
     }
 }
