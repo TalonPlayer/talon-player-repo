@@ -10,6 +10,7 @@ public class EntityObj
     public List<string> friendIDS;
     public string clanName;
     public Sprite clanLogo;
+    public bool active;
     public EntityBody body;
     public bool isPreset;
     public bool hasClan;
@@ -38,12 +39,14 @@ public class EntityObj
 
     public EntityObj(string name)
     {
+        active = false;
         entityName = name;
     }
 
     public EntityObj(EntityPreset preset)
     {
         isPreset = true;
+        active = false;
         hasClan = preset.hasClan;
         entityName = preset._name;
         entityID = preset.ID;
@@ -54,7 +57,9 @@ public class EntityObj
 
         experience = preset.experience;
         threatLevel = preset.threatLevel;
+        
         weaponID = preset.weaponID;
+        exclusiveWeapon = preset.exclusiveWeapon;
 
         speed = preset.speed;
 

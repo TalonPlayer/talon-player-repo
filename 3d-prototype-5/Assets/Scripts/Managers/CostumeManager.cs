@@ -6,7 +6,7 @@ using UnityEngine;
 public class CostumeManager : MonoBehaviour
 {
     public static CostumeManager Instance;
-    private Entity currentEntity;
+    private MyEntity currentEntity;
     void Awake()
     {
         Instance = this;
@@ -16,7 +16,7 @@ public class CostumeManager : MonoBehaviour
     public Outfit bandana; // elbow
     public List<Outfit> faceList, hatList, gloveList, shoeList, beltList;
     public List<Outfit> zombieHatList;
-    public void Dress(Entity entity, EntityObj info)
+    public void Dress(MyEntity entity, EntityObj info)
     {
         currentEntity = entity;
         List<Costume> order = new List<Costume>()

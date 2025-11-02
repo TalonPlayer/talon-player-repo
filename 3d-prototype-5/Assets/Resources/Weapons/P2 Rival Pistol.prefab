@@ -247,7 +247,7 @@ MonoBehaviour:
   weaponName: Rival Pistol
   weaponID: NERF_102
   maxAmmoCount: 12
-  fireRate: 0.15
+  fireRate: 1
   magObj: {fileID: 5990639378504192881}
   magPos: {fileID: 1921861369249154542}
   weaponAnimator: {fileID: 9100000, guid: ab56d28c6f99f3c488936ec6d7d52486, type: 2}
@@ -259,6 +259,7 @@ MonoBehaviour:
   - {fileID: 8702279090565108626, guid: 11244d88cff0de84494577b0707afce3, type: 3}
   weaponType: 0
   loadingType: 0
+  isExclusive: 0
 --- !u!65 &3287127607784931410
 BoxCollider:
   m_ObjectHideFlags: 0

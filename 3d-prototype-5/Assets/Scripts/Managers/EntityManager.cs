@@ -3,19 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
-public class EntityManager : MonoBehaviour
+public class MyEntityManager : MonoBehaviour
 {
-    public static EntityManager Instance;
-    public int humans = 10;
-    public int zombies = 10;
+    public static MyEntityManager Instance;
+    public int totalEntities = 100;
     public Transform ragdollFolder;
     public Transform itemFolder;
     public Transform projectileFolder;
     public Transform wanderFolder;
 
     [Header("Lists")]
-    public List<Entity> entities;       // Active Entities
-    public List<EntityObj> entityInfos;  // Entity Info
+    public List<MyEntity> entities;       // Active Entities
+    public List<MyEntity> humans;       // Active Entities
+    public List<MyEntity> zombies;       // Active Entities
+    public List<EntityObj> entityInfos;  // MyEntity Info
     public List<Transform> wanderPoints;
     public EntityPreset[] presetEntities;
     public List<string> names;
@@ -23,11 +24,11 @@ public class EntityManager : MonoBehaviour
     public Transform zombieFolder;
 
     [Header("Prefabs")]
-    public Entity humanSoldier;
-    public Entity humanWanderer;
-    public Entity zombiePrefab;
+    public MyEntity humanSoldier;
+    public MyEntity humanWanderer;
+    public MyEntity zombiePrefab;
 
-    [Header("Entity Pool")]
+    [Header("MyEntity Pool")]
     public EntityBody defaultBody;
     public EntityPool pool;
     public Transform humanSpawn;
@@ -81,52 +82,16 @@ public class EntityManager : MonoBehaviour
     void Start()
     {
         PresetOutfits();
-        //AddPresetPool();
-        //SillyHalloween();
+        AddPresetPool();
+        SillyHalloween();
         CreateEntityPool();
-
+        
+        /*
         foreach (EntityObj info in entityInfos)
         {
             SpawnHuman(info);
         }
-
-
-        for (int i = 0; i < zombies; i++)
-        {
-            string n = Helper.RandomElement(pool.firstNames);
-            n += " " + Helper.RandomElement(pool.lastNameInitials);
-            EntityObj obj = new EntityObj(n);
-
-            obj.threatLevel = Random.Range(25, 75);
-
-            obj.weaponID = Helper.RandomElement(pool.weapons).weaponID;
-
-            obj.speed = Random.Range(0, 100f);
-            obj.experience = (Experience)Random.Range(0, 5);
-            obj.role = RoleType.Follower;
-            // obj.role = (RoleType)Random.Range(0, 6);
-            obj.mission = (ObjectiveType)Random.Range(0, 4);
-            obj.social = (SocialType)Random.Range(0, 3);
-            obj.behavior = (BehaviorType)Random.Range(0, 5);
-            obj.body = defaultBody;
-
-            for (int j = 0; j < obj.body.clothes.Count; j++)
-            {
-                obj.primaryColors.Add(Helper.RandomElement(pool.primaryColors));
-                obj.secondaryColors.Add(Helper.RandomElement(pool.secondaryColors));
-            }
-            obj.shirtTexture = Helper.RandomElement(pool.shirtTextures);
-
-            obj.faceID = Helper.RandomElement(faceList).ID;
-            obj.hatID = Helper.RandomElement(hatList).ID;
-            obj.glovesID = Helper.RandomElement(gloveList).ID;
-            obj.shoesID = Helper.RandomElement(shoeList).ID;
-            obj.beltID = Helper.RandomElement(beltList).ID;
-
-            entityInfos.Add(obj);
-            SpawnZombie(obj);
-        }
-
+        */
     }
 
     void Update()
@@ -159,8 +124,8 @@ public class EntityManager : MonoBehaviour
     }
     public void CreateEntityPool()
     {
-        // Change 15 for GameManager.cs Entity Pool Num - Preset Count
-        for (int i = 0; i < humans; i++)
+        // Change 15 for GameManager.cs MyEntity Pool Num - Preset Count
+        for (int i = 0; i < totalEntities; i++)
         {
             string n = Helper.RandomElement(pool.firstNames);
             n += " " + Helper.RandomElement(pool.lastNameInitials);
@@ -214,12 +179,12 @@ public class EntityManager : MonoBehaviour
 
 
 
-    public void SpawnHuman(EntityObj info)
+    public MyEntity SpawnHuman(EntityObj info)
     {
         Vector3 pos = Helper.RandomPosition(humanSpawn);
         pos = SnapToGround(pos);
         Vector3 rot = Helper.RandomVectorInRadius(1f) + transform.position;
-        Entity e;
+        MyEntity e;
         switch (info.role)
         {
             case RoleType.Follower:
@@ -269,14 +234,15 @@ public class EntityManager : MonoBehaviour
             weapon = pool.exclusiveWeapons.Find(w => w.weaponID == info.weaponID);
         else
             weapon = pool.weapons.Find(w => w.weaponID == info.weaponID);
-
         e.combat.Equip(weapon);
         e.brain.knowsObjective = true;
 
         if (e.outline) e.outline.Init();
+
+        return e;
     }
 
-    public void BuildEntity(Entity entity, EntityObj info)
+    public void BuildEntity(MyEntity entity, EntityObj info)
     {
         EntityBody body = Instantiate(info.body, entity.transform);
 
@@ -285,16 +251,17 @@ public class EntityManager : MonoBehaviour
 
         body.SetClothes(info);
         CostumeManager.Instance.Dress(entity, info);
-
+        entity.myInfo = info;
+        info.active = true;
     }
 
 
-    public void SpawnZombie(EntityObj info)
+    public MyEntity SpawnZombie(EntityObj info)
     {
         Vector3 pos = Helper.RandomPosition(zombieSpawn);
         pos = SnapToGround(pos);
         Vector3 rot = Helper.RandomVectorInRadius(1f) + transform.position;
-        Entity e = Instantiate(zombiePrefab, pos, Quaternion.LookRotation(rot), zombieFolder);
+        MyEntity e = Instantiate(zombiePrefab, pos, Quaternion.LookRotation(rot), zombieFolder);
         BuildEntity(e, info);
         e.Init();
         e.brain.objectiveTarget = ObjectiveManager.Instance.objectives[0].transform;
@@ -302,15 +269,20 @@ public class EntityManager : MonoBehaviour
         e.entityName = info.entityName;
         e.entityID = info.entityID;
 
-        WeaponModel weapon = pool.weapons.Find(w => w.weaponID == info.weaponID);
-
+        WeaponModel weapon;
+        if (info.exclusiveWeapon)
+            weapon = pool.exclusiveWeapons.Find(w => w.weaponID == info.weaponID);
+        else
+            weapon = pool.weapons.Find(w => w.weaponID == info.weaponID);
         e.combat.SetAnimatorController(weapon.zombieAnimator);
 
         e.brain.knowsObjective = true;
+
+        return e;
     }
 
 
-    public void GetFriends(Entity ent, EntityPreset obj)
+    public void GetFriends(MyEntity ent, EntityPreset obj)
     {
         ent.brain.hasFriends = true;
         foreach (string id in obj.friendIDS)
@@ -365,4 +337,17 @@ public class EntityManager : MonoBehaviour
 
         return pos;
     }
+
+    public MyEntity SpawnRandomHuman()
+    {
+        List<EntityObj> info = entityInfos.FindAll(e => !e.active);
+        return SpawnHuman(Helper.RandomElement(info));
+    }
+    public MyEntity SpawnRandomZombie()
+    {
+        List<EntityObj> info = entityInfos.FindAll(e => !e.active);
+        return SpawnZombie(Helper.RandomElement(info));
+    }
 }
+
+

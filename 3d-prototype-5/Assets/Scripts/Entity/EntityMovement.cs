@@ -23,7 +23,7 @@ public class EntityMovement : MonoBehaviour
     public float fleeDistance = 15f;
     public int strafeSide;
 
-    private Entity entity;
+    private MyEntity entity;
     private EntityBrain brain;
     void Awake()
     {
@@ -31,7 +31,7 @@ public class EntityMovement : MonoBehaviour
     }
     void Start()
     {
-        entity = GetComponent<Entity>();
+        entity = GetComponent<MyEntity>();
         brain = GetComponent<EntityBrain>();
 
         speedMultiplier = entity.speed / 250.0f;
@@ -41,7 +41,7 @@ public class EntityMovement : MonoBehaviour
         sprintSpeed *= speedMultiplier;
         panicSpeed *= speedMultiplier;
 
-        EntityManager.moveTick += Move;
+        MyEntityManager.moveTick += Move;
         entity.body.Play("RandomFloat", Random.Range(0f, 2f));
         randomDirection = Helper.RandomVectorInRadius(6f);
         ChangeSpeed((int)moveType);
@@ -49,7 +49,7 @@ public class EntityMovement : MonoBehaviour
 
     public void OnDeath()
     {
-        EntityManager.moveTick -= Move;
+        MyEntityManager.moveTick -= Move;
     }
 
     void Move()
@@ -57,7 +57,6 @@ public class EntityMovement : MonoBehaviour
         UpdateAnimations();
         if (isAiming) // Move to Position while aiming at target
         {
-            agent.SetDestination(targetPos);
 
             if (brain.target != null && brain.facingTarget != null)
                 RotateToTarget((brain.facingTarget.position - transform.position).normalized);
@@ -103,11 +102,7 @@ public class EntityMovement : MonoBehaviour
     public void MoveTo(Vector3 pos)
     {
         isMoving = true;
-        NavMeshHit hit;
-        // Sample a point on the current path within 10 units
-        if (NavMesh.SamplePosition(pos, out hit, 25f, NavMesh.AllAreas))
-            targetPos = hit.position;
-        else targetPos = pos;
+        targetPos = pos;
         ResumeMovement();
 
     }
@@ -150,82 +145,6 @@ public class EntityMovement : MonoBehaviour
         }
 
         return (count > 0) ? center / count : transform.position;
-    }
-
-    public void Flee()
-    {
-        Vector3 pos = transform.position;
-        Vector3 enemyCenter = EnemyCohesion();
-        bool toRight = false;
-        Vector3 toL = Vector3.zero;
-        Vector3 toR = Vector3.zero;
-        // Base flee direction: from enemy center to us (XZ)
-        Vector3 eDir = pos - enemyCenter;
-        eDir.y = 0f;
-        if (eDir.sqrMagnitude < 1e-6f) eDir = transform.forward;
-        eDir.Normalize();
-
-        Vector3 finalDir = eDir;
-
-        // Check a short wall probe in our flee direction
-        Vector3 origin = pos + Vector3.up * 1f;
-        float wallProbe = 6f;                // how far ahead to look for a wall
-        int wallMask = (1 << 12) | (1 << 16);              // your wall layer
-
-        if (Physics.Raycast(origin, eDir, out RaycastHit hit, wallProbe, wallMask))
-        {
-            if (hit.collider.CompareTag("Safe Zone"))
-            {
-                MoveTo(hit.transform.position);
-                return;
-            }
-            // Circle radius = distance from enemy center to wall-hit point
-            float radius = Vector3.Distance(enemyCenter, hit.point) / 3f;
-
-            // Perpendiculars to enemy->us direction on XZ
-            Vector3 perpL = Vector3.Cross(Vector3.up, eDir); // left
-            Vector3 perpR = -perpL;                          // right
-
-            // Tangent candidates on the circle centered at enemy center
-            Vector3 pL = enemyCenter + perpL * radius;
-            Vector3 pR = enemyCenter + perpR * radius;
-
-            // Pick the closer tangent point to our current position
-            toL = pL - pos; toL.y = 0f;
-            toR = pR - pos; toR.y = 0f;
-
-            if (toL.sqrMagnitude >= toR.sqrMagnitude)
-            {
-                finalDir = (eDir + toL).normalized;
-            }
-            else
-            {
-                finalDir = (eDir + toR).normalized;
-                toRight = true;
-            }
-
-            // Debug
-            Debug.DrawLine(enemyCenter, pL, Color.red);
-            Debug.DrawLine(enemyCenter, pR, Color.blue);
-            Debug.DrawRay(pos, finalDir, Color.cyan);
-        }
-
-        float fleeDistance = 10f;
-        Vector3 desired = pos + finalDir * fleeDistance;
-
-        Vector3 sampled;
-        if (TrySampleOnNavMesh(desired, 2f, out sampled))
-        {
-            MoveTo(sampled);
-        }
-        else
-        {
-            if (toRight) finalDir = (eDir + toL).normalized;
-            else finalDir = (eDir + toR).normalized;
-            desired = pos + finalDir * fleeDistance;
-            if (TrySampleOnNavMesh(desired, 2f, out sampled))
-                MoveTo(sampled);
-        }
     }
 
     public void StrafeForLineOfSight(string tag, float strafeAmount = 4f)
@@ -406,26 +325,6 @@ public class EntityMovement : MonoBehaviour
             MoveTo(fallbackSample);
     }
 
-
-
-
-    public bool IsPathSafe(Vector3 pos, string tag)
-    {
-        Vector3 thisPos = transform.position;
-        thisPos.y += 1f;
-        Vector3 direction = pos - thisPos;
-        if (Physics.Raycast(thisPos, direction, out RaycastHit hit, direction.magnitude, (1 << 6)))
-        {
-            if (hit.collider.CompareTag(tag))
-            {
-                Debug.Log(hit.collider.name);
-                return false;
-            }
-
-        }
-        return true;
-    }
-
     public bool HasReached(float radius = .25f)
     {
         return agent.remainingDistance <= agent.stoppingDistance + radius;
@@ -443,7 +342,7 @@ public class EntityMovement : MonoBehaviour
         return dist <= agent.stoppingDistance + radius;
     }
 
-    public bool HasReachedPosition(float radius = 2f)
+    public bool HasReachedPosition(float radius = 1f)
     {
         float dist = Vector3.Distance(targetPos, transform.position);
 

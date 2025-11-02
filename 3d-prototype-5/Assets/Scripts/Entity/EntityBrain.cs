@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 using System.Collections;
 using UnityEngine.EventSystems;
 
@@ -10,12 +9,13 @@ using UnityEngine.EventSystems;
 public abstract class EntityBrain : MonoBehaviour, IPointerClickHandler
 {
     [Header("Vision")]
-    public List<Entity> visibleEnemies;
-    public List<Entity> nearbyAllies;
+    public List<MyEntity> visibleEnemies;
+    public List<MyEntity> nearbyAllies;
     public Transform target;
     public Transform facingTarget;
     public Transform closestSafeZone;
     public Transform objectiveTarget;
+    public Vector3 patrolPos;
 
     [Header("World States")]
     public bool isHuman;                // Is a human
@@ -35,16 +35,11 @@ public abstract class EntityBrain : MonoBehaviour, IPointerClickHandler
     public bool inSafeZone;
     public bool inFormation;
     public bool isWandering;
-    protected bool scoutPause = false;
+    [SerializeField] protected bool scoutPause = false;
 
     public int situation;
     public int fleeThreshold = 75;
     protected int chargeThreshold = 5;
-
-    // Vision
-    float visionDistance = 25f;
-    int steps = 18;
-    float maxOffset = 45f;
 
     [Header("Social Types")]
     public Experience expLvl;
@@ -53,32 +48,35 @@ public abstract class EntityBrain : MonoBehaviour, IPointerClickHandler
     public SocialType socialType;
     public BehaviorType behaviorType;
 
-    protected Entity entity;
+    protected MyEntity entity;
     protected EntityBody body;
     protected EntityMovement movement;
     protected EntityCombat combat;
     protected Coroutine scoutRoutine;
+
+    public float distanceToTarget;
+
     void Awake()
     {
 
     }
+
     protected virtual void Start()
     {
-        entity = GetComponent<Entity>();
+        entity = GetComponent<MyEntity>();
         movement = GetComponent<EntityMovement>();
         combat = GetComponent<EntityCombat>();
-        EntityManager.visionTick += VisionCheck;
-        EntityManager.aggroTick += CheckTarget;
-        EntityManager.brainTick += Brain;
+
+        MyEntityManager.aggroTick += CheckTarget;
+        MyEntityManager.brainTick += Brain;
 
         if (objectiveTarget) movement.MoveTo(objectiveTarget.position);
     }
 
     public virtual void OnDeath()
     {
-        EntityManager.visionTick -= VisionCheck;
-        EntityManager.aggroTick -= CheckTarget;
-        EntityManager.brainTick -= Brain;
+        MyEntityManager.aggroTick -= CheckTarget;
+        MyEntityManager.brainTick -= Brain;
     }
 
     public abstract void Brain();
@@ -93,15 +91,14 @@ public abstract class EntityBrain : MonoBehaviour, IPointerClickHandler
         yield return new WaitForSeconds(time);
 
         if (radius > 0f)
-            movement.Orbit(target.position, radius);
+            movement.Orbit(objectiveTarget.position, radius);
         else
-            movement.Orbit(target.position);
+            movement.Orbit(objectiveTarget.position);
 
         movement.randomDirection = Helper.RandomVectorInRadius(Random.Range(0f, 5f));
         movement.ToggleAiming(true);
         scoutPause = false;
     }
-
     #endregion
 
     protected bool IsFacingTarget()
@@ -115,99 +112,20 @@ public abstract class EntityBrain : MonoBehaviour, IPointerClickHandler
 
         return dot > .0001f; // You can adjust the threshold (1 = perfect alignment)
     }
+
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (GameManager.Instance.cameraView == CameraView.EntityFacing) return;
-        GameManager.Instance.SetCamera(CameraView.EntityFacing, entity);
+        if (PlayerManager.Instance.cameraView != CameraView.TopDown) return;
+
+        if (PlayerManager.Instance.controlMode == ControlMode.ActionMode)
+            PlayerManager.Instance.SelectEntity(entity, Input.GetKey(KeyCode.LeftShift));
+        else
+            PlayerManager.Instance.SetCamera(CameraView.EntityFacing, entity);
     }
-    public void VisionCheck()
-    {
-        Vector3 origin = transform.position;
-        origin.y += 1f;
-
-        float halfFOV = maxOffset; // degrees
-        float distance = visionDistance;
-
-        int count = Mathf.Max(1, steps);
-        if (isFleeing && inDanger)
-        {
-            count /= 2;
-            maxOffset /= 2f;
-            distance /= 5f;
-        }
-        foreach (Entity a in nearbyAllies)
-        {
-            foreach (Entity e in a.brain.visibleEnemies)
-            {
-                if (!visibleEnemies.Contains(e))
-                {
-                    visibleEnemies.Add(e);
-                    isAggro = true;
-                    entity.body.Play("IsAggro", true);
-                }
-            }
-        }
-        List<Entity> temp = visibleEnemies.FindAll(e => e == null);
-
-        foreach (Entity e in temp)
-        {
-            visibleEnemies.Remove(e);
-        }
-
-        for (int i = 0; i <= count; i++)
-        {
-            float t = (float)i / count;
-            float yaw = Mathf.Lerp(-halfFOV, halfFOV, t); // -FOV..+FOV
-
-            // Rotate around this entity's local up axis so it follows its Y rotation
-            Quaternion yawRot = Quaternion.AngleAxis(yaw, transform.up);
-            Vector3 dir = (yawRot * transform.forward).normalized;
-
-            if (Physics.Raycast(origin, dir, out RaycastHit hit, distance))
-            {
-                if (isHuman)
-                {
-                    Entity e = hit.collider.GetComponent<Entity>();
-                    if (!e) return;
-
-                    if (hit.collider.CompareTag("Zombie") && !visibleEnemies.Contains(e))
-                    {
-                        visibleEnemies.Add(e);
-                        isAggro = true;
-                    }
-                    else if (hit.collider.CompareTag("Human") && !nearbyAllies.Contains(e))
-                    {
-                        nearbyAllies.Add(e);
-                    }
-                    entity.body.Play("IsAggro", true);
-
-                }
-                else if (!isHuman)
-                {
-                    Entity e = hit.collider.GetComponent<Entity>();
-                    if (!e) return;
-
-                    if (hit.collider.CompareTag("Human") && !visibleEnemies.Contains(e))
-                    {
-                        visibleEnemies.Add(e);
-                        isAggro = true;
-                    }
-                    else if (hit.collider.CompareTag("Zombie") && !nearbyAllies.Contains(e))
-                    {
-                        nearbyAllies.Add(e);
-                    }
-
-                    entity.body.Play("IsAggro", true);
-                }
-            }
-        }
-    }
-
     public void CheckTarget()
     {
-        List<Entity> availableEnemies = visibleEnemies.FindAll(e => !e.brain.inSafeZone);
         // there are no more units or enemy is no longer alive
-        if (availableEnemies.Count == 0 && isAggro)
+        if (visibleEnemies.Count == 0 && isAggro)
         {
             isAggro = false;
             entity.body.Play("IsAggro", false);
@@ -219,7 +137,7 @@ public abstract class EntityBrain : MonoBehaviour, IPointerClickHandler
         float closestDistanceSqr = Mathf.Infinity;
 
         // Check to see if there are any units that are closer than the player
-        foreach (Entity e in availableEnemies)
+        foreach (MyEntity e in visibleEnemies)
         {
             if (e == null || e.brain.inSafeZone) continue;
 
@@ -246,42 +164,78 @@ public abstract class EntityBrain : MonoBehaviour, IPointerClickHandler
         }
     }
 
+    // Trigger enter kept lean
+    void OnTriggerEnter(Collider other)
+    {
+        if (!other) return;
+
+        MyEntity e = other.GetComponent<MyEntity>();
+        if (!e || e == entity || !e.isAlive) return;
+
+        bool isEnemy = isHuman ? other.CompareTag("Zombie") : other.CompareTag("Human");
+        if (!isEnemy)
+        {
+            if (nearbyAllies != null && !nearbyAllies.Contains(e))
+            {
+                nearbyAllies.Add(e);
+            }
+            return;
+        }
+
+        if (visibleEnemies != null && !visibleEnemies.Contains(e))
+        {
+            visibleEnemies.Add(e);
+        }
+
+        if (!isAggro)
+        {
+            isAggro = true;
+            if (entity)
+                entity.body.Play("IsAggro", true);
+        }
+    }
+
     void OnTriggerExit(Collider other)
     {
-        if (isHuman)
+        if (!other) return;
+
+        MyEntity e = other.GetComponent<MyEntity>();
+        if (!e || e == entity || !e.isAlive) return;
+
+        bool isEnemy = isHuman ? other.CompareTag("Zombie") : other.CompareTag("Human");
+        if (!isEnemy)
         {
-            Entity e = other.GetComponent<Entity>();
-            if (!e) return;
-
-            if (other.CompareTag("Zombie"))
+            if (nearbyAllies != null)
             {
-                if (visibleEnemies.Contains(e))
-                    visibleEnemies.Remove(e);
+                for (int i = nearbyAllies.Count - 1; i >= 0; i--)
+                {
+                    if (ReferenceEquals(nearbyAllies[i], e))
+                    {
+                        nearbyAllies.RemoveAt(i);
+                        break;
+                    }
+                }
             }
-
-            if (other.CompareTag("Human"))
-            {
-                if (nearbyAllies.Contains(e))
-                    nearbyAllies.Remove(e);
-            }
-        }
-        else
-        {
-            Entity e = other.GetComponent<Entity>();
-            if (!e) return;
-            if (other.CompareTag("Human"))
-            {
-                if (visibleEnemies.Contains(e))
-                    visibleEnemies.Remove(e);
-            }
-
-            if (other.CompareTag("Zombie"))
-            {
-                if (nearbyAllies.Contains(e))
-                    nearbyAllies.Remove(e);
-            }
+            return;
         }
 
+        if (visibleEnemies != null)
+        {
+            for (int i = visibleEnemies.Count - 1; i >= 0; i--)
+            {
+                if (ReferenceEquals(visibleEnemies[i], e))
+                {
+                    visibleEnemies.RemoveAt(i);
+                    break;
+                }
+            }
+            // If that was the last enemy, drop aggro & anim
+            if (visibleEnemies.Count == 0 && isAggro)
+            {
+                isAggro = false;
+                facingTarget = null;
+            }
+        }
     }
 }
 
@@ -321,12 +275,9 @@ public enum SocialType
 
 public enum BehaviorType
 {
-    Aggressive = 0,     // Entity will go for more risky plays
-    Cautious = 1,         // Entity will be hesitant on going beyond safe zones
-    Resilient = 2,          // Entity doesn't care to what happens to them
-    Strategic = 3,     // Entity will be able to encourage anyone to assist
-    Oblivious = 4,      // Entity doesn't know whats going on
+    Aggressive = 0,     // MyEntity will go for more risky plays
+    Cautious = 1,         // MyEntity will be hesitant on going beyond safe zones
+    Resilient = 2,          // MyEntity doesn't care to what happens to them
+    Strategic = 3,     // MyEntity will be able to encourage anyone to assist
+    Oblivious = 4,      // MyEntity doesn't know whats going on
 }
-
-
-

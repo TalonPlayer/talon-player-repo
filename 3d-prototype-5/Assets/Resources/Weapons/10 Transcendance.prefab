@@ -216,7 +216,7 @@ MonoBehaviour:
   weaponName: Transcendance
   weaponID: NERF_010
   maxAmmoCount: 15
-  fireRate: 0.5
+  fireRate: 1
   magObj: {fileID: 2884199761619672304}
   magPos: {fileID: 853054376388777090}
   weaponAnimator: {fileID: 9100000, guid: eb37de261ec579847ae28911c21ead3b, type: 2}
@@ -230,6 +230,7 @@ MonoBehaviour:
   - {fileID: 5422780234697957421, guid: 15aed8251251f3649b10723fe40eeaf0, type: 3}
   weaponType: 1
   loadingType: 0
+  isExclusive: 0
 --- !u!65 &1777424512781874784
 BoxCollider:
   m_ObjectHideFlags: 0

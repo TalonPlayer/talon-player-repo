@@ -19,12 +19,12 @@ public class EntityBody : MonoBehaviour
     public List<Clothing> clothes;
     public bool itemDropGravity = true;
     public List<GameObject> heldItems;
-    private Entity entity;
+    private MyEntity entity;
     private EntityBrain brain;
     private List<Renderer> renderers;
     void Awake()
     {
-        entity = GetComponentInParent<Entity>();
+        entity = GetComponentInParent<MyEntity>();
         brain = GetComponentInParent<EntityBrain>();
     }
     void Start()
@@ -54,6 +54,7 @@ public class EntityBody : MonoBehaviour
     }
     public void SetMaterialOpacity(Renderer renderer, float opacity)
     {
+        if (renderer == null) return;
         foreach (Material mat in renderer.materials)
         {
             mat.SetFloat("_Surface", 1f);
@@ -85,7 +86,7 @@ public class EntityBody : MonoBehaviour
     public void OnDeath()
     {
         renderers = GetComponentsInChildren<Renderer>().ToList();
-        body.transform.parent = EntityManager.Instance.ragdollFolder;
+        body.transform.parent = MyEntityManager.Instance.ragdollFolder;
         StartCoroutine(FadeRoutine(4f, 1.75f));
     }
 
@@ -244,7 +245,7 @@ public class EntityBody : MonoBehaviour
         {
             // creates a new item and puts it into the item folder
 
-            item.transform.parent = EntityManager.Instance.itemFolder;
+            item.transform.parent = MyEntityManager.Instance.itemFolder;
             item.transform.localScale = item.transform.lossyScale;
 
             // Item is now affected by gravity and not attached to body
@@ -286,7 +287,7 @@ public class EntityBody : MonoBehaviour
         {
             // creates a new item and puts it into the item folder
 
-            item.transform.parent = EntityManager.Instance.itemFolder;
+            item.transform.parent = MyEntityManager.Instance.itemFolder;
             item.transform.localScale = item.transform.lossyScale;
 
             // Item is now affected by gravity and not attached to body

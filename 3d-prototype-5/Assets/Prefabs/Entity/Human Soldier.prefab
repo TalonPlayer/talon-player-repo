@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 3645923941841074462}
   - component: {fileID: 2107968447862496052}
   - component: {fileID: 8919186965959596051}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Human Soldier
   m_TagString: Human
   m_Icon: {fileID: 0}
@@ -63,6 +63,33 @@ MonoBehaviour:
     target: {fileID: 0}
   friends: []
   isAlive: 1
+  myInfo:
+    entityName: 
+    entityID: 
+    friendIDS: []
+    clanName: 
+    clanLogo: {fileID: 0}
+    active: 0
+    body: {fileID: 0}
+    isPreset: 0
+    hasClan: 0
+    experience: 0
+    threatLevel: 0
+    exclusiveWeapon: 0
+    weaponID: 
+    speed: 0
+    role: 0
+    mission: 0
+    social: 0
+    behavior: 0
+    primaryColors: []
+    secondaryColors: []
+    shirtTexture: {fileID: 0}
+    faceID: 
+    hatID: 
+    glovesID: 
+    shoesID: 
+    beltID: 
   threatLevel: 50
   speed: 0
   stamina: 0
@@ -166,6 +193,7 @@ MonoBehaviour:
   facingTarget: {fileID: 0}
   closestSafeZone: {fileID: 0}
   objectiveTarget: {fileID: 0}
+  patrolPos: {x: 0, y: 0, z: 0}
   isHuman: 1
   isLeader: 0
   hasGroup: 0
@@ -183,6 +211,7 @@ MonoBehaviour:
   inSafeZone: 0
   inFormation: 0
   isWandering: 0
+  scoutPause: 0
   situation: 0
   fleeThreshold: 175
   expLvl: 0
@@ -190,6 +219,7 @@ MonoBehaviour:
   objType: 0
   socialType: 0
   behaviorType: 0
+  distanceToTarget: 0
   scoutLookInterval: {x: 0.8, y: 2}
   clan:
     groupName: 
@@ -217,10 +247,10 @@ MonoBehaviour:
   isAiming: 0
   blocked: 0
   moveType: 1
-  walkSpeed: 8
-  jogSpeed: 10
-  sprintSpeed: 13
-  panicSpeed: 15
+  walkSpeed: 7
+  jogSpeed: 9
+  sprintSpeed: 12
+  panicSpeed: 16
   speedMultiplier: 0
   fleeDistance: 5
   strafeSide: 0
@@ -279,7 +309,7 @@ NavMeshAgent:
   m_Height: 2
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
+  m_ObstacleAvoidanceType: 1
 --- !u!136 &3541937593447246255
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -313,10 +343,10 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 384
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 130999
+    m_Bits: 130615
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0

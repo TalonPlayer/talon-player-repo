@@ -4,10 +4,8 @@ using UnityEngine;
 
 public class Objective : MonoBehaviour
 {
-    public string objectiveName;
-    public int current;
-    public int goal;
-    public int rewards;
+    public List<MyEntity> entities;
+    public bool canBeCleaned = false;
     void Start()
     {
         

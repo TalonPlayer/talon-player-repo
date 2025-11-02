@@ -10,7 +10,7 @@ public class HumanWanderer : HumanBrain
     {
         base.Start();
         SafeZoneManager.safeZoneTick += ClosestSafeZone;
-        objectiveTarget = Helper.RandomElement(EntityManager.Instance.wanderPoints);
+        objectiveTarget = Helper.RandomElement(MyEntityManager.Instance.wanderPoints);
         movement.Orbit(objectiveTarget.position);
 
         if (isLeader)
@@ -27,8 +27,6 @@ public class HumanWanderer : HumanBrain
             target = objectiveTarget;
             return;
         }
-
-        HumanEvaluateSituation();
 
         if (isAggro && isVigilant)
         {
@@ -49,7 +47,7 @@ public class HumanWanderer : HumanBrain
         {
             movement.strafeSide = 0;
             movement.randomDirection = Helper.RandomVectorInRadius(6f);
-            objectiveTarget = Helper.RandomElement(EntityManager.Instance.wanderPoints);
+            objectiveTarget = Helper.RandomElement(MyEntityManager.Instance.wanderPoints);
             movement.Orbit(objectiveTarget.position);
         }
         if (inSafeZone) // Set a timer for them to go back out
@@ -77,7 +75,7 @@ public class HumanWanderer : HumanBrain
                 if (inFormation) friendGroup.AssignLineFormation();
                 if (movement.HasReachedPosition(Random.Range(1f, 5f)))
                 {
-                    objectiveTarget = Helper.RandomElement(EntityManager.Instance.wanderPoints);
+                    objectiveTarget = Helper.RandomElement(MyEntityManager.Instance.wanderPoints);
                     movement.Orbit(objectiveTarget.position);
                 }
                 else // Move if not near objective
@@ -88,7 +86,7 @@ public class HumanWanderer : HumanBrain
             {
                 if (movement.HasReachedPosition(Random.Range(1f, 5f)))
                 {
-                    objectiveTarget = Helper.RandomElement(EntityManager.Instance.wanderPoints);
+                    objectiveTarget = Helper.RandomElement(MyEntityManager.Instance.wanderPoints);
                     movement.Orbit(objectiveTarget.position);
                 }
                 else // Move if not near objective
@@ -105,8 +103,6 @@ public class HumanWanderer : HumanBrain
 
 
         if (objectiveTarget && !inFormation)
-            if (Vector3.Distance(transform.position, objectiveTarget.position) < 5f)
-                movement.StrafeForLineOfSight("Human", nearbyAllies.Count * .65f);
 
         if (!combat.isReloading)
         {
@@ -141,63 +137,6 @@ public class HumanWanderer : HumanBrain
 
             }
             return;
-        }
-    }
-
-    public override void HumanEvaluateSituation()
-    {
-        situation = GetSituation();
-        if (isHuman)
-        {
-            if (inSafeZone)
-            {
-                inDanger = false;
-                isFleeing = false;
-
-                if (socialType == 0) isVigilant = true;
-                movement.ChangeSpeed(1);
-                movement.ToggleAiming(isAggro);
-                return;
-            }
-            // Compare situation value to fleeThreshold
-            if (situation >= fleeThreshold)
-            {
-                isFleeing = true;
-                isVigilant = false;
-
-                if (isLeader) friendGroup.BreakFormation();
-
-                if (movement.IsPathSafe(closestSafeZone.position, "Zombie"))
-                    movement.MoveTo(closestSafeZone.position);
-                else
-                    movement.Flee();
-                movement.ChangeSpeed(2);
-            }
-            else if (situation >= 15)
-            {
-                inDanger = false;
-                isFleeing = false;
-                isVigilant = true;
-                movement.ChangeSpeed(1);
-                movement.ToggleAiming(isAggro);
-            }
-            else
-            {
-                isFleeing = false;
-                inDanger = false;
-                isVigilant = false;
-
-                movement.ChangeSpeed(0);
-
-                movement.ToggleAiming(isAggro);
-            }
-
-            if (situation >= fleeThreshold + 20)
-            {
-                movement.agent.speed = movement.panicSpeed;
-                inDanger = true;
-                isVigilant = false;
-            }
         }
     }
 }

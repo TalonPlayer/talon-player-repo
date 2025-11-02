@@ -6,8 +6,8 @@ using UnityEngine;
 public class EntityPool : MonoBehaviour
 {
     [Header("Weapon")]
-    [HideInInspector] public List<WeaponModel> weapons;
-    [HideInInspector] public List<WeaponModel> exclusiveWeapons;
+    public List<WeaponModel> weapons;
+    public List<WeaponModel> exclusiveWeapons;
     public List<string> lastNameInitials = new List<string>(){
         "A.", "B.", "C.", "D.", "E.", "F.", "G.", "H.", "I.", "J.", "K.", "L.",
         "M.", "N.", "O.", "P.", "Q.", "R.", "S.", "T.", "U.", "V.", "W.", "X.",
@@ -40,8 +40,8 @@ public class EntityPool : MonoBehaviour
     {
         shirtTextures = Resources.LoadAll<Texture>("Sprites/Shirt Textures").ToList();
         weapons = Resources.LoadAll<WeaponModel>("Weapons").ToList();
+        exclusiveWeapons = weapons.FindAll(w => w.isExclusive);
         weapons = weapons.FindAll(w => !w.isExclusive);
-        exclusiveWeapons = weapons.FindAll(w=>w.isExclusive);
     }
 
 }

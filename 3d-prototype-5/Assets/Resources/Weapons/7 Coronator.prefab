@@ -114,7 +114,7 @@ MonoBehaviour:
   weaponName: Coronator
   weaponID: NERF_007
   maxAmmoCount: 30
-  fireRate: 0.65
+  fireRate: 1
   magObj: {fileID: 6968752785556361098}
   magPos: {fileID: 1206928828740066657}
   weaponAnimator: {fileID: 9100000, guid: eb37de261ec579847ae28911c21ead3b, type: 2}
@@ -128,6 +128,7 @@ MonoBehaviour:
   - {fileID: 595946121153513814, guid: a4ebe42427a963e469674393c85c345b, type: 3}
   weaponType: 1
   loadingType: 0
+  isExclusive: 0
 --- !u!65 &1250935767345121275
 BoxCollider:
   m_ObjectHideFlags: 0

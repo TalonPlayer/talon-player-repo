@@ -6,14 +6,15 @@ using UnityEngine.Events;
 /// <summary>
 /// Class that contains generic info about the entity
 /// </summary>
-public class Entity : MonoBehaviour
+public class MyEntity : MonoBehaviour
 {
     [Header("Info")]
     public string entityName;
     public string entityID;
     public Group group;
-    public List<Entity> friends;
+    public List<MyEntity> friends;
     public bool isAlive = true;
+    public EntityObj myInfo;
 
     [Header("Stats")]
     public float threatLevel = 50;
@@ -38,7 +39,11 @@ public class Entity : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         cc = GetComponent<CapsuleCollider>();
-        EntityManager.Instance.entities.Add(this);
+        MyEntityManager.Instance.entities.Add(this);
+        if (brain.isHuman)
+                MyEntityManager.Instance.humans.Add(this);
+            else
+                MyEntityManager.Instance.zombies.Add(this);
     }
 
     public void Init()
@@ -51,25 +56,31 @@ public class Entity : MonoBehaviour
         combat = GetComponent<EntityCombat>();
     }
 
-    public bool IsFriend(Entity entity)
+    public bool IsFriend(MyEntity entity)
     {
         return friends.Contains(entity);
     }
 
     public void OnDeath()
     {
-        EntityManager.Instance.ScheduleRespawn(entityName);
+        isAlive = false;
+        myInfo.active = false;
+        // MyEntityManager.Instance.ScheduleRespawn(entityName);
 
-        EntityManager.finishTick += () =>
+        MyEntityManager.finishTick += () =>
         {
-            EntityManager.Instance.entities.Remove(this);
-            EntityManager.Instance.RecycleRagdolls();
-            EntityManager.Instance.RecycleItems();
-            isAlive = false;
+            MyEntityManager.Instance.entities.Remove(this);
+            if (brain.isHuman)
+                MyEntityManager.Instance.humans.Remove(this);
+            else
+                MyEntityManager.Instance.zombies.Remove(this);
+
+            MyEntityManager.Instance.RecycleRagdolls();
+            MyEntityManager.Instance.RecycleItems();
             cc.enabled = false;
             movement.agent.enabled = false;
 
-            foreach (Entity e in EntityManager.Instance.entities)
+            foreach (MyEntity e in MyEntityManager.Instance.entities)
             {
                 if (e.brain.nearbyAllies.Contains(this)) e.brain.nearbyAllies.Remove(this);
                 if (e.brain.visibleEnemies.Contains(this)) e.brain.visibleEnemies.Remove(this);

@@ -38,29 +38,10 @@ public class HumanSoldier : HumanBrain
 
             return;
         }
-        float distance = Vector3.Distance(transform.position, objectiveTarget.position);
-        if (distance > 15f)
-        {
-            movement.ChangeSpeed(2);
-        }
-        else if (distance > 4f)
-        {
-            movement.ChangeSpeed(1);
-        }
 
         // If is at objective, start defending
         if (isDefending)
         {
-            // If the entity is no longer near the objective, while scouting. Orbit again
-            if (!movement.HasReached(objectiveTarget, 12f) && scoutPause)
-            {
-                CancelScout();
-                scoutPause = false;
-                atObjective = false;
-                movement.Orbit(objectiveTarget.position);
-                isDefending = false;
-            }
-
             // If the entity has reached the position while not scouting, stand still then orbit again soon.
             if (movement.HasReachedPosition() && !scoutPause)
             {
@@ -69,10 +50,17 @@ public class HumanSoldier : HumanBrain
 
                 CancelScout();
 
-                if (isAggro)
-                    scoutRoutine = StartCoroutine(ScoutRoutine(Random.Range(0f, 3.5f), objectiveTarget));
-                else
-                    scoutRoutine = StartCoroutine(ScoutRoutine(Random.Range(1f, 8f), objectiveTarget));
+                scoutRoutine = StartCoroutine(ScoutRoutine(Random.Range(5f, 10f), objectiveTarget));
+            }
+
+            // If the entity is no longer near the objective, while scouting. Orbit again
+            if (!movement.HasReached(objectiveTarget, 6f) && scoutPause)
+            {
+                CancelScout();
+                scoutPause = false;
+                atObjective = false;
+                movement.Orbit(objectiveTarget.position);
+                isDefending = false;
             }
             return;
         }
@@ -82,15 +70,18 @@ public class HumanSoldier : HumanBrain
         {
             
             // If they reached the target within a certain radius, start orbiting/defending
-            if (movement.HasReachedPosition(Random.Range(3f, 5f)))
+            if (movement.HasReached(objectiveTarget, 6f))
             {
                 atObjective = true;
                 isDefending = true;
-                movement.Orbit(target.position, 4f);
+                movement.Orbit(objectiveTarget.position, 6f);
                 
             }
             else // Move if not near objective
             {
+                if (movement.targetPos != objectiveTarget.transform.position)
+                    movement.targetPos = objectiveTarget.transform.position;
+
                 movement.ResumeMovement();
 
             }
@@ -108,7 +99,7 @@ public class HumanSoldier : HumanBrain
 
                 combat.RangeAttack();
             }
-            else
+            else if (combat.hasAmmo)
             {
                 combat.Reload();
             }

@@ -31,7 +31,7 @@ public class EntityCombat : MonoBehaviour
     private Vector3 direction;
     Coroutine attackRoutine;
     Coroutine throwRoutine;
-    private Entity entity;
+    private MyEntity entity;
     public EntityBody body;
     private EntityBrain brain;
     private Vector3 pos;
@@ -42,7 +42,7 @@ public class EntityCombat : MonoBehaviour
 
     void Start()
     {
-        entity = GetComponent<Entity>();
+        entity = GetComponent<MyEntity>();
         brain = GetComponent<EntityBrain>();
     }
 
@@ -126,7 +126,7 @@ public class EntityCombat : MonoBehaviour
         (Helper.RandomElement(weapon.darts),
         pos,
         Quaternion.LookRotation(shotDir),
-        EntityManager.Instance.projectileFolder);
+        MyEntityManager.Instance.projectileFolder);
 
         proj.Launch(direction, entity.entityName);
 
@@ -169,7 +169,7 @@ public class EntityCombat : MonoBehaviour
         (Helper.RandomElement(throwablePrefabs),
         pos,
         Quaternion.LookRotation(shotDir),
-        EntityManager.Instance.projectileFolder);
+        MyEntityManager.Instance.projectileFolder);
 
         proj.Launch(direction, entity.entityName);
 
@@ -195,7 +195,7 @@ public class EntityCombat : MonoBehaviour
             Collider mag = Instantiate(magPrefab,
             magPos.position,
             Quaternion.identity,
-            EntityManager.Instance.itemFolder);
+            MyEntityManager.Instance.itemFolder);
             mag.gameObject.SetActive(true);
             mag.enabled = true;
             mag.gameObject.transform.localScale = magPrefab.gameObject.transform.lossyScale;

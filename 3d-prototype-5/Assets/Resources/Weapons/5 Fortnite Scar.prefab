@@ -82,7 +82,7 @@ MonoBehaviour:
   weaponName: Fortnite Scar
   weaponID: NERF_005
   maxAmmoCount: 15
-  fireRate: 0.5
+  fireRate: 1
   magObj: {fileID: 1455124133671459864}
   magPos: {fileID: 3231432520519436666}
   weaponAnimator: {fileID: 9100000, guid: eb37de261ec579847ae28911c21ead3b, type: 2}
@@ -96,6 +96,7 @@ MonoBehaviour:
   - {fileID: 595946121153513814, guid: a4ebe42427a963e469674393c85c345b, type: 3}
   weaponType: 0
   loadingType: 0
+  isExclusive: 0
 --- !u!65 &6649827756681507290
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -50,7 +50,7 @@ public class ZombieBrain : EntityBrain
 
     IEnumerator SurroundRoutine()
     {
-        yield return new WaitForSeconds(10f);
+        yield return new WaitForSeconds(Random.Range(4f,6f));
         isReady = true;
         isSurrounding = false;
     }
@@ -79,7 +79,7 @@ public class ZombieBrain : EntityBrain
         if (target == null)
         {
             target = objectiveTarget;
-            movement.Orbit(target.position);
+            movement.Orbit(objectiveTarget.position);
             return;
         }
 
@@ -97,7 +97,7 @@ public class ZombieBrain : EntityBrain
 
             if (movement.HasReached(target.position, .75f))
             {
-                Entity e = target.GetComponent<Entity>();
+                MyEntity e = target.GetComponent<MyEntity>();
                 if (e)
                     if (e.isAlive && !e.brain.inSafeZone) e.OnDeath();
             }
@@ -117,16 +117,6 @@ public class ZombieBrain : EntityBrain
         // If is at objective, start defending
         if (isDefending)
         {
-            // If the entity is no longer near the objective, while scouting. Orbit again
-            if (!movement.HasReached(target, 6f) && scoutPause)
-            {
-                CancelScout();
-                scoutPause = false;
-                atObjective = false;
-                isDefending = false;
-                movement.Orbit(target.position);
-            }
-
             // If the entity has reached the position while not scouting, stand still then orbit again soon.
             if (movement.HasReachedPosition() && !scoutPause)
             {
@@ -134,7 +124,18 @@ public class ZombieBrain : EntityBrain
                 scoutPause = true;
 
                 CancelScout();
-                scoutRoutine = StartCoroutine(ScoutRoutine(Random.Range(1f, 8f), target));
+
+                scoutRoutine = StartCoroutine(ScoutRoutine(Random.Range(5f, 10f), objectiveTarget));
+            }
+            
+            // If the entity is no longer near the objective, while scouting. Orbit again
+            if (!movement.HasReached(objectiveTarget, 6f) && scoutPause)
+            {
+                CancelScout();
+                scoutPause = false;
+                atObjective = false;
+                movement.Orbit(objectiveTarget.position);
+                isDefending = false;
             }
             return;
         }
@@ -142,17 +143,22 @@ public class ZombieBrain : EntityBrain
         // If they are not at objective and they know where it is, move towards it
         if (!atObjective && knowsObjective)
         {
+            
             // If they reached the target within a certain radius, start orbiting/defending
-            if (movement.HasReachedPosition(Random.Range(5f, 7f)))
+            if (movement.HasReached(objectiveTarget, 6f))
             {
                 atObjective = true;
                 isDefending = true;
-                movement.strafeSide = 0;
-                movement.Orbit(target.position);
+                movement.Orbit(objectiveTarget.position, 6f);
+                
             }
             else // Move if not near objective
             {
-                movement.MoveTo(objectiveTarget.position);
+                if (movement.targetPos != objectiveTarget.transform.position)
+                    movement.targetPos = objectiveTarget.transform.position;
+
+                movement.ResumeMovement();
+
             }
             return;
         }
@@ -168,7 +174,7 @@ public class ZombieBrain : EntityBrain
             if (distance <= 15f && !isCharging)
             {
                 isCharging = true;
-                foreach (Entity e in nearbyAllies)
+                foreach (MyEntity e in nearbyAllies)
                 {
                     if (e == null) continue;
                     if (!e.isAlive) continue;

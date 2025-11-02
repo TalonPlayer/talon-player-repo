@@ -114,7 +114,7 @@ MonoBehaviour:
   weaponName: Falcon
   weaponID: NERF_105
   maxAmmoCount: 12
-  fireRate: 0.5
+  fireRate: 1
   magObj: {fileID: 0}
   magPos: {fileID: 0}
   weaponAnimator: {fileID: 9100000, guid: ab56d28c6f99f3c488936ec6d7d52486, type: 2}
@@ -128,6 +128,7 @@ MonoBehaviour:
   - {fileID: 595946121153513814, guid: a4ebe42427a963e469674393c85c345b, type: 3}
   weaponType: 0
   loadingType: 0
+  isExclusive: 0
 --- !u!65 &2221630738625012172
 BoxCollider:
   m_ObjectHideFlags: 0

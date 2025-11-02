@@ -41,7 +41,8 @@ public class Projectile : MonoBehaviour
         var other = collision.gameObject;
         if (other.CompareTag("Zombie"))
         {
-            Entity e = other.GetComponent<Entity>();
+            MyEntity e = other.GetComponent<MyEntity>();
+            if (!e.isAlive) return;
             e.OnDeath();
 
             activated = false;
