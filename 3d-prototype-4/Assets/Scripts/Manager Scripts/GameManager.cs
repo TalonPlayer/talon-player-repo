@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
         if (!debugMode)
         {
             GlobalSaveSystem.trackAchivement = true;
-            SceneWorldManager.Instance.TransferToWorld(5);
+            SceneWorldManager.Instance.TransferToWorld(0);
         }
         else // Debug mode is on
         {

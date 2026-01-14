@@ -1,0 +1,601 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1061539462428457673
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7142307466186211565}
+  m_Layer: 0
+  m_Name: Left
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7142307466186211565
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1061539462428457673}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 3767569788310182979}
+  - {fileID: 3327484086454654099}
+  - {fileID: 5283905743656206045}
+  - {fileID: 2459764619134075535}
+  m_Father: {fileID: 5763528817721711441}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6208320290961251856
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8010956985166957072}
+  m_Layer: 0
+  m_Name: Right
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8010956985166957072
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6208320290961251856}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6456937131706413032}
+  - {fileID: 3200018218948886441}
+  - {fileID: 3962386921275164060}
+  - {fileID: 960524026488556762}
+  m_Father: {fileID: 5763528817721711441}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8896179187537219674
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5763528817721711441}
+  m_Layer: 0
+  m_Name: Block
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5763528817721711441
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8896179187537219674}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4, y: 0, z: -5.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 7142307466186211565}
+  - {fileID: 8010956985166957072}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1277758800815096686
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 8010956985166957072}
+    m_Modifications:
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.000774771
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.99999976
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -180.089
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7870949381222192290, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_Name
+      value: (R) Cover Point Stand
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+--- !u!4 &960524026488556762 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+  m_PrefabInstance: {fileID: 1277758800815096686}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &2307348479322475922
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 7142307466186211565}
+    m_Modifications:
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.70658785
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.7076254
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -90.084
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7473449774061364115, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_Name
+      value: (L) Cover Point Stand
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+--- !u!4 &2459764619134075535 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+  m_PrefabInstance: {fileID: 2307348479322475922}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &3031710581689158184
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 8010956985166957072}
+    m_Modifications:
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.70658785
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.7076254
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -90.084
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7870949381222192290, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_Name
+      value: (R) Cover Point Stand
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+--- !u!4 &3962386921275164060 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+  m_PrefabInstance: {fileID: 3031710581689158184}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &3173374114084117390
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 7142307466186211565}
+    m_Modifications:
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -2.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7076257
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.70658755
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 89.916
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7473449774061364115, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_Name
+      value: (L) Cover Point Stand
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+--- !u!4 &3327484086454654099 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+  m_PrefabInstance: {fileID: 3173374114084117390}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &3496845836201717789
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 8010956985166957072}
+    m_Modifications:
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -2.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.99999976
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.0007338524
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -0.084
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7870949381222192290, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_Name
+      value: (R) Cover Point Stand
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+--- !u!4 &3200018218948886441 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+  m_PrefabInstance: {fileID: 3496845836201717789}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &3922238449506751326
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 7142307466186211565}
+    m_Modifications:
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -2.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.99999976
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.0007338524
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -0.084
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7473449774061364115, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_Name
+      value: (L) Cover Point Stand
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+--- !u!4 &3767569788310182979 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+  m_PrefabInstance: {fileID: 3922238449506751326}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &5004716634120740956
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 8010956985166957072}
+    m_Modifications:
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -2.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7870949381222192290, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+      propertyPath: m_Name
+      value: (R) Cover Point Stand
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+--- !u!4 &6456937131706413032 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2085154942244523956, guid: 93b94900c48901d4fbdd752d1cea4544, type: 3}
+  m_PrefabInstance: {fileID: 5004716634120740956}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &5436895416757285312
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 7142307466186211565}
+    m_Modifications:
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.0007338822
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.99999976
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 179.916
+      objectReference: {fileID: 0}
+    - target: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7473449774061364115, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+      propertyPath: m_Name
+      value: (L) Cover Point Stand
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+--- !u!4 &5283905743656206045 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 155250853157162781, guid: 72d54652c228c5949a7369b4ce1b68bf, type: 3}
+  m_PrefabInstance: {fileID: 5436895416757285312}
+  m_PrefabAsset: {fileID: 0}

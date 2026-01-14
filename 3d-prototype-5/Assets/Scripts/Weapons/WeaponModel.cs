@@ -7,6 +7,7 @@ public class WeaponModel : MonoBehaviour
     public string weaponName;
     public string weaponID;
     public int maxAmmoCount;
+    public int maxMagCount = 3;
     public float fireRate;
     public Collider magObj;
     public Transform magPos;

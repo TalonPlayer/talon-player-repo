@@ -8,7 +8,7 @@ public class SafeZone : MonoBehaviour
     {
         if (other.CompareTag("Human"))
         {
-            MyEntity e = other.GetComponent<MyEntity>();
+            Entity e = other.GetComponent<Entity>();
 
             e.brain.closestSafeZone = transform;
             e.brain.inSafeZone = true;
@@ -19,7 +19,7 @@ public class SafeZone : MonoBehaviour
     {
         if (other.CompareTag("Human"))
         {
-            MyEntity e = other.GetComponent<MyEntity>();
+            Entity e = other.GetComponent<Entity>();
 
             e.brain.inSafeZone = false;
         }

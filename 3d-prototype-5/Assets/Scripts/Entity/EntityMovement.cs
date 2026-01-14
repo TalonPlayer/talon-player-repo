@@ -20,10 +20,20 @@ public class EntityMovement : MonoBehaviour
     public float sprintSpeed;
     public float panicSpeed;
     public float speedMultiplier;
-    public float fleeDistance = 15f;
+
+    [Header("Surrouding Values")]
+    public float fleeRadiusInner = 22.5f;
+    public float fleeRadiusOuter = 25f;
+    public float radiusInner = 17.5f;   // inside this is "danger"
+    public float radiusOuter = 20f;   // don't roam beyond this
+    public float minSeparation = 6f;      // at least this far from current position
+    public int maxAttempts = 16;      // tries to find a valid NavMesh point
+    public float sampleRadius = 4f;      // NavMesh.SamplePosition radius
+    public float inwardTolerance = 0.2f;    // how strictly we reject inward moves (0 = strict)
+
     public int strafeSide;
 
-    private MyEntity entity;
+    private Entity entity;
     private EntityBrain brain;
     void Awake()
     {
@@ -31,15 +41,17 @@ public class EntityMovement : MonoBehaviour
     }
     void Start()
     {
-        entity = GetComponent<MyEntity>();
+        entity = GetComponent<Entity>();
         brain = GetComponent<EntityBrain>();
 
+        /*
         speedMultiplier = entity.speed / 250.0f;
         speedMultiplier = Random.Range(1f - speedMultiplier, 1.5f + speedMultiplier);
         walkSpeed *= speedMultiplier;
         jogSpeed *= speedMultiplier;
         sprintSpeed *= speedMultiplier;
         panicSpeed *= speedMultiplier;
+        */
 
         MyEntityManager.moveTick += Move;
         entity.body.Play("RandomFloat", Random.Range(0f, 2f));
@@ -63,9 +75,6 @@ public class EntityMovement : MonoBehaviour
             else
                 RotateToTarget(randomDirection);
         }
-
-        if (isMoving) agent.SetDestination(targetPos);
-
     }
 
     public void StopMovement()
@@ -77,7 +86,10 @@ public class EntityMovement : MonoBehaviour
     public void ResumeMovement()
     {
         isMoving = true;
-        agent.isStopped = false;
+        agent.SetDestination(targetPos);
+        if (entity)
+            if (entity.isAlive)
+                agent.isStopped = false;
     }
 
     public void ChangeSpeed(int type)
@@ -242,12 +254,11 @@ public class EntityMovement : MonoBehaviour
             if (Random.value < 0.5f) perp = -perp;              // randomly choose left or right
 
             // Small jitter so positions vary around that perpendicular, not a perfect line
-            const float angleJitter = 25f;                      // degrees
-            Quaternion jitter = Quaternion.AngleAxis(Random.Range(-angleJitter, angleJitter), Vector3.up);
+            Quaternion jitter = Quaternion.AngleAxis(Random.Range(-30, 30), Vector3.up);
             Vector3 dir = (jitter * perp).normalized;
 
             // Pick distance within radius
-            float dist = Random.Range(radius * 0.5f, radius);
+            float dist = Random.Range(-radius, radius);
             offset = dir * dist;
         }
         else
@@ -256,23 +267,32 @@ public class EntityMovement : MonoBehaviour
             offset = Helper.RandomVectorInRadius(radius);
         }
 
+        if (TrySampleOnNavMesh(target + offset, sampleRadius, out Vector3 sampled))
+        {
+            MoveTo(sampled);
+            return;
+        }
         MoveTo(target + offset);
     }
 
-    public void Surrounding()
+    public void Surrounding(bool restricted = false)
     {
-        // Config
-        float innerDangerRadius = 17.5f;   // inside this is "danger"
-        float outerRoamRadius = 20f;   // don't roam beyond this
-        float minSeparation = 6f;      // at least this far from current position
-        int maxAttempts = 16;      // tries to find a valid NavMesh point
-        float sampleRadius = 4f;      // NavMesh.SamplePosition radius
-        float inwardTolerance = 0.2f;    // how strictly we reject inward moves (0 = strict)
 
         Vector3 center = (brain != null && brain.target != null)
             ? brain.target.position
             : transform.position;
-
+        float outerRoamRadius = 0f;
+        float innerDangerRadius = 0f;
+        if (restricted)
+        {
+            outerRoamRadius = fleeRadiusOuter;
+            innerDangerRadius = fleeRadiusInner;
+        }
+        else
+        {
+            outerRoamRadius = radiusOuter;
+            innerDangerRadius = radiusInner;          
+        }
         if (outerRoamRadius <= innerDangerRadius)
             outerRoamRadius = innerDangerRadius + 1f;
 

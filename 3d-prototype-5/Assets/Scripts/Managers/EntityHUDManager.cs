@@ -44,7 +44,7 @@ public class EntityHUDManager : MonoBehaviour
 
     }
 
-    public void SetHud(MyEntity entity)
+    public void SetHud(Entity entity)
     {
 
         // Name
@@ -171,7 +171,7 @@ public class EntityHUDManager : MonoBehaviour
 
         if (entity.brain.hasFriends)
         {
-            foreach (MyEntity friend in entity.friends)
+            foreach (Entity friend in entity.friends)
             {
                 FriendBox box = Instantiate(boxPrefab, friendListContent);
                 box.aliveStatus.sprite = friend.brain.isHuman ? humanSprite : zombieSprite;

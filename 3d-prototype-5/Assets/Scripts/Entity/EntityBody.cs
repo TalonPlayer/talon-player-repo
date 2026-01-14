@@ -19,12 +19,12 @@ public class EntityBody : MonoBehaviour
     public List<Clothing> clothes;
     public bool itemDropGravity = true;
     public List<GameObject> heldItems;
-    private MyEntity entity;
+    private Entity entity;
     private EntityBrain brain;
     private List<Renderer> renderers;
     void Awake()
     {
-        entity = GetComponentInParent<MyEntity>();
+        entity = GetComponentInParent<Entity>();
         brain = GetComponentInParent<EntityBrain>();
     }
     void Start()
@@ -103,15 +103,23 @@ public class EntityBody : MonoBehaviour
 
         RagDoll();
 
-        yield return new WaitForSeconds(delay);
+        yield return new WaitForEndOfFrame();
+
         thisAnimator.SetTrigger("Sink");
+
+        yield return new WaitForEndOfFrame();
 
         foreach (Collider c in GetComponentsInChildren<Collider>())
             c.enabled = false;
+
+
         foreach (Rigidbody r in GetComponentsInChildren<Rigidbody>())
             r.isKinematic = true;
+
         float start = 1f;
         float elapsed = 0f;
+
+        yield return new WaitForEndOfFrame();
 
         while (elapsed < fadeTime)
         {
@@ -124,6 +132,7 @@ public class EntityBody : MonoBehaviour
 
             yield return null;
         }
+
 
         Destroy(gameObject);
 

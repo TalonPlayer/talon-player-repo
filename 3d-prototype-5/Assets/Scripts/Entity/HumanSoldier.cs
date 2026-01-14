@@ -54,7 +54,7 @@ public class HumanSoldier : HumanBrain
             }
 
             // If the entity is no longer near the objective, while scouting. Orbit again
-            if (!movement.HasReached(objectiveTarget, 6f) && scoutPause)
+            if (!movement.HasReached(objectiveTarget, baseOrbitRadius) && scoutPause)
             {
                 CancelScout();
                 scoutPause = false;
@@ -70,11 +70,11 @@ public class HumanSoldier : HumanBrain
         {
             
             // If they reached the target within a certain radius, start orbiting/defending
-            if (movement.HasReached(objectiveTarget, 6f))
+            if (movement.HasReached(objectiveTarget, orbitRadius))
             {
                 atObjective = true;
                 isDefending = true;
-                movement.Orbit(objectiveTarget.position, 6f);
+                movement.Orbit(objectiveTarget.position, baseOrbitRadius);
                 
             }
             else // Move if not near objective

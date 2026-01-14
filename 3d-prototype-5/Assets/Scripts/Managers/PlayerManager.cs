@@ -10,12 +10,13 @@ public class PlayerManager : MonoBehaviour
     public CameraView cameraView = CameraView.TopDown;
     public Animator hudAnimator;
     public Animator controlAnimator;
-    public MyEntity selectedEntity;
+    public Entity selectedEntity;
     public CameraMovementType moveType;
     public EntityDragSelection dragSelection;
     public ControlMode controlMode;
-    public Objective waypoint;
-    public List<Objective> waypoints;
+    public Waypoint waypoint;
+    public Waypoint objectiveWaypoint;
+    public List<Waypoint> waypoints;
     void Awake()
     {
         Instance = this;
@@ -50,6 +51,7 @@ public class PlayerManager : MonoBehaviour
         }
 
     }
+
     public void ChangeControls(int controlMode)
     {
         this.controlMode = (ControlMode)controlMode;
@@ -64,7 +66,7 @@ public class PlayerManager : MonoBehaviour
                 break;
         }
     }
-    public void SetCamera(CameraView viewType, MyEntity target = null)
+    public void SetCamera(CameraView viewType, Entity target = null)
     {
         cameraView = viewType;
         selectedEntity = target;
@@ -89,7 +91,7 @@ public class PlayerManager : MonoBehaviour
                 break;
         }
     }
-    public void SelectEntity(MyEntity entity, bool additive)
+    public void SelectEntity(Entity entity, bool additive)
     {
         if (!additive)
             dragSelection.ClearSelection();
@@ -106,38 +108,78 @@ public class PlayerManager : MonoBehaviour
 
     public void MoveSelection()
     {
-        Plane ground = new Plane(Vector3.up, Vector3.zero);
+        if (dragSelection.selectedEntities.Count == 0) return;
+        Objective o = null;
+        Waypoint w = null;
         Vector3 pos = Vector3.zero;
+        bool isObjective = false;
+        bool isWaypoint = false;
+        float size = 1f;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        float enter;
-        if (ground.Raycast(ray, out enter))
-        {
-            pos = ray.GetPoint(enter);
-        }
-        Objective waypointObj = Instantiate(waypoint, pos, Quaternion.identity, transform);
-        foreach (MyEntity entity in dragSelection.selectedEntities)
-        {
-            List<Objective> temp = new List<Objective>();
-            foreach (Objective waypoint in waypoints)
+        int layers = (1 << 11) | (1 << 12) | (1 << 19) | (1 << 20);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, 500f, layers, QueryTriggerInteraction.Collide))
+            if (hit.collider.tag == "Wall") return;
+            else
             {
-                waypoint.entities.Remove(entity);
-                if (waypoint.entities.Count == 0)
-                    Destroy(waypoint.gameObject);
+                isObjective = hit.collider.tag == "Objective";
+                isWaypoint = hit.collider.tag == "Waypoint";
+                if (isObjective)
+                {
+                    o = hit.collider.GetComponent<Objective>();
+                    if (o) size = o.objectiveSize;
+                    pos = o.transform.position;
+                }
+                else if (isWaypoint)
+                {
+                    w = hit.collider.GetComponent<Waypoint>();
+                    if (w) pos = w.transform.position;
+                }
                 else
-                    temp.Add(waypoint);
+                {
+                    pos = hit.point;
+                    pos.y += .1f;
+                }
             }
 
-            waypoints.Clear();
-            waypoints = temp;
+        Waypoint waypointObj = null;
 
-            waypointObj.entities.Add(entity);
-            waypoints.Add(waypointObj);
-            entity.brain.objectiveTarget = waypointObj.transform;
+        if (isObjective)
+            waypointObj = Instantiate(objectiveWaypoint, pos, Quaternion.identity, o.transform);
+        else if (!isWaypoint)
+            waypointObj = Instantiate(waypoint, pos, Quaternion.identity, transform);
+
+        foreach (Entity entity in dragSelection.selectedEntities)
+        {
+
+            if (isWaypoint)
+            {
+                w.entities.Add(entity);
+                entity.brain.objectiveTarget = w.transform;
+            }
+            else
+            {
+                foreach (Waypoint p in waypoints)
+                    p.RemoveAndEvaluate(entity);
+                List<Waypoint> temp = waypoints.FindAll(w => w.entities.Count == 0 && w.canBeCleaned);
+                foreach (Waypoint p in temp)
+                    Destroy(p.gameObject);
+                waypoints = waypoints.FindAll(w => w.entities.Count != 0 || !w.canBeCleaned);
+
+                waypointObj.entities.Add(entity);
+                waypoints.Add(waypointObj);
+                entity.brain.objectiveTarget = waypointObj.transform;
+            }
+
+            entity.brain.orbitRadius = isObjective ? size : entity.brain.baseOrbitRadius;
+
+
         }
 
         dragSelection.ClearSelection();
     }
-    
+
+
     public void CancelDrag()
     {
         dragSelection.CancelDrag();

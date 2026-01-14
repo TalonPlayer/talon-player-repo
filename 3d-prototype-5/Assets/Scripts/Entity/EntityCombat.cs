@@ -31,7 +31,7 @@ public class EntityCombat : MonoBehaviour
     private Vector3 direction;
     Coroutine attackRoutine;
     Coroutine throwRoutine;
-    private MyEntity entity;
+    private Entity entity;
     public EntityBody body;
     private EntityBrain brain;
     private Vector3 pos;
@@ -42,7 +42,7 @@ public class EntityCombat : MonoBehaviour
 
     void Start()
     {
-        entity = GetComponent<MyEntity>();
+        entity = GetComponent<Entity>();
         brain = GetComponent<EntityBrain>();
     }
 
@@ -51,7 +51,8 @@ public class EntityCombat : MonoBehaviour
         weapon = newWeapon;
 
         maxAmmoCount = weapon.maxAmmoCount;
-
+        maxMagCount = weapon.maxMagCount;
+        currentAmmoCount = weapon.maxMagCount;
         attackTimeMax = weapon.fireRate + .25f;
         attackTimeMin = weapon.fireRate - .25f;
 
@@ -186,7 +187,7 @@ public class EntityCombat : MonoBehaviour
     IEnumerator ReloadRoutine()
     {
         currentMags--;
-        hasAmmo = currentMags <= 0;
+        hasAmmo = currentMags > 0;
         isReloading = true;
         entity.body.Play("Reload");
 

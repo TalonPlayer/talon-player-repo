@@ -115,6 +115,7 @@ MonoBehaviour:
   weaponName: Single Shot
   weaponID: NERF_103
   maxAmmoCount: 1
+  maxMagCount: 50
   fireRate: 1
   magObj: {fileID: 9063796280097532404}
   magPos: {fileID: 6902500849866399824}
@@ -129,6 +130,7 @@ MonoBehaviour:
   - {fileID: 595946121153513814, guid: a4ebe42427a963e469674393c85c345b, type: 3}
   weaponType: 0
   loadingType: 0
+  isExclusive: 0
 --- !u!65 &2464720553692974340
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -297,8 +297,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Pentagon
   weaponID: NERF_101
-  maxAmmoCount: 24
-  fireRate: 1
+  maxAmmoCount: 55
+  maxMagCount: 5
+  fireRate: 0.55
   magObj: {fileID: 5840378879795238497}
   magPos: {fileID: 3293300889392174910}
   weaponAnimator: {fileID: 9100000, guid: ab56d28c6f99f3c488936ec6d7d52486, type: 2}
@@ -312,6 +313,7 @@ MonoBehaviour:
   - {fileID: 5422780234697957421, guid: 15aed8251251f3649b10723fe40eeaf0, type: 3}
   weaponType: 0
   loadingType: 0
+  isExclusive: 0
 --- !u!65 &7697770130041344416
 BoxCollider:
   m_ObjectHideFlags: 0

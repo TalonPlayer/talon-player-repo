@@ -17,14 +17,14 @@ public static class MouseWorld
         return Vector3.zero;
     }
 
-    public static MyEntity GetMouseSelection()
+    public static Entity GetMouseSelection()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit, 100f, 1 << 6))
         {
             if (hit.collider.CompareTag("Human"))
             {
-                MyEntity entity = hit.collider.GetComponent<MyEntity>();
+                Entity entity = hit.collider.GetComponent<Entity>();
                 return entity;
             }
         }

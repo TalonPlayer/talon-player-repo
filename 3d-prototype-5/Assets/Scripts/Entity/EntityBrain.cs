@@ -9,8 +9,8 @@ using UnityEngine.EventSystems;
 public abstract class EntityBrain : MonoBehaviour, IPointerClickHandler
 {
     [Header("Vision")]
-    public List<MyEntity> visibleEnemies;
-    public List<MyEntity> nearbyAllies;
+    public List<Entity> visibleEnemies;
+    public List<Entity> nearbyAllies;
     public Transform target;
     public Transform facingTarget;
     public Transform closestSafeZone;
@@ -35,8 +35,11 @@ public abstract class EntityBrain : MonoBehaviour, IPointerClickHandler
     public bool inSafeZone;
     public bool inFormation;
     public bool isWandering;
+    public bool restrictedAttack;
     [SerializeField] protected bool scoutPause = false;
 
+    public float orbitRadius;
+    [HideInInspector] public float baseOrbitRadius;
     public int situation;
     public int fleeThreshold = 75;
     protected int chargeThreshold = 5;
@@ -48,12 +51,12 @@ public abstract class EntityBrain : MonoBehaviour, IPointerClickHandler
     public SocialType socialType;
     public BehaviorType behaviorType;
 
-    protected MyEntity entity;
+    protected Entity entity;
     protected EntityBody body;
     protected EntityMovement movement;
     protected EntityCombat combat;
     protected Coroutine scoutRoutine;
-
+    protected Coroutine restrictRoutine;
     public float distanceToTarget;
 
     void Awake()
@@ -63,7 +66,7 @@ public abstract class EntityBrain : MonoBehaviour, IPointerClickHandler
 
     protected virtual void Start()
     {
-        entity = GetComponent<MyEntity>();
+        entity = GetComponent<Entity>();
         movement = GetComponent<EntityMovement>();
         combat = GetComponent<EntityCombat>();
 
@@ -71,10 +74,13 @@ public abstract class EntityBrain : MonoBehaviour, IPointerClickHandler
         MyEntityManager.brainTick += Brain;
 
         if (objectiveTarget) movement.MoveTo(objectiveTarget.position);
+
+        baseOrbitRadius = orbitRadius;
     }
 
     public virtual void OnDeath()
     {
+        CancelScout();
         MyEntityManager.aggroTick -= CheckTarget;
         MyEntityManager.brainTick -= Brain;
     }
@@ -98,6 +104,17 @@ public abstract class EntityBrain : MonoBehaviour, IPointerClickHandler
         movement.randomDirection = Helper.RandomVectorInRadius(Random.Range(0f, 5f));
         movement.ToggleAiming(true);
         scoutPause = false;
+    }
+    public void Respawn()
+    {
+        restrictedAttack = true;
+        if (restrictRoutine != null) StopCoroutine(restrictRoutine);
+        restrictRoutine = StartCoroutine(RestrictAttack(10f));
+    }
+    protected IEnumerator RestrictAttack(float time)
+    {
+        yield return new WaitForSeconds(time);
+        restrictedAttack = false;
     }
     #endregion
 
@@ -137,7 +154,7 @@ public abstract class EntityBrain : MonoBehaviour, IPointerClickHandler
         float closestDistanceSqr = Mathf.Infinity;
 
         // Check to see if there are any units that are closer than the player
-        foreach (MyEntity e in visibleEnemies)
+        foreach (Entity e in visibleEnemies)
         {
             if (e == null || e.brain.inSafeZone) continue;
 
@@ -145,6 +162,7 @@ public abstract class EntityBrain : MonoBehaviour, IPointerClickHandler
             if (distSqr < closestDistanceSqr)
             {
                 closestDistanceSqr = distSqr;
+                distanceToTarget = distSqr;
                 closest = e.transform;
             }
         }
@@ -169,7 +187,7 @@ public abstract class EntityBrain : MonoBehaviour, IPointerClickHandler
     {
         if (!other) return;
 
-        MyEntity e = other.GetComponent<MyEntity>();
+        Entity e = other.GetComponent<Entity>();
         if (!e || e == entity || !e.isAlive) return;
 
         bool isEnemy = isHuman ? other.CompareTag("Zombie") : other.CompareTag("Human");
@@ -178,6 +196,7 @@ public abstract class EntityBrain : MonoBehaviour, IPointerClickHandler
             if (nearbyAllies != null && !nearbyAllies.Contains(e))
             {
                 nearbyAllies.Add(e);
+                e.seenBy.Add(entity);
             }
             return;
         }
@@ -185,6 +204,7 @@ public abstract class EntityBrain : MonoBehaviour, IPointerClickHandler
         if (visibleEnemies != null && !visibleEnemies.Contains(e))
         {
             visibleEnemies.Add(e);
+            e.seenBy.Add(entity);
         }
 
         if (!isAggro)
@@ -199,7 +219,7 @@ public abstract class EntityBrain : MonoBehaviour, IPointerClickHandler
     {
         if (!other) return;
 
-        MyEntity e = other.GetComponent<MyEntity>();
+        Entity e = other.GetComponent<Entity>();
         if (!e || e == entity || !e.isAlive) return;
 
         bool isEnemy = isHuman ? other.CompareTag("Zombie") : other.CompareTag("Human");
@@ -211,6 +231,7 @@ public abstract class EntityBrain : MonoBehaviour, IPointerClickHandler
                 {
                     if (ReferenceEquals(nearbyAllies[i], e))
                     {
+                        nearbyAllies[i].seenBy.Remove(entity);
                         nearbyAllies.RemoveAt(i);
                         break;
                     }
@@ -225,6 +246,7 @@ public abstract class EntityBrain : MonoBehaviour, IPointerClickHandler
             {
                 if (ReferenceEquals(visibleEnemies[i], e))
                 {
+                    visibleEnemies[i].seenBy.Remove(entity);
                     visibleEnemies.RemoveAt(i);
                     break;
                 }

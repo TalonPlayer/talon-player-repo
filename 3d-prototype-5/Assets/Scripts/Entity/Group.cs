@@ -6,8 +6,8 @@ using UnityEngine;
 public class Group
 {
     public string groupName;
-    public MyEntity leader;
-    public List<MyEntity> members = new List<MyEntity>();
+    public Entity leader;
+    public List<Entity> members = new List<Entity>();
     public Objective currentObjective;
     public Sprite groupImage;
     public Transform target;
@@ -28,10 +28,10 @@ public class Group
     public void AssignLineFormation(float spacing = .75f)
     {
         if (leader == null || members == null || members.Count == 0) return;
-        List<MyEntity> nonLeaders = members.FindAll(m => m != leader && m != null && m.isAlive);
+        List<Entity> nonLeaders = members.FindAll(m => m != leader && m != null && m.isAlive);
         for (int i = 0; i < nonLeaders.Count; i++)
         {
-            MyEntity m = nonLeaders[i];
+            Entity m = nonLeaders[i];
             m.brain.inFormation = true;
             m.movement.agent.autoBraking = true;
             Vector3 targetPos = leader.transform.position;
@@ -47,7 +47,7 @@ public class Group
 
     public void BreakFormation()
     {
-        foreach (MyEntity e in members)
+        foreach (Entity e in members)
         {
             e.brain.inFormation = false;
         }

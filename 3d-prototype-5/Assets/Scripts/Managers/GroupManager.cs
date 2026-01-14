@@ -10,7 +10,7 @@ public class GroupManager : MonoBehaviour
     {
         Instance = this;
     }
-    public void AssignToGroup(string _groupName, MyEntity entity, Sprite logo = null)
+    public void AssignToGroup(string _groupName, Entity entity, Sprite logo = null)
     {
         Group newGroup = new Group(_groupName);
 

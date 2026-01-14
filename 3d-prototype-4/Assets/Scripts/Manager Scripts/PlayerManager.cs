@@ -88,7 +88,7 @@ public class PlayerManager : MonoBehaviour
 
         int desired = SaveSystem.currentPlayers.Count;
 
-        
+        /*
         // 1) Try spawn P1 on Keyboard+Mouse (optional)
         var p1 = playerInputManager.JoinPlayer(
             playerIndex: numOfPlayers,
@@ -99,8 +99,9 @@ public class PlayerManager : MonoBehaviour
         InitPlayerFromSave(p1, numOfPlayers);
 
         if (desired == 1) return;
-        
          numOfPlayers++;
+
+        */
         // 2) Spawn remaining players on available gamepads
         foreach (var pad in Gamepad.all)
         {

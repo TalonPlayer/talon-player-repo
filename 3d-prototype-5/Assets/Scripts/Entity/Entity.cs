@@ -1,18 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 /// <summary>
 /// Class that contains generic info about the entity
 /// </summary>
-public class MyEntity : MonoBehaviour
+public class Entity : MonoBehaviour
 {
     [Header("Info")]
     public string entityName;
     public string entityID;
     public Group group;
-    public List<MyEntity> friends;
+    public List<Entity> friends;
     public bool isAlive = true;
     public EntityObj myInfo;
 
@@ -29,7 +28,9 @@ public class MyEntity : MonoBehaviour
     public Rigidbody rb;
     public CapsuleCollider cc;
     public Outline outline;
-    public UnityEvent onDeath;
+    public delegate void DeathEvent();
+    public event DeathEvent onDeath;
+    public List<Entity> seenBy;
     void Awake()
     {
 
@@ -41,9 +42,29 @@ public class MyEntity : MonoBehaviour
         cc = GetComponent<CapsuleCollider>();
         MyEntityManager.Instance.entities.Add(this);
         if (brain.isHuman)
-                MyEntityManager.Instance.humans.Add(this);
+            MyEntityManager.Instance.humans.Add(this);
+        else
+            MyEntityManager.Instance.zombies.Add(this);
+
+        onDeath += () =>
+        {
+            foreach (Entity e in seenBy)
+            {
+                if (e.brain.nearbyAllies.Contains(this))
+                    e.brain.nearbyAllies.Remove(this);
+                if (e.brain.visibleEnemies.Contains(this))
+                    e.brain.visibleEnemies.Remove(this);
+                if (e.brain.target == transform) e.brain.target = null;
+                if (e.brain.facingTarget == transform) e.brain.facingTarget = null;
+            }
+            MyEntityManager.Instance.entities.Remove(this);
+            if (brain.isHuman)
+                MyEntityManager.Instance.humans.Remove(this);
             else
-                MyEntityManager.Instance.zombies.Add(this);
+                MyEntityManager.Instance.zombies.Remove(this);
+            MyEntityManager.Instance.RecycleRagdolls();
+            MyEntityManager.Instance.RecycleItems();
+        };
     }
 
     public void Init()
@@ -56,7 +77,7 @@ public class MyEntity : MonoBehaviour
         combat = GetComponent<EntityCombat>();
     }
 
-    public bool IsFriend(MyEntity entity)
+    public bool IsFriend(Entity entity)
     {
         return friends.Contains(entity);
     }
@@ -65,29 +86,49 @@ public class MyEntity : MonoBehaviour
     {
         isAlive = false;
         myInfo.active = false;
-        // MyEntityManager.Instance.ScheduleRespawn(entityName);
+
+
+        if (!brain.isHuman)
+        {
+            myInfo.deathPos = transform.position;
+            myInfo.spawnAwayFrom = brain.visibleEnemies;
+            MyEntityManager.Instance.ScheduleRespawn(myInfo);
+        }
 
         MyEntityManager.finishTick += () =>
         {
-            MyEntityManager.Instance.entities.Remove(this);
-            if (brain.isHuman)
-                MyEntityManager.Instance.humans.Remove(this);
-            else
-                MyEntityManager.Instance.zombies.Remove(this);
+            onDeath?.Invoke();
+            onDeath = null;
 
-            MyEntityManager.Instance.RecycleRagdolls();
-            MyEntityManager.Instance.RecycleItems();
+
             cc.enabled = false;
             movement.agent.enabled = false;
 
-            foreach (MyEntity e in MyEntityManager.Instance.entities)
+            if (group != null)
             {
-                if (e.brain.nearbyAllies.Contains(this)) e.brain.nearbyAllies.Remove(this);
-                if (e.brain.visibleEnemies.Contains(this)) e.brain.visibleEnemies.Remove(this);
-
-                if (e.brain.target == transform) e.brain.target = null;
-                if (e.brain.facingTarget == transform) e.brain.facingTarget = null;
+                group.members.Remove(this);
             }
+
+            brain.OnDeath();
+            movement.OnDeath();
+            body.OnDeath();
+            DelayDestroy(.25f);
+        };
+    }
+
+    public void OnRemove()
+    {
+        isAlive = false;
+        myInfo.active = false;
+        myInfo.respawning = false;
+        MyEntityManager.finishTick += () =>
+        {
+            onDeath?.Invoke();
+            onDeath = null;
+
+
+            cc.enabled = false;
+            movement.agent.enabled = false;
 
             if (group != null)
             {
@@ -111,10 +152,7 @@ public class MyEntity : MonoBehaviour
         Destroy(gameObject);
     }
 
-    void Respawn()
-    {
-        
-    }
+
 
 }
 

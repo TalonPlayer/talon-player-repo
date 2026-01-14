@@ -90,6 +90,9 @@ MonoBehaviour:
     glovesID: 
     shoesID: 
     beltID: 
+    respawning: 0
+    spawnAwayFrom: []
+    deathPos: {x: 0, y: 0, z: 0}
   threatLevel: 50
   speed: 0
   stamina: 0
@@ -100,81 +103,7 @@ MonoBehaviour:
   rb: {fileID: 2107968447862496052}
   cc: {fileID: 0}
   outline: {fileID: 8919186965959596051}
-  onDeath:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1902834379090850867}
-        m_TargetAssemblyTypeName: EntityBrain, Assembly-CSharp
-        m_MethodName: OnDeath
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 2134211338315602869}
-        m_TargetAssemblyTypeName: EntityMovement, Assembly-CSharp
-        m_MethodName: OnDeath
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: EntityBody, Assembly-CSharp
-        m_MethodName: RagDoll
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: EntityBody, Assembly-CSharp
-        m_MethodName: OnDeath
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0.25
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: EntityBody, Assembly-CSharp
-        m_MethodName: DelayDropAll
-        m_Mode: 4
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1723003757735477289}
-        m_TargetAssemblyTypeName: Entity, Assembly-CSharp
-        m_MethodName: DelayDestroy
-        m_Mode: 4
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0.25
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  seenBy: []
 --- !u!114 &1902834379090850867
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -211,7 +140,10 @@ MonoBehaviour:
   inSafeZone: 0
   inFormation: 0
   isWandering: 0
+  restrictedAttack: 0
   scoutPause: 0
+  orbitRadius: 6
+  baseOrbitRadius: 0
   situation: 0
   fleeThreshold: 175
   expLvl: 0
@@ -247,12 +179,19 @@ MonoBehaviour:
   isAiming: 0
   blocked: 0
   moveType: 1
-  walkSpeed: 7
-  jogSpeed: 9
-  sprintSpeed: 12
-  panicSpeed: 16
+  walkSpeed: 10
+  jogSpeed: 14
+  sprintSpeed: 18
+  panicSpeed: 24
   speedMultiplier: 0
-  fleeDistance: 5
+  fleeRadiusInner: 22.5
+  fleeRadiusOuter: 25
+  radiusInner: 17.5
+  radiusOuter: 20
+  minSeparation: 6
+  maxAttempts: 16
+  sampleRadius: 4
+  inwardTolerance: 0.2
   strafeSide: 0
 --- !u!114 &5518139832339662525
 MonoBehaviour:
@@ -266,7 +205,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72932c9c3495fc84ab61f28d4367ce18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRange: 15
+  attackRange: 13
   attackDelay: 0
   attackTimeMin: 0.25
   attackTimeMax: 1
@@ -304,7 +243,7 @@ NavMeshAgent:
   m_AngularSpeed: 1080
   m_StoppingDistance: 0.25
   m_AutoTraverseOffMeshLink: 0
-  m_AutoBraking: 0
+  m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 2
   m_BaseOffset: 0
@@ -320,7 +259,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 67648
+    m_Bits: 591936
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 63410
@@ -346,7 +285,7 @@ SphereCollider:
     m_Bits: 384
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 130615
+    m_Bits: 654903
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0

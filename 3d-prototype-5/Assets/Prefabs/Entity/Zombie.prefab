@@ -89,6 +89,9 @@ MonoBehaviour:
     glovesID: 
     shoesID: 
     beltID: 
+    respawning: 0
+    spawnAwayFrom: []
+    deathPos: {x: 0, y: 0, z: 0}
   threatLevel: 50
   speed: 0
   stamina: 0
@@ -99,45 +102,7 @@ MonoBehaviour:
   rb: {fileID: 8524127400736478437}
   cc: {fileID: 0}
   outline: {fileID: 0}
-  onDeath:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8257864677063111896}
-        m_TargetAssemblyTypeName: EntityMovement, Assembly-CSharp
-        m_MethodName: OnDeath
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1674874845853613246}
-        m_TargetAssemblyTypeName: EntityBrain, Assembly-CSharp
-        m_MethodName: OnDeath
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 5805888826884869445}
-        m_TargetAssemblyTypeName: Entity, Assembly-CSharp
-        m_MethodName: DelayDestroy
-        m_Mode: 4
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0.25
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  seenBy: []
 --- !u!114 &1674874845853613246
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -174,7 +139,10 @@ MonoBehaviour:
   inSafeZone: 0
   inFormation: 0
   isWandering: 0
+  restrictedAttack: 0
   scoutPause: 0
+  orbitRadius: 6
+  baseOrbitRadius: 0
   situation: 0
   fleeThreshold: 75
   expLvl: 0
@@ -203,12 +171,19 @@ MonoBehaviour:
   isAiming: 0
   blocked: 0
   moveType: 1
-  walkSpeed: 5
-  jogSpeed: 15
-  sprintSpeed: 18
-  panicSpeed: 22
+  walkSpeed: 14
+  jogSpeed: 18
+  sprintSpeed: 24
+  panicSpeed: 30
   speedMultiplier: 0
-  fleeDistance: 25
+  fleeRadiusInner: 20
+  fleeRadiusOuter: 24
+  radiusInner: 16
+  radiusOuter: 18
+  minSeparation: 6
+  maxAttempts: 4
+  sampleRadius: 4
+  inwardTolerance: 0.2
   strafeSide: 0
 --- !u!114 &8043011393159089515
 MonoBehaviour:
@@ -273,7 +248,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 68672
+    m_Bits: 592960
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 62386
@@ -299,7 +274,7 @@ SphereCollider:
     m_Bits: 384
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 130615
+    m_Bits: 654903
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0

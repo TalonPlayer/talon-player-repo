@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -9,10 +8,10 @@ public class EntityDragSelection : MonoBehaviour
 
     public Rect selectionRect;
     public bool isDraggingSelection = false;
-
+    public bool hasSelection = false;
     private Vector2 dragStart;
     private Texture2D whiteTex;
-    public List<MyEntity> selectedEntities;
+    public List<Entity> selectedEntities;
     void Awake()
     {
         whiteTex = new Texture2D(1, 1);
@@ -92,7 +91,7 @@ public class EntityDragSelection : MonoBehaviour
         if (!additive)
             ClearSelection();
 
-        List<MyEntity> humans = MyEntityManager.Instance.humans;
+        List<Entity> humans = MyEntityManager.Instance.humans;
         for (int i = 0; i < humans.Count; i++)
         {
             Outline outline = humans[i].outline;

@@ -35,6 +35,9 @@ public class EntityObj
     public string glovesID;
     public string shoesID;
     public string beltID;
+    public bool respawning = false;
+    public List<Entity> spawnAwayFrom;
+    public Vector3 deathPos;
     public EntityObj() { }
 
     public EntityObj(string name)
@@ -57,7 +60,7 @@ public class EntityObj
 
         experience = preset.experience;
         threatLevel = preset.threatLevel;
-        
+
         weaponID = preset.weaponID;
         exclusiveWeapon = preset.exclusiveWeapon;
 
@@ -77,5 +80,64 @@ public class EntityObj
         glovesID = preset.glovesID;
         shoesID = preset.shoesID;
         beltID = preset.beltID;
+    }
+
+    public Vector3 GetRespawnPoint()
+    {
+        Vector3 enemyCohesion = Cohesion();
+
+        Vector3 away = (deathPos - enemyCohesion).normalized;
+        away.y = deathPos.y + .25f;
+        int layers = (1 << 11) | (1 << 12);
+        if (Physics.Raycast(deathPos, away, out RaycastHit hit, 20f, layers, QueryTriggerInteraction.Ignore))
+        {
+            if (hit.collider.tag == "Wall")
+            {
+                hit.point -= away * 2f;
+
+                Vector3 perp = Vector3.Cross(hit.point, Vector3.up);
+                perp *= 2f;
+                perp.y = .25f;
+                float left = Vector3.Distance(-perp, enemyCohesion);
+                float right = Vector3.Distance(perp, enemyCohesion);
+
+                hit.point = left > right ? perp : -perp;
+                if (left > right)
+                    hit.point = perp;
+                else
+                {
+                    hit.point = -perp;
+                    perp = -perp;
+                }
+                if (Physics.Raycast(hit.point, perp, out hit, 7f, layers, QueryTriggerInteraction.Ignore))
+                    respawning = false;
+            }
+                
+            return hit.point;
+        }
+        away.y = .25f;
+        away *= 20f;
+        return away + deathPos;
+
+    }
+
+    public Vector3 Cohesion()
+    {
+        var enemies = spawnAwayFrom;
+        if (enemies == null || enemies.Count == 0)
+            return deathPos;
+
+        Vector3 center = deathPos;
+        int count = 0;
+
+        for (int i = 0; i < enemies.Count; i++)
+        {
+            var e = enemies[i];
+            if (e == null) continue;
+            center += e.transform.position;
+            count++;
+        }
+
+        return (count > 0) ? center / count : deathPos;
     }
 }
