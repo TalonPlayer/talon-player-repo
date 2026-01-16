@@ -110,7 +110,7 @@ CapsuleCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 16384
+    m_Bits: 49152
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -184,16 +184,12 @@ MonoBehaviour:
     IsWeaponEmpty: 0
     Targets: []
     ViewableTargets: []
+  behaviorMode: 0
   reactionTime: 0.2
-  defaultPlan:
-  - {fileID: 11400000, guid: 02667f48554f1314e9171da1544cfe8c, type: 2}
-  - {fileID: 11400000, guid: c538073f7ce02e6498d306cf0315ccbf, type: 2}
-  - {fileID: 11400000, guid: c06505db2d1fb494abeaf3611f20358b, type: 2}
-  - {fileID: 11400000, guid: 2b7170efe7175e344b966809842ce1c3, type: 2}
-  recoveryPlan: []
-  environmentalFallbackPlan: []
-  reacquireFallbackPlan: []
-  defensiveOverridePlan: []
+  spawnPlan: []
+  searchPlan: []
+  combatPlan: []
+  retreatPlan: []
   logPlans: 1
   debugPlanText: {fileID: 669515897650920128}
 --- !u!114 &563350915666222774
@@ -250,6 +246,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c4639d4ec45fc64fa7f25fcdec3c95d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  startingWeapon: {fileID: 0}
   inHand: {fileID: 3995097011414075051}
   meleeRange: 5
   meleeDist: 1

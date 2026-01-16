@@ -13,6 +13,8 @@ public class WeaponEffects : MonoBehaviour
     public ParticleSystem impactParticles;
     public TrailRenderer bulletTrail;
     public GameObject magazine;
+    public Collider coll;
+    public Rigidbody rb;
 
     public IEnumerator SpawnTrail(RaycastHit hit, Action onHit)
     {
@@ -51,6 +53,18 @@ public class WeaponEffects : MonoBehaviour
         trail.Clear();
         Destroy(trail.gameObject);
         Instantiate(impactParticles, hit, Quaternion.LookRotation(hit));
+    }
+
+    public void PlayerPickUp(Player player)
+    {
+        Weapon wpn = GetComponent<Weapon>();
+        wpn.fx.coll.GetComponent<Outline>().SetOutlineActive(false);
+
+        RuntimeWeapon weapon = new RuntimeWeapon(wpn);
+
+        player.combat.Equip(weapon);
+
+        Destroy(gameObject);
     }
 
     // public int poolAmount = 20;

@@ -45,7 +45,7 @@ public class UnitAnimationEvent : MonoBehaviour
 
     public void DropHand()
     {
-        main.body.DropHand();
+        Weapon.DropHand(main.combat.inHand);
     }
     public void RotateCover(float rotationTime)
     {
@@ -124,5 +124,10 @@ public class UnitAnimationEvent : MonoBehaviour
     public void ShootToCover()
     {
         main.movement.MoveTo(main.movement.coverPoint.transform.position);
+    }
+
+    public void Reload()
+    {
+        main.body.animator.SetLayerWeight(2, 1f);
     }
 }

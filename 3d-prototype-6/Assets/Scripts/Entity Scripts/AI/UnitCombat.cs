@@ -5,6 +5,7 @@ using UnityEngine;
 public class UnitCombat : MonoBehaviour
 {
     private Unit main;
+    public WeaponObj startingWeapon;
     public Weapon inHand;
     [Header("Non-Weapon Stats")]
     public float meleeRange; // Range to validate melee
@@ -22,24 +23,8 @@ public class UnitCombat : MonoBehaviour
 
     void Start()
     {
-        if (inHand)
-        {
-            Equip(inHand);
-        }
-        else
-        {
-            Transform t = main.body.rightHand.GetChild(0);
-
-            if (t)
-            {
-                Weapon wpn = t.GetComponent<Weapon>();
-                if (wpn)
-                {
-                    Equip(wpn);
-                }
-            }
-        }
-
+        RuntimeWeapon wpn = new RuntimeWeapon(startingWeapon);
+        Equip(wpn);
         intervalShotCount = Random.Range(6, 12 + main.ai.AILevel);
     }
 
@@ -101,7 +86,6 @@ public class UnitCombat : MonoBehaviour
         if (!isReloading)
         {
             main.body.Play("Reload");
-            main.body.animator.SetLayerWeight(2, 1f);
             isReloading = true;
         }
     }
@@ -111,21 +95,33 @@ public class UnitCombat : MonoBehaviour
         isReloading = false;
         inHand.Reload();
     }
-    public void Equip(Weapon weapon)
+    public void Equip(RuntimeWeapon w)
     {
+        WeaponEffects fx = Instantiate(w.model);
+        Weapon weapon = fx.gameObject.AddComponent<Weapon>();
+
+        if (!fx) {Debug.LogWarning($"Weapon Effects not valid for {w.weaponName}"); return;}
+        inHand = weapon;
+        if (!w.used) inHand.Init(w, fx);
+
         // Add logic if the player is carrying only one weapon, the current weapon gets put in off hand
         // Add logic for dropping weapons
-        weapon.transform.parent = main.body.rightHand.transform;
-        weapon.rb.isKinematic = true;
-        weapon.rb.useGravity = false;
-        weapon.coll.gameObject.layer = 2;
-        weapon.coll.enabled = false;
-        weapon.transform.localPosition = Vector3.zero;
+        Vector3 size = inHand.transform.localScale;
+        inHand.transform.parent = main.body.rightHand.transform;
+        inHand.transform.localRotation = Quaternion.Euler(Vector3.zero);
+        inHand.transform.localPosition = Vector3.zero;
+        inHand.transform.localScale = size;
+        
+        fx.rb.isKinematic = true;
+        fx.rb.useGravity = false;
+        inHand.gameObject.layer = 2;
+        Transform[] children = inHand.transform.GetComponentsInChildren<Transform>();
+        foreach (Transform c in children) c.gameObject.layer = 2;
+        fx.coll.enabled = false;
 
-        inHand = weapon;
         onFire -= ShootWeapon;
         onFire += ShootWeapon;
-        inHand.Init();
         main.body.SetFireRate(inHand.weaponType);
+        main.body.SetReloadSpeed(inHand.reloadTime);
     }
 }

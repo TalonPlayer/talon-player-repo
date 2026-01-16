@@ -11,7 +11,6 @@ public class PlayerBody : MonoBehaviour
     public Animator headAnimator;
     public RuntimeAnimatorController weaponController;
     public Animator weaponAnimator;
-    public
     void Awake()
     {
         main = GetComponent<Player>();
@@ -26,6 +25,16 @@ public class PlayerBody : MonoBehaviour
     {
 
     }
+    public void SetWeapon(RuntimeAnimatorController controller)
+    {
+        weaponController = controller;
+        weaponAnimator.runtimeAnimatorController = null;
+        weaponAnimator.Update(0f);
+
+        weaponAnimator.runtimeAnimatorController = weaponController;
+        weaponAnimator.Update(0f);
+    }
+
 
     public void Play(string stringParam)
     {
@@ -43,11 +52,6 @@ public class PlayerBody : MonoBehaviour
     {
         headAnimator.SetBool(stringParam, boolParam);
     }
-    public void SetWeapon(RuntimeAnimatorController animator)
-    {
-        weaponController = animator;
-    }
-
     public void PlayWeapon(string stringParam)
     {
         if (!weaponController) return;
@@ -71,5 +75,11 @@ public class PlayerBody : MonoBehaviour
         if (!weaponController) return;
 
         weaponAnimator.SetBool(stringParam, boolParam);
+    }
+
+    public void ADSFade(bool isAiming, float adsSpeed)
+    {
+        string aimState = isAiming ? "ADS" : "Normal View";
+        weaponAnimator.CrossFade(aimState, adsSpeed);
     }
 }

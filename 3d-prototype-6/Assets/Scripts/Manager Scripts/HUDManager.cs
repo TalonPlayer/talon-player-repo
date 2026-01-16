@@ -8,6 +8,7 @@ using UnityEngine;
 public class HUDManager : MonoBehaviour
 {
     public TextMeshProUGUI ammoText, weaponText, enemyStateText, enemyActionText;
+    public TextMeshProUGUI interactText;
     public static HUDManager Instance;
     void Awake()
     {
@@ -32,4 +33,10 @@ public class HUDManager : MonoBehaviour
     {
         Instance.ammoText.text = $"{current} / {max}";
     }
+
+    public static void InteractText(string message)
+    {
+        Instance.interactText.text = message;
+    }
+
 }

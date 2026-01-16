@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DroppedWeapon : MonoBehaviour
+public class WeaponInteraction : MonoBehaviour
 {
     
     void Start()

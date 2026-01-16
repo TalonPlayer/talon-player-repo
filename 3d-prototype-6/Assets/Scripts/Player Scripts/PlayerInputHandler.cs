@@ -7,9 +7,11 @@ using static UnityEngine.InputSystem.InputAction;
 public class PlayerInputHandler : MonoBehaviour
 {
     private Player main;
+    private PlayerInteraction interaction;
     void Awake()
     {
         main = GetComponent<Player>();
+        interaction = GetComponent<PlayerInteraction>();
     }
 
     void Start()
@@ -92,6 +94,14 @@ public class PlayerInputHandler : MonoBehaviour
         if (ctx.started)
         {
             main.combat.Reload();
+        }
+    }
+
+    public void OnInteract(CallbackContext ctx)
+    {
+        if (ctx.started)
+        {
+            interaction.OnInteract();
         }
     }
 }

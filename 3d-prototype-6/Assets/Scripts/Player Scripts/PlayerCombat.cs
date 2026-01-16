@@ -11,6 +11,7 @@ public class PlayerCombat : MonoBehaviour
     public bool isMeleeing;
     public float meleeCooldown;
     public int meleeDamage = 200;
+    public float adsSpeed = .25f;
     public bool isAiming;
     private bool isReloading;
     private float recoilReduction;
@@ -27,16 +28,13 @@ public class PlayerCombat : MonoBehaviour
 
     void Start()
     {
-        if (inHand)
-        {
-            Equip(inHand);
-        }
-
         _layers = ~(Layer.Ally | Layer.Player | 1 << 2);
     }
 
     void Update()
     {
+        if (!inHand) return;
+
         Firing();
         AimDownSights();
     }
@@ -56,12 +54,12 @@ public class PlayerCombat : MonoBehaviour
     {
         if (isReloading)
         {
-            main.body.PlayWeapon("IsAiming", false);
+            main.body.ADSFade(false, adsSpeed);
             return;
         }
 
         isAiming = main.isSecondaryFiring;
-        main.body.PlayWeapon("IsAiming", isAiming);
+        main.body.ADSFade(isAiming, adsSpeed);
         recoilReduction = isAiming ? 2f : 4f;
     }
 
@@ -76,8 +74,6 @@ public class PlayerCombat : MonoBehaviour
             StopCoroutine(reloadRoutine);
         }
     }
-
-
 
     IEnumerator MeleeRoutine()
     {
@@ -125,7 +121,7 @@ public class PlayerCombat : MonoBehaviour
     {
         currentYawRecoil = ((Random.value - .5f) / 2) * inHand.recoilX;
         currentPitchRecoil = (Random.value - .5f) / 2;
-        if (timePressed >= inHand.maxRecoilTime || isAiming)
+        if (timePressed >= inHand.maxRecoilTime)
             currentPitchRecoil *= inHand.recoilY / 4f;
         else
             currentPitchRecoil *= inHand.recoilY;
@@ -136,7 +132,7 @@ public class PlayerCombat : MonoBehaviour
     {
         if (inHand.currentBulletCount <= 0 && !isReloading) reloadRoutine = StartCoroutine(ReloadRoutine());
 
-        if (main.isPrimaryFiring && !isReloading && inHand)
+        if (main.isPrimaryFiring && !isReloading)
         {
             timePressed += Time.deltaTime;
             timePressed = Mathf.Min(timePressed, inHand.maxRecoilTime);
@@ -149,27 +145,63 @@ public class PlayerCombat : MonoBehaviour
         }
     }
 
-    public void Equip(Weapon weapon)
+    public void Equip(RuntimeWeapon w)
     {
+        Weapon prev = null;
+        if (inHand)
+        {
+
+            if (inHand.weaponName == w.weaponName)
+            {
+                inHand.currentRounds += w.bulletsInMag;
+                HUDManager.UpdateAmmoText(inHand.currentBulletCount, inHand.currentRounds);
+                return;
+            }
+            else prev = inHand;
+
+        }
+
+
+
+        WeaponEffects fx = Instantiate(w.model);
+        fx.coll.GetComponent<Outline>().SetOutlineActive(false);
+
+        Weapon weapon = fx.gameObject.AddComponent<Weapon>();
+
+        if (!fx) { Debug.LogWarning($"Weapon Effects not valid for {w.weaponName}"); return; }
+        inHand = weapon;
+
+        inHand.Init(w, fx);
+
         // Add logic if the player is carrying only one weapon, the current weapon gets put in off hand
         // Add logic for dropping weapons
-        weapon.transform.parent = main.body.rightHand.transform;
-        weapon.transform.rotation = main.body.transform.rotation;
-        weapon.transform.localPosition = Vector3.zero;
-        weapon.transform.localScale = Vector3.one;
+        Vector3 size = inHand.transform.localScale;
 
-        weapon.gameObject.layer = 16;
+        inHand.transform.parent = main.body.rightHand.transform;
+        inHand.transform.localRotation = Quaternion.Euler(Vector3.zero);
+        inHand.transform.localPosition = Vector3.zero;
+        inHand.transform.localScale = size;
 
-        inHand = weapon;
-        if (weapon.fx.weaponAnimator)
-            main.body.SetWeapon(weapon.fx.weaponAnimator);
+        inHand.gameObject.layer = 16;
+        Transform[] children = inHand.transform.GetComponentsInChildren<Transform>();
+        foreach (Transform c in children) c.gameObject.layer = 16;
+
+        fx.rb.isKinematic = true;
+        fx.rb.useGravity = false;
+        fx.coll.enabled = false;
+
+        main.body.SetWeapon(fx.weaponAnimator);
         main.onPrimaryInteraction -= ShootWeapon;
         main.onPrimaryInteraction += ShootWeapon;
         //main.onSecondaryInteraction -= AimDownSights;
         //main.onSecondaryInteraction += AimDownSights;
-        inHand.Init();
-        HUDManager.UpdateWeaponText(inHand.weaponName);
+        HUDManager.UpdateWeaponText(w.weaponName);
+        HUDManager.UpdateAmmoText(inHand.currentBulletCount, inHand.currentRounds);
 
-
+        if (prev != null)
+        {
+            Weapon.DropHand(prev);
+            HUDManager.InteractText("");
+        } 
     }
 }

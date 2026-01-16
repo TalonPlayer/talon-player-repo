@@ -11,6 +11,8 @@ public class PlayerMovement : MonoBehaviour
     public float yawRotationSpeed, pitchRotationSpeed;
     public float standCamLevel = .55f;
     public float positionChangeSpeed = .15f;
+    [HideInInspector] public float targetCamLevel = 0f;
+
     [Header("Move Conditions")]
     public bool isGrounded;
     public bool isMoving;
@@ -50,6 +52,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 moveDir;
     private Vector3 cachedDir;
     private Vector3 aimInputVector;
+    public Vector3 lookInput {get { return aimInputVector;}}
     private Vector3 vel;
     private Vector3 horizVel;
     private Quaternion normalYawRot;
@@ -62,8 +65,8 @@ public class PlayerMovement : MonoBehaviour
     public float newYawAngle;
     public float recoilKickSmoothTime = 0.03f;   // fast kick
     public float recoilReturnSpeed = 10f;        // slow return (higher = faster return)
-    private float recoilYawOffset;
-    private float recoilPitchOffset;
+    public float recoilYawOffset;
+    public float recoilPitchOffset;
     private float recoilYawTarget;
     private float recoilPitchTarget;
     private float recoilYawVel;
@@ -80,6 +83,7 @@ public class PlayerMovement : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
         main = GetComponent<Player>();
+        targetCamLevel = standCamLevel;
     }
 
     void Start()
@@ -153,7 +157,6 @@ public class PlayerMovement : MonoBehaviour
     IEnumerator PositionChangeLerp(PositionState positionState)
     {
         float targetHeight = 0f;
-        float targetCamLevel = 0f;
 
         switch (positionState)
         {
@@ -283,18 +286,17 @@ public class PlayerMovement : MonoBehaviour
         Vector3 motion = horizVel + new Vector3(0f, vel.y, 0f);
         controller.Move(motion * Time.deltaTime);
     }
+
     public void AddRecoil(float yawDelta, float pitchDelta)
     {
         recoilYawTarget += yawDelta;
         recoilPitchTarget += pitchDelta;
 
-        // Keep pitch sane (prevents flipping if you spam recoil)
+        // prevents flipping if you spam recoil
         recoilPitchTarget = Mathf.Clamp(recoilPitchTarget, -30f, 30f);
     }
-    // PlayerMovement.cs
     private void Look()
     {
-        // 1) Normal input-driven look (this is the "base"/normal rotation)
         newYawAngle += aimInputVector.x * cameraSensitivity * Time.deltaTime;
         newPitchAngle -= aimInputVector.z * cameraSensitivity * Time.deltaTime;
 
@@ -303,23 +305,18 @@ public class PlayerMovement : MonoBehaviour
         currentYaw = Mathf.SmoothDamp(currentYaw, newYawAngle, ref yawVel, yawRotationSpeed);
         currentPitch = Mathf.SmoothDamp(currentPitch, newPitchAngle, ref pitchVel, pitchRotationSpeed);
 
-        // Cache the normal rotations (requested)
         cachedNormalPlayerRot = Quaternion.Euler(0f, currentYaw, 0f);
         cachedNormalCamRot = Quaternion.Euler(currentPitch, 0f, 0f);
 
-        // 2) Recoil offsets: kick quickly toward target offsets
         recoilYawOffset = Mathf.SmoothDamp(recoilYawOffset, recoilYawTarget, ref recoilYawVel, recoilKickSmoothTime);
         recoilPitchOffset = Mathf.SmoothDamp(recoilPitchOffset, recoilPitchTarget, ref recoilPitchVel, recoilKickSmoothTime);
 
-        // 3) Slowly lerp targets back to zero (return to normal)
         recoilYawTarget = Mathf.Lerp(recoilYawTarget, 0f, recoilReturnSpeed * Time.deltaTime);
         recoilPitchTarget = Mathf.Lerp(recoilPitchTarget, 0f, recoilReturnSpeed * Time.deltaTime);
 
-        // 4) Apply: final rotation = normal rotation * recoil offset rotation
         transform.rotation = cachedNormalPlayerRot * Quaternion.Euler(0f, recoilYawOffset, 0f);
         playerCam.localRotation = cachedNormalCamRot * Quaternion.Euler(recoilPitchOffset, 0f, 0f);
     }
-
     public enum PositionState
     {
         Stand,

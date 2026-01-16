@@ -65,22 +65,9 @@ public class NPCBody : MonoBehaviour
     {
         int rand = Random.Range(0, deathAnimCount);
 
-        animator.Play("Death " + rand);
+        animator.CrossFade("Death " + rand, .5f);
         animator.SetLayerWeight(1, 0f);
         Play("IsDead", true);
-    }
-
-    public void DropHand()
-    {
-        Weapon weapon = main.combat.inHand;
-        if (weapon)
-        {
-            weapon.transform.parent = EntityManager.Instance.weaponDropFolder;
-            weapon.rb.isKinematic = false;
-            weapon.rb.useGravity = true;
-            weapon.coll.enabled = true;
-            weapon.coll.gameObject.layer = 14;
-        }
     }
 
     public void BodyHit()
@@ -93,18 +80,23 @@ public class NPCBody : MonoBehaviour
     {
         Play("Shoot");
 
-        if (wpnType == WeaponType.Shotgun)
-            animator.SetLayerWeight(2, .65f);
+        if (wpnType == WeaponType.Pump)
+            animator.SetLayerWeight(2, .25f);
         else if (wpnType == WeaponType.Auto)
             animator.SetLayerWeight(2, .1f);
     }
 
     public void SetFireRate(WeaponType wpnType)
     {
-        if (wpnType == WeaponType.Shotgun)
+        if (wpnType == WeaponType.Pump)
             Play("FireRate", 1f);
         else if (wpnType == WeaponType.Auto)
             Play("FireRate", 3f);
+    }
+
+    public void SetReloadSpeed(float reloadSpeed)
+    {
+        Play("ReloadSpeed", 1 / reloadSpeed); 
     }
 
     #region Animations
