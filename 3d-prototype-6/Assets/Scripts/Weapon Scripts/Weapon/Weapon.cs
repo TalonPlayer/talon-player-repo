@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 
 /// <summary>
 /// The Runtime Instantiated weapon
@@ -83,7 +85,6 @@ public class Weapon : MonoBehaviour
                 if (Physics.Raycast(headPos, baseDir, out RaycastHit hit, 100f, layers, QueryTriggerInteraction.Ignore))
                 {
                     Action onHit = null;
-
                     if (hit.collider.CompareTag(tag))
                     {
                         float damage = baseDamage;
@@ -94,10 +95,19 @@ public class Weapon : MonoBehaviour
                         {
                             e = b.main;
                             damage = Mathf.RoundToInt(b.damageMult * baseDamage);
+                            b.Hit(baseDir, damage);
                         }
 
                         damage += Mathf.RoundToInt(critMult * baseDamage);
-                        if (e) onHit = () => e.OnHit(Mathf.RoundToInt(damage), attacker);
+                        if (e)
+                            if (e.isAlive)
+                                onHit = () =>
+                                {
+                                    e.OnHit(Mathf.RoundToInt(damage), attacker);
+                                    UnityAction onRagdollDeath = () => b.Hit(baseDir, damage);
+                                    if (b && e.isAlive) e.death.AppendEvent(onRagdollDeath);
+                                };
+
                     }
 
                     StartCoroutine(fx.SpawnTrail(hit, onHit));
@@ -108,6 +118,7 @@ public class Weapon : MonoBehaviour
             _lastShootTime = Time.time;
         }
     }
+
     public void Reload()
     {
 
@@ -126,6 +137,12 @@ public class Weapon : MonoBehaviour
 
     }
 
+    public void SingleReload()
+    {
+        currentBulletCount++;
+        currentRounds--;
+    }
+
     public static void DropHand(Weapon weapon)
     {
         if (weapon)
@@ -134,7 +151,7 @@ public class Weapon : MonoBehaviour
             weapon.fx.rb.isKinematic = false;
             weapon.fx.rb.useGravity = true;
             weapon.fx.coll.enabled = true;
-            weapon.fx.coll.GetComponent<Outline>().SetOutlineActive(false);;
+            weapon.fx.coll.GetComponent<Outline>().SetOutlineActive(false); ;
             weapon.gameObject.layer = 15;
             Transform[] children = weapon.transform.GetComponentsInChildren<Transform>();
             foreach (Transform c in children) c.gameObject.layer = 15;

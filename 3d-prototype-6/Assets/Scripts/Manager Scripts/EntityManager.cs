@@ -10,10 +10,10 @@ public class EntityManager : MonoBehaviour
     public delegate void BrainTick(); public static event BrainTick brainTick;
     public List<Unit> enemies = new List<Unit>();
     public List<Unit> allies = new List<Unit>();
-    public List<Entity> entities = new List<Entity>();
     public Transform enemyFolder;
     public Transform allyFolder;
     public Transform weaponDropFolder;
+    public Transform ragdollFolder;
     void Awake()
     {
         Instance = this;
@@ -29,11 +29,32 @@ public class EntityManager : MonoBehaviour
 
     public static void AddEnemy(Unit u)
     {
+        u.transform.parent = Instance.enemyFolder;
         Instance.enemies.Add(u);
     }
 
     public static void AddAlly(Unit u)
     {
+        u.transform.parent = Instance.allyFolder;
         Instance.allies.Add(u);
     }
+
+    public void CleanUp()
+    {
+        Transform[] folders = { enemyFolder, allyFolder, weaponDropFolder, ragdollFolder };
+
+        foreach(Transform f in folders)
+        {
+            Transform[] children = Helper.GetChildrenArray(f);
+
+            foreach(Transform c in children)
+                Destroy(c.gameObject);
+        }
+
+        enemies.Clear();
+        allies.Clear();
+
+        brainTick = null;
+    }
+
 }

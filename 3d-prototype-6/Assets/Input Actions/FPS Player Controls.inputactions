@@ -83,13 +83,22 @@
                     "id": "32017b11-3c66-4a48-9bc0-ed6a7ad7fe6b",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "",
+                    "interactions": "Tap",
                     "initialStateCheck": false
                 },
                 {
                     "name": "Interaction",
                     "type": "Button",
                     "id": "3eccee97-fd20-43ee-b3d5-05566d6b7ae8",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Tap",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Next Wave",
+                    "type": "Button",
+                    "id": "169cd096-ea61-46bf-941d-4553d3e691f5",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -281,6 +290,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Interaction",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8d370e73-7c4d-46bf-9fc6-4a6f726c669f",
+                    "path": "<Keyboard>/6",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Next Wave",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -235,7 +235,7 @@ public class PlayerMovement : MonoBehaviour
             switch (position)
             {
                 case PositionState.Stand:
-                    if (isSprinting && !main.combat.isAiming) spd *= sprintMult;
+                    if (isSprinting) spd *= sprintMult;
                     break;
                 case PositionState.Crouch:
                     spd *= crouchMult;
@@ -311,8 +311,10 @@ public class PlayerMovement : MonoBehaviour
         recoilYawOffset = Mathf.SmoothDamp(recoilYawOffset, recoilYawTarget, ref recoilYawVel, recoilKickSmoothTime);
         recoilPitchOffset = Mathf.SmoothDamp(recoilPitchOffset, recoilPitchTarget, ref recoilPitchVel, recoilKickSmoothTime);
 
+
         recoilYawTarget = Mathf.Lerp(recoilYawTarget, 0f, recoilReturnSpeed * Time.deltaTime);
         recoilPitchTarget = Mathf.Lerp(recoilPitchTarget, 0f, recoilReturnSpeed * Time.deltaTime);
+        HUDManager.CursorRecoil(recoilPitchTarget);
 
         transform.rotation = cachedNormalPlayerRot * Quaternion.Euler(0f, recoilYawOffset, 0f);
         playerCam.localRotation = cachedNormalCamRot * Quaternion.Euler(recoilPitchOffset, 0f, 0f);

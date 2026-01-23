@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c14c59fbbd143614b90447fd72ca78fe, type: 3}
+  m_Name: Ptarmigan
+  m_EditorClassIdentifier: 
+  weaponName: Ptarmigan
+  weaponFamily: 001Sub_Base
+  weaponType: 2
+  reloadType: 1
+  baseDamage: 7
+  critMult: 1
+  bulletsInMag: 30
+  numOfMags: 9
+  bulletsPerShot: 1
+  bulletSpread: 0.08
+  fireRate: 0.075
+  reloadTime: 0.75
+  recoilX: 4
+  recoilY: 10
+  maxRecoilTime: 2
+  model: {fileID: 5800782730551037099, guid: cf01027b16d1b3a4b89ba58d97f73aef, type: 3}

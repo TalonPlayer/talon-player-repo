@@ -190,7 +190,7 @@ MonoBehaviour:
   searchPlan: []
   combatPlan: []
   retreatPlan: []
-  logPlans: 1
+  logPlans: 0
   debugPlanText: {fileID: 669515897650920128}
 --- !u!114 &563350915666222774
 MonoBehaviour:
@@ -293,6 +293,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85bd227c188481b428514e8c33937123, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  body: {fileID: 5321587313704226547}
   eyes: {fileID: 5859111337003114978}
   rightHand: {fileID: 5886727054131196392}
   leftHand: {fileID: 8213873427360369714}
@@ -450,7 +451,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5087547911619827366
 RectTransform:
   m_ObjectHideFlags: 0

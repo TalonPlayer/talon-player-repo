@@ -124,6 +124,21 @@ public static class Helper
         return list;
     }
 
+    /// <summary>
+    /// Returns an array of children Transforms, excludes the parent
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="t"></param>
+    /// <returns></returns>
+    public static Transform[] GetChildrenArray(Transform t)
+    {
+        Transform[] array = new Transform[t.childCount];
+        for (int i = 0; i < t.childCount; i++)
+            array[i] = t.GetChild(i);
+
+        return array;
+    }
+
     public static Transform GetTransformChild(Transform parent, string name)
     {
         Transform[] allDescendants = parent.GetComponentsInChildren<Transform>();

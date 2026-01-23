@@ -5,6 +5,7 @@ using UnityEngine;
 public class NPCBody : MonoBehaviour
 {
     private Unit main;
+    public Transform body;
     public Transform eyes;
     public Transform rightHand;
     public Transform leftHand;
@@ -50,15 +51,27 @@ public class NPCBody : MonoBehaviour
 
         // For each body of the part that has a joint, make them non kinematic and parent
         // the body to the ragdoll folder
+
         Rigidbody[] rigidbodies = GetComponentsInChildren<Rigidbody>();
+
+        body.transform.parent = EntityManager.Instance.ragdollFolder;
+
         // entity.rb.isKinematic = false;
         foreach (Rigidbody r in rigidbodies)
         {
             r.isKinematic = false;
             r.velocity = Vector3.zero;
             r.gameObject.layer = 14;
-            r.gameObject.tag = "Ragdoll";
         }
+    }
+
+    public void SetWeapon(RuntimeAnimatorController controller)
+    {
+        animator.runtimeAnimatorController = null;
+        animator.Update(0f);
+
+        animator.runtimeAnimatorController = controller;
+        animator.Update(0f);
     }
 
     public void RandomDeathAnim()
@@ -92,6 +105,8 @@ public class NPCBody : MonoBehaviour
             Play("FireRate", 1f);
         else if (wpnType == WeaponType.Auto)
             Play("FireRate", 3f);
+        else if (wpnType == WeaponType.Semi)
+            Play("FireRate", 1f);
     }
 
     public void SetReloadSpeed(float reloadSpeed)

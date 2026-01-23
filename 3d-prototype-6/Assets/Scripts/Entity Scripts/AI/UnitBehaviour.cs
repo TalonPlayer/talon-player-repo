@@ -18,10 +18,7 @@ public class UnitBehaviour : MonoBehaviour
     void Awake()
     {
         main = GetComponent<Unit>();
-    }
 
-    void Start()
-    {
         AILevel = Mathf.Clamp(AILevel, 1, 10);
 
         switch ((int)unitType)
@@ -35,6 +32,11 @@ public class UnitBehaviour : MonoBehaviour
                 layers = ~(Layer.Ally | Layer.Player | 1 << 2);
                 break;
         }
+    }
+
+    void Start()
+    {
+
     }
 
     /// <summary>
@@ -91,14 +93,14 @@ public class UnitBehaviour : MonoBehaviour
         }
 
         orientation = FacingMode.FaceTarget;
-        
+
         if (movementType == MoveUrgency.None)
         {
-            main.movement.ToggleMovement(false);
+            //main.movement.ToggleMovement(false);
         }
         else
         {
-            main.movement.ToggleMovement(true);
+            //main.movement.ToggleMovement(true);
         }
     }
 }

@@ -23,9 +23,15 @@ public class UnitCombat : MonoBehaviour
 
     void Start()
     {
+        // if (startingWeapon) Init();
+    }
+
+    public void Init()
+    {
+        if (startingWeapon == null) return;
         RuntimeWeapon wpn = new RuntimeWeapon(startingWeapon);
         Equip(wpn);
-        intervalShotCount = Random.Range(6, 12 + main.ai.AILevel);
+        intervalShotCount = Random.Range(4, 6 + main.ai.AILevel);
     }
 
     public void FSM()
@@ -61,7 +67,7 @@ public class UnitCombat : MonoBehaviour
         main.body.ShootWeapon(inHand.weaponType);
         intervalShotCount--;
 
-        if (!inHand.HasAmmo && inHand.HasMags) { Reload(); return; }
+        if (!inHand.HasAmmo && inHand.currentRounds > 0) { Reload(); return; }
     }
 
     public void Melee()
@@ -121,7 +127,12 @@ public class UnitCombat : MonoBehaviour
 
         onFire -= ShootWeapon;
         onFire += ShootWeapon;
+        main.body.SetWeapon(inHand.fx.unitWeaponAnimator);
         main.body.SetFireRate(inHand.weaponType);
         main.body.SetReloadSpeed(inHand.reloadTime);
+    }
+    public void DropHand()
+    {
+        Weapon.DropHand(main.combat.inHand);
     }
 }

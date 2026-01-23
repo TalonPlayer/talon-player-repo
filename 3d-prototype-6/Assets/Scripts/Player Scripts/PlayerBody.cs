@@ -25,13 +25,20 @@ public class PlayerBody : MonoBehaviour
     {
 
     }
+
     public void SetWeapon(RuntimeAnimatorController controller)
     {
-        weaponController = controller;
-        weaponAnimator.runtimeAnimatorController = null;
-        weaponAnimator.Update(0f);
+        if (weaponAnimator == null)
+            return;
 
+        // If you're setting the same controller again, don't reset the Animator.
+        if (weaponAnimator.runtimeAnimatorController == controller)
+            return;
+
+        weaponController = controller;
         weaponAnimator.runtimeAnimatorController = weaponController;
+
+        weaponAnimator.Rebind();
         weaponAnimator.Update(0f);
     }
 
@@ -80,6 +87,6 @@ public class PlayerBody : MonoBehaviour
     public void ADSFade(bool isAiming, float adsSpeed)
     {
         string aimState = isAiming ? "ADS" : "Normal View";
-        weaponAnimator.CrossFade(aimState, adsSpeed);
+        weaponAnimator.CrossFade(aimState, adsSpeed, 0);
     }
 }

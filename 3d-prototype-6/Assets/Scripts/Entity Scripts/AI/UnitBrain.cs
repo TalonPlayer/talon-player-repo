@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -13,13 +15,13 @@ public class UnitBrain : MonoBehaviour
     public BehaviorMode behaviorMode;
     public float reactionTime = 0.2f;
     private float _reactionTimer;
-    public List<Step> spawnPlan;    // Plan used when the unit is spawned, leave empty if theres nothing special
-    public List<Step> searchPlan;   // Plan used to search for enemies
-    public List<Step> combatPlan;   // Plan used when in combat, this should be loopable
-    public List<Step> retreatPlan;  // Plan used for when the unit needs to retreat
+    public Step[] spawnPlan;    // Plan used when the unit is spawned, leave empty if theres nothing special
+    public Step[] searchPlan;   // Plan used to search for enemies
+    public Step[] combatPlan;   // Plan used when in combat, this should be loopable
+    public Step[] retreatPlan;  // Plan used for when the unit needs to retreat
     public bool logPlans;
     public TextMeshPro debugPlanText;
-    private List<Step> currentPlan;
+    private Step[] currentPlan;
     private RuntimeStep currentStep;
     private bool _timedOut;
     private int _stepIndex = -1;
@@ -35,15 +37,18 @@ public class UnitBrain : MonoBehaviour
     {
         EntityManager.brainTick += BrainTick;
         state = new UnitWorldState();
+    }
 
+    public void Init()
+    {
         FullReset();
 
-        debugPlanText.gameObject.SetActive(debugPlanText);
+        debugPlanText.gameObject.SetActive(logPlans);
     }
 
     private void FullReset()
     {
-        if (spawnPlan != null && spawnPlan.Count > 0)
+        if (spawnPlan != null && spawnPlan.Length > 0)
             SwitchPlan(BehaviorMode.Spawn);
         else
             SwitchPlan(BehaviorMode.Search);
@@ -84,7 +89,7 @@ public class UnitBrain : MonoBehaviour
 
         currentStep = new RuntimeStep(currentPlan[_stepIndex], main, state);
 
-        currentStep.EndOfPlan = _stepIndex == currentPlan.Count - 1;
+        currentStep.EndOfPlan = _stepIndex == currentPlan.Length - 1;
         if (currentStep.DelayInit > 0)
             currentStep.Timer = StartCoroutine(DelayStep(currentStep.DelayInit));
         else
@@ -163,19 +168,19 @@ public class UnitBrain : MonoBehaviour
         switch (mode)
         {
             case BehaviorMode.Spawn:
-                newPlan = spawnPlan;
+                newPlan = spawnPlan.ToList();
                 break;
             case BehaviorMode.Search:
-                newPlan = searchPlan;
+                newPlan = searchPlan.ToList();
                 break;
             case BehaviorMode.Combat:
-                newPlan = combatPlan;
+                newPlan = combatPlan.ToList();
                 break;
             case BehaviorMode.Retreat:
-                newPlan = retreatPlan;
+                newPlan = retreatPlan.ToList();
                 break;
         }
-        currentPlan = new List<Step>(newPlan);
+        currentPlan = (Step[]) newPlan.ToArray().Clone();
         _stepIndex = -1;
         NextStep();
     }
@@ -260,8 +265,8 @@ public class UnitBrain : MonoBehaviour
 
 public enum BehaviorMode
 {
-    Spawn,
-    Search,
-    Combat,
-    Retreat
+    Spawn = 0,
+    Search = 1,
+    Combat = 2,
+    Retreat = 3
 }

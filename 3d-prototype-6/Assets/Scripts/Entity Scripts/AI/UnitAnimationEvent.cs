@@ -41,6 +41,8 @@ public class UnitAnimationEvent : MonoBehaviour
     public void Ragdoll()
     {
         main.body.RagDoll();
+        main.coll.enabled = false;
+
     }
 
     public void DropHand()

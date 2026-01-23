@@ -22,10 +22,9 @@ public class Unit : Entity
     public UnitCombat combat;
     public UnitVision vision;
     public Collider coll;
+    public int points = 0;
     public bool isUnderFire;
-    public float underFireTime = 5f;
-    public float underFireThreshold = 0f; // Damage that will make the AI consider running away
-    private float _undCurrent;
+    public float underFireTime = 1f;
     private float _ufTimer;
     protected override void Awake()
     {
@@ -37,19 +36,29 @@ public class Unit : Entity
         EntityManager.AddEnemy(this);
     }
 
+    public void Init()
+    {
+        brain.Init();
+        combat.Init();
+    }
+
     void Update()
     {
         if (!isAlive) return;
 
-        movement.FSM();
-        combat.FSM();
-        
+        movement.ToggleMovement(!isUnderFire);
+
         if (isUnderFire)
         {
             _ufTimer -= Time.deltaTime;
             if (_ufTimer > 0f) return;
-            _undCurrent = 0f;
             isUnderFire = false;
+
+        }
+        else
+        {
+            movement.FSM();
+            combat.FSM();
         }
         
     }
@@ -58,7 +67,6 @@ public class Unit : Entity
         if (!isAlive) return;
         isUnderFire = true;
         _ufTimer = underFireTime;
-        _undCurrent += damage;
         body.BodyHit();
         base.OnHit(damage, attacker);
     }
@@ -77,5 +85,10 @@ public class Unit : Entity
         s = movement.Tick(s);
 
         return s;
+    }
+
+    public void DestroySelf()
+    {
+        Destroy(gameObject);
     }
 }

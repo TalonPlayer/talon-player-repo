@@ -60,6 +60,6 @@ public class SwayController : MonoBehaviour
         invertLook.x = Mathf.Clamp(invertLook.x, -maxRotStep, maxRotStep);
         invertLook.y = Mathf.Clamp(invertLook.y, -maxRotStep, maxRotStep);
 
-        swayRot = new Vector3(invertLook.y + move.recoilPitchOffset, invertLook.x, invertLook.x);
+        swayRot = new Vector3(invertLook.y + move.recoilPitchOffset * (combat.inHand.recoilY * .15f), invertLook.x, invertLook.x);
     }
 }

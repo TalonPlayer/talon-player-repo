@@ -7,7 +7,8 @@ using UnityEngine;
 public class WeaponEffects : MonoBehaviour
 {
     [Header("Weapon Effects")]
-    public RuntimeAnimatorController weaponAnimator;
+    [Tooltip("For Player")] public RuntimeAnimatorController weaponAnimator;
+    [Tooltip("For Unit")] public RuntimeAnimatorController unitWeaponAnimator;
     public Transform barrelPoint;
     public ParticleSystem muzzleFlash;
     public ParticleSystem impactParticles;

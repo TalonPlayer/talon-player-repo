@@ -104,4 +104,12 @@ public class PlayerInputHandler : MonoBehaviour
             interaction.OnInteract();
         }
     }
+
+    public void OnNextWave(CallbackContext ctx)
+    {
+        if (ctx.started)
+        {
+            WaveManager.Instance.SkipIntermission();
+        }
+    }
 }

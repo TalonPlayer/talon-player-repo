@@ -94,6 +94,7 @@ public class UnitMovement : MonoBehaviour
     public void ToggleMovement(bool canMove)
     {
         agent.isStopped = !canMove;
+        main.body.Play("IsMoving", canMove);
     }
 
     public void SetLookDirection(Vector3 dir)

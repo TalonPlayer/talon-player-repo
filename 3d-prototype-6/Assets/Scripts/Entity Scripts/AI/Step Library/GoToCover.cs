@@ -25,7 +25,6 @@ public class GoToCover : Step
             
         if (u.movement.HasReachedDestination)
         {
-            u.movement.InCover();
             return Status.Complete;
         }
 

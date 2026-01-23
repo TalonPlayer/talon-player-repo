@@ -11,7 +11,8 @@ public abstract class Entity : MonoBehaviour
     protected int _maxHealth;
     public bool isAlive = true;
     [Header("Entity Components")]
-    public DeathEvent death;
+    public DeathEvent death;    
+    private Coroutine teleportRoutine;
     protected virtual void Awake()
     {
         name = _name;
@@ -29,6 +30,10 @@ public abstract class Entity : MonoBehaviour
             CheckHealth();
         }; 
     }
+    public bool WillDie(int damage)
+    {
+        return health - damage <= 0;
+    }
     protected void CheckHealth()
     {
         if (isAlive && health <= 0)
@@ -41,4 +46,37 @@ public abstract class Entity : MonoBehaviour
         isAlive = false;
         death.OnDeath();
     }
+
+    /// <summary>
+    /// Teleport the entity to a position and influence rotation. Calls a coroutine to make sure it happens.
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <param name="rot">Put in Quaternion.Identity if you don't want rotation</param>
+    public void Teleport(Vector3 pos, Quaternion rot)
+    {
+        if (teleportRoutine != null) StopCoroutine(teleportRoutine);
+        teleportRoutine = StartCoroutine(TPRoutine(pos, rot));
+    }
+
+    IEnumerator TPRoutine(Vector3 p, Quaternion r)
+    {
+        float t = 0f;
+        float maxTime = .25f;
+        bool unsuccessful = true;
+        do
+        {
+            t += Time.deltaTime / maxTime;
+            if (t >= 1f) break;
+
+            transform.position = p;
+            transform.rotation = r;
+
+            bool posMatch = transform.position.Equals(p);
+            bool rotMatch = transform.rotation.Equals(r);
+
+            unsuccessful = !posMatch && !rotMatch;
+            yield return null;
+        } while(unsuccessful);
+    }
+
 }

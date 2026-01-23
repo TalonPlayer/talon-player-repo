@@ -14,9 +14,14 @@ public class Player : Entity
     public PlayerInputHandler input;
     public PlayerCombat combat;
     public PlayerBody body;
-
+    public int points;
     public bool isPrimaryFiring;
     public bool isSecondaryFiring;
+    public float regenSpeed = 3f;
+    public float underFireTime = 5f;
+    public bool isUnderFire = false;
+    public bool isRegening = false;
+    private Coroutine underFireRoutine, regenRoutine;
     protected override void Awake()
     {
         base.Awake();
@@ -25,7 +30,7 @@ public class Player : Entity
     protected override void Start()
     {
         base.Start();
-
+        death.AppendEvent(GameManager.Reset);
     }
 
     void Update()
@@ -46,4 +51,66 @@ public class Player : Entity
     {
         isSecondaryFiring = isFiring;
     }
+
+    public void AddPoints(int p)
+    {
+        points += p;
+        HUDManager.UpdatePoints(points);
+    }
+
+    public void Reset()
+    {
+        AddPoints(-points);
+        health = _maxHealth;
+        isAlive = true;
+        HUDManager.UpdateHealthBar(1f);
+    }
+
+    public override void OnHit(int damage, Entity attacker)
+    {
+        if (regenRoutine != null) StopCoroutine(regenRoutine);
+        if (underFireRoutine != null) StopCoroutine(underFireRoutine);
+        underFireRoutine = StartCoroutine(UnderFireRoutine());
+
+        EntityManager.onHit += () =>
+        {
+            health -= damage;
+            HUDManager.UpdateHealthBar((float) health / _maxHealth);
+            CheckHealth();
+        }; 
+    }
+
+    private IEnumerator UnderFireRoutine()
+    {
+
+        isUnderFire = true;
+        isRegening = false;
+        yield return new WaitForSeconds(underFireTime);
+        isUnderFire = false;
+
+        regenRoutine = StartCoroutine(Regeneration());
+    }
+
+    private IEnumerator Regeneration()
+    {
+        isRegening = true;
+        int cur = health;
+        float t = 0f;
+        while (t < 1)
+        {
+            int lerp = Mathf.RoundToInt(Mathf.Lerp(0, _maxHealth, t));
+
+            if (lerp > cur) health = lerp;
+            t += Time.deltaTime / regenSpeed;
+
+            HUDManager.UpdateHealthBar((float) health / _maxHealth);
+
+            yield return null;
+
+            if (!isRegening) break;
+        }
+        isRegening = false;
+    }
+
+    
 }

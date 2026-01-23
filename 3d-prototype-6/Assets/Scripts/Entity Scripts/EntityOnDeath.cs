@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,5 +10,10 @@ public class DeathEvent : MonoBehaviour
     public void OnDeath()
     {
         onDeath?.Invoke();
+    }
+
+    public void AppendEvent(UnityAction e)
+    {
+        onDeath.AddListener(e);
     }
 }

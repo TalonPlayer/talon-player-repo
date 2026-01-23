@@ -7,7 +7,7 @@ public class PlayerCombat : MonoBehaviour
     private Player main;
     public Weapon inHand;
     [HideInInspector] public bool isFiring;
-    public bool canFire;
+    private bool canFire = true;
     public bool isMeleeing;
     public float meleeCooldown;
     public int meleeDamage = 200;
@@ -40,25 +40,27 @@ public class PlayerCombat : MonoBehaviour
     }
     public void ShootWeapon()
     {
-        if (isReloading) return;
-        if (isMeleeing) return;
-        if (!inHand.IsReady) return;
+        if (!inHand.IsReady || isReloading || isMeleeing || !canFire) return;
 
         inHand.Shoot("Enemy", _layers, main.body.head.position, main.body.head.forward, main, isAiming);
 
         CalculateRecoil();
         HUDManager.UpdateAmmoText(inHand.currentBulletCount, inHand.currentRounds);
+
+        if (inHand.weaponType == WeaponType.Semi || inHand.weaponType == WeaponType.Pump) canFire = false;
     }
 
     public void AimDownSights()
     {
-        if (isReloading)
+        if (isReloading || isMeleeing)
         {
             main.body.ADSFade(false, adsSpeed);
+            HUDManager.ToggleCursor(true);
             return;
         }
 
         isAiming = main.isSecondaryFiring;
+        HUDManager.ToggleCursor(!isAiming);
         main.body.ADSFade(isAiming, adsSpeed);
         recoilReduction = isAiming ? 2f : 4f;
     }
@@ -70,7 +72,9 @@ public class PlayerCombat : MonoBehaviour
         StartCoroutine(MeleeRoutine());
         if (isReloading)
         {
+            HUDManager.ToggleReloadInfo(false);
             isReloading = false;
+
             StopCoroutine(reloadRoutine);
         }
     }
@@ -104,35 +108,89 @@ public class PlayerCombat : MonoBehaviour
 
     public void Reload()
     {
-        if (isReloading) return;
+        if (isReloading || isMeleeing) return;
         if (inHand.currentBulletCount <= inHand.maxBulletCount && inHand.currentRounds > 0)
+        {
+
             reloadRoutine = StartCoroutine(ReloadRoutine());
+        }
     }
     IEnumerator ReloadRoutine()
     {
+        HUDManager.ToggleReloadInfo(true);
+
         isReloading = true;
-        yield return new WaitForSeconds(inHand.reloadTime);
+
+        float start = 0f;
+        float t = 0f;
+        float r = inHand.reloadTime;
+
+        if (inHand.reloadType == ReloadType.All)
+        {
+
+            while (t < 1f)
+            {
+                if (!isReloading) break;
+
+                float fill = Mathf.Lerp(start, 1f, t);
+                t += Time.deltaTime / r;
+
+                HUDManager.UpdateReloadBar(fill);
+                yield return null;
+            }
+            if (isReloading) inHand.Reload();
+            HUDManager.UpdateAmmoText(inHand.currentBulletCount, inHand.currentRounds);
+        }
+        else
+        {
+            while (inHand.currentBulletCount < inHand.maxBulletCount)
+            {
+                
+                while (t < 1f)
+                {
+                    if (!isReloading) break; 
+                    
+
+                    float fill = Mathf.Lerp(start, 1f, t);
+                    t += Time.deltaTime / r;
+
+                    HUDManager.UpdateReloadBar(fill);
+                    yield return null;
+                }
+                t = 0f;
+                
+                if (isReloading) inHand.SingleReload();
+                else break;
+                HUDManager.UpdateAmmoText(inHand.currentBulletCount, inHand.currentRounds);
+
+                if (inHand.currentRounds <= 0) break;
+                yield return null;
+            }
+
+
+        }
+        HUDManager.ToggleReloadInfo(false);
         isReloading = false;
-        inHand.Reload();
-        HUDManager.UpdateAmmoText(inHand.currentBulletCount, inHand.currentRounds);
+
     }
 
     public void CalculateRecoil()
     {
         currentYawRecoil = ((Random.value - .5f) / 2) * inHand.recoilX;
         currentPitchRecoil = (Random.value - .5f) / 2;
-        if (timePressed >= inHand.maxRecoilTime)
-            currentPitchRecoil *= inHand.recoilY / 4f;
-        else
-            currentPitchRecoil *= inHand.recoilY;
+        currentPitchRecoil *= inHand.recoilY;
 
         main.movement.AddRecoil(-currentYawRecoil, -Mathf.Abs(currentPitchRecoil));
     }
     public void Firing()
     {
-        if (inHand.currentBulletCount <= 0 && !isReloading) reloadRoutine = StartCoroutine(ReloadRoutine());
+        if (inHand.currentBulletCount <= 0 && !isReloading && !isMeleeing)
+        {
 
-        if (main.isPrimaryFiring && !isReloading)
+            reloadRoutine = StartCoroutine(ReloadRoutine());
+        }
+
+        if (main.isPrimaryFiring && !isReloading && !isMeleeing && canFire)
         {
             timePressed += Time.deltaTime;
             timePressed = Mathf.Min(timePressed, inHand.maxRecoilTime);
@@ -143,6 +201,8 @@ public class PlayerCombat : MonoBehaviour
             isFiring = false;
             timePressed = 0;
         }
+
+        if (!main.isPrimaryFiring) canFire = true;
     }
 
     public void Equip(RuntimeWeapon w)
@@ -154,6 +214,7 @@ public class PlayerCombat : MonoBehaviour
             if (inHand.weaponName == w.weaponName)
             {
                 inHand.currentRounds += w.bulletsInMag;
+                inHand.currentRounds = Mathf.Min(inHand.currentRounds, inHand.maxRounds);
                 HUDManager.UpdateAmmoText(inHand.currentBulletCount, inHand.currentRounds);
                 return;
             }
@@ -161,7 +222,13 @@ public class PlayerCombat : MonoBehaviour
 
         }
 
+        if (isReloading)
+        {
+            HUDManager.ToggleReloadInfo(false);
+            isReloading = false;
 
+            StopCoroutine(reloadRoutine);
+        }
 
         WeaponEffects fx = Instantiate(w.model);
         fx.coll.GetComponent<Outline>().SetOutlineActive(false);
@@ -196,12 +263,13 @@ public class PlayerCombat : MonoBehaviour
         //main.onSecondaryInteraction -= AimDownSights;
         //main.onSecondaryInteraction += AimDownSights;
         HUDManager.UpdateWeaponText(w.weaponName);
+        HUDManager.Instance.bulletSpread = w.bulletSpread;
         HUDManager.UpdateAmmoText(inHand.currentBulletCount, inHand.currentRounds);
 
         if (prev != null)
         {
             Weapon.DropHand(prev);
             HUDManager.InteractText("");
-        } 
+        }
     }
 }
