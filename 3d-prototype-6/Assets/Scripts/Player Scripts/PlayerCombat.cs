@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,13 +7,16 @@ public class PlayerCombat : MonoBehaviour
 {
     private Player main;
     public Weapon inHand;
-    [HideInInspector] public bool isFiring;
-    private bool canFire = true;
-    public bool isMeleeing;
-    public float meleeCooldown;
-    public int meleeDamage = 200;
+    public Weapon[] weaponSlots;
+    public int wpnIndex = -1;
+
     public float adsSpeed = .25f;
-    public bool isAiming;
+
+    public bool canFire = true;
+    public bool isAiming = false;
+    public bool nonAutoRefresh = false;
+    public Action swappedInWeapon;
+    private bool isFiring;
     private bool isReloading;
     private float recoilReduction;
     private float currentPitchRecoil;
@@ -30,6 +34,11 @@ public class PlayerCombat : MonoBehaviour
     {
         _layers = ~(Layer.Ally | Layer.Player | 1 << 2);
     }
+    public void Init(int weaponSlot)
+    {
+        ClearInventory();
+        weaponSlots = new Weapon[weaponSlot];
+    }
 
     void Update()
     {
@@ -40,157 +49,67 @@ public class PlayerCombat : MonoBehaviour
     }
     public void ShootWeapon()
     {
-        if (!inHand.IsReady || isReloading || isMeleeing || !canFire) return;
+        if (!canFire || !inHand.HasAmmo) return;
 
         inHand.Shoot("Enemy", _layers, main.body.head.position, main.body.head.forward, main, isAiming);
-
+        main.body.PlayWeapon("Shoot");
         CalculateRecoil();
         HUDManager.UpdateAmmoText(inHand.currentBulletCount, inHand.currentRounds);
-
-        if (inHand.weaponType == WeaponType.Semi || inHand.weaponType == WeaponType.Pump) canFire = false;
+        canFire = false;
+        if (inHand.currentBulletCount <= 0)
+            main.body.PlayWeapon("No Bullets", true);
     }
 
     public void AimDownSights()
     {
-        if (isReloading || isMeleeing)
+        if (!canFire) return;
+        if (!main.isSecondaryFiring && isAiming)
         {
+            isAiming = false;
             main.body.ADSFade(false, adsSpeed);
             HUDManager.ToggleCursor(true);
-            return;
         }
-
-        isAiming = main.isSecondaryFiring;
-        HUDManager.ToggleCursor(!isAiming);
-        main.body.ADSFade(isAiming, adsSpeed);
-        recoilReduction = isAiming ? 2f : 4f;
-    }
-
-    public void Melee()
-    {
-        if (isMeleeing) return;
-
-        StartCoroutine(MeleeRoutine());
-        if (isReloading)
+        else if (main.isSecondaryFiring && !isAiming)
         {
-            HUDManager.ToggleReloadInfo(false);
-            isReloading = false;
-
-            StopCoroutine(reloadRoutine);
+            isAiming = true;
+            main.body.ADSFade(true, adsSpeed);
+            HUDManager.ToggleCursor(false);
         }
-    }
 
-    IEnumerator MeleeRoutine()
-    {
-        isMeleeing = true;
 
-        if (Physics.Raycast(transform.position, main.body.head.forward, out RaycastHit hit, 2f, _layers, QueryTriggerInteraction.Ignore))
-        {
-            if (hit.collider.CompareTag("Enemy"))
-            {
-                float damage = meleeDamage;
-                BodyPart b = hit.collider.GetComponent<BodyPart>();
-                Entity e = hit.collider.GetComponent<Entity>();
-
-                if (b)
-                {
-                    e = b.main;
-                    damage = Mathf.RoundToInt(b.damageMult * meleeDamage);
-                }
-
-                if (e) e.OnHit(Mathf.RoundToInt(damage), main);
-            }
-        }
-        yield return new WaitForSeconds(meleeCooldown);
-
-        isMeleeing = false;
-
+        recoilReduction = isAiming ? 2f : 4.5f;
     }
 
     public void Reload()
     {
-        if (isReloading || isMeleeing) return;
-        if (inHand.currentBulletCount <= inHand.maxBulletCount && inHand.currentRounds > 0)
-        {
+        if (!canFire || !inHand.CanReload) return;
 
-            reloadRoutine = StartCoroutine(ReloadRoutine());
-        }
+        main.body.PlayWeapon("IsReloading", true);
+        canFire = false;
     }
-    IEnumerator ReloadRoutine()
+
+    public void FullReload()
     {
-        HUDManager.ToggleReloadInfo(true);
-
-        isReloading = true;
-
-        float start = 0f;
-        float t = 0f;
-        float r = inHand.reloadTime;
-
-        if (inHand.reloadType == ReloadType.All)
-        {
-
-            while (t < 1f)
-            {
-                if (!isReloading) break;
-
-                float fill = Mathf.Lerp(start, 1f, t);
-                t += Time.deltaTime / r;
-
-                HUDManager.UpdateReloadBar(fill);
-                yield return null;
-            }
-            if (isReloading) inHand.Reload();
-            HUDManager.UpdateAmmoText(inHand.currentBulletCount, inHand.currentRounds);
-        }
-        else
-        {
-            while (inHand.currentBulletCount < inHand.maxBulletCount)
-            {
-                
-                while (t < 1f)
-                {
-                    if (!isReloading) break; 
-                    
-
-                    float fill = Mathf.Lerp(start, 1f, t);
-                    t += Time.deltaTime / r;
-
-                    HUDManager.UpdateReloadBar(fill);
-                    yield return null;
-                }
-                t = 0f;
-                
-                if (isReloading) inHand.SingleReload();
-                else break;
-                HUDManager.UpdateAmmoText(inHand.currentBulletCount, inHand.currentRounds);
-
-                if (inHand.currentRounds <= 0) break;
-                yield return null;
-            }
-
-
-        }
-        HUDManager.ToggleReloadInfo(false);
-        isReloading = false;
-
+        inHand.Reload();
+        HUDManager.UpdateAmmoText(inHand.currentBulletCount, inHand.currentRounds);
+        canFire = true;
     }
 
     public void CalculateRecoil()
     {
-        currentYawRecoil = ((Random.value - .5f) / 2) * inHand.recoilX;
-        currentPitchRecoil = (Random.value - .5f) / 2;
-        currentPitchRecoil *= inHand.recoilY;
+        currentYawRecoil = ((UnityEngine.Random.value - .5f) / 2) * inHand.recoilX;
+        currentPitchRecoil = (UnityEngine.Random.value - .5f) / 2;
+
+        if (timePressed >= inHand.maxRecoilTime)
+            currentPitchRecoil *= inHand.recoilY;
+        else
+            currentPitchRecoil *= inHand.recoilY / 4f;
 
         main.movement.AddRecoil(-currentYawRecoil, -Mathf.Abs(currentPitchRecoil));
     }
     public void Firing()
     {
-        if (inHand.currentBulletCount <= 0 && !isReloading && !isMeleeing)
-        {
-
-            reloadRoutine = StartCoroutine(ReloadRoutine());
-        }
-
-        if (main.isPrimaryFiring && !isReloading && !isMeleeing && canFire)
+        if (main.isPrimaryFiring && !isReloading && canFire)
         {
             timePressed += Time.deltaTime;
             timePressed = Mathf.Min(timePressed, inHand.maxRecoilTime);
@@ -202,46 +121,134 @@ public class PlayerCombat : MonoBehaviour
             timePressed = 0;
         }
 
-        if (!main.isPrimaryFiring) canFire = true;
+        if (!main.isPrimaryFiring && nonAutoRefresh)
+        {
+            canFire = true;
+            nonAutoRefresh = false;
+        }
+    }
+
+    public void Swap(int increm)
+    {
+        if (inHand == null) return;
+
+        int newIndex = wpnIndex + increm;
+
+        // +1
+        if (newIndex >= weaponSlots.Length)
+            newIndex = 0;
+        // -1
+        else if (newIndex < 0)
+            newIndex = weaponSlots.Length - 1;
+
+        Weapon newWeapon = weaponSlots[newIndex];
+        if (newWeapon)
+        {
+            if (newWeapon == inHand) return;
+            wpnIndex = newIndex;
+            SwapOutWeapon(inHand);
+            swappedInWeapon = () =>
+            {
+
+                SwapInWeapon(newWeapon);
+            };
+        }
+    }
+
+    public int AvailableOccupancy()
+    {
+        for (int i = 0; i < weaponSlots.Length; i++)
+        {
+            if (weaponSlots[i] == null)
+                return i;
+        }
+        // No available room, so replace current weapon
+        return wpnIndex;
+    }
+
+    public void SwapOutWeapon(Weapon weapon)
+    {
+        weapon.gameObject.SetActive(false);
+        canFire = false;
+        main.body.weaponAnimator.CrossFade("Swap Out", .25f);
+    }
+
+    public void SwapInWeapon(Weapon weapon)
+    {
+        inHand = weapon;
+
+        weapon.gameObject.SetActive(true);
+        main.body.SetWeapon(weapon.fx.weaponAnimator);
+        main.body.weaponAnimator.Play("Swap In");
+
+        main.onPrimaryInteraction -= ShootWeapon;
+        main.onPrimaryInteraction += ShootWeapon;
+
+        // Update the ui for the player
+        HUDManager.UpdateWeaponText(inHand.weaponName);
+        HUDManager.Instance.bulletSpread = inHand.bulletSpread;
+        HUDManager.UpdateAmmoText(inHand.currentBulletCount, inHand.currentRounds);
+    }
+
+    public void RefillAmmo()
+    {
+        foreach(Weapon w in weaponSlots) w.RefillWeapon();
+
+        HUDManager.UpdateAmmoText(inHand.currentBulletCount, inHand.currentRounds);
+    }
+
+    public void ClearInventory()
+    {
+        Transform[] c = Helper.GetChildrenArray(main.body.rightHand);
+        foreach (Transform t in c) Destroy(t.gameObject);
     }
 
     public void Equip(RuntimeWeapon w)
     {
         Weapon prev = null;
+        int handIndex = AvailableOccupancy();
+
+        // If has weapon in hand
         if (inHand)
         {
-
-            if (inHand.weaponName == w.weaponName)
+            // If the weapon is in the inventory, just take the ammo
+            Weapon wpn = Array.Find(weaponSlots, wp =>
             {
-                inHand.currentRounds += w.bulletsInMag;
-                inHand.currentRounds = Mathf.Min(inHand.currentRounds, inHand.maxRounds);
+                if (!wp) return false;
+                return wp.weaponName == w.weaponName;  
+            });
+            if (wpn)
+            {
+                wpn.currentRounds += w.bulletsInMag;
+                wpn.currentRounds = Mathf.Min(wpn.currentRounds, wpn.maxRounds);
                 HUDManager.UpdateAmmoText(inHand.currentBulletCount, inHand.currentRounds);
                 return;
             }
-            else prev = inHand;
 
-        }
-
-        if (isReloading)
-        {
-            HUDManager.ToggleReloadInfo(false);
-            isReloading = false;
-
-            StopCoroutine(reloadRoutine);
+            // Queue the previous hand to be dropped or swapped.
+            else
+            {
+                // There is free room here, so swap current hand and equip this.
+                if (weaponSlots[handIndex] == null)
+                    SwapOutWeapon(inHand);
+                else    // There is no room, so queue the previous to drop.
+                    prev = inHand;
+            }
         }
 
         WeaponEffects fx = Instantiate(w.model);
         fx.coll.GetComponent<Outline>().SetOutlineActive(false);
 
-        Weapon weapon = fx.gameObject.AddComponent<Weapon>();
+        Weapon weapon;
+        if (w.used) weapon = fx.GetComponent<Weapon>();
+        else weapon = fx.gameObject.AddComponent<Weapon>();
 
         if (!fx) { Debug.LogWarning($"Weapon Effects not valid for {w.weaponName}"); return; }
         inHand = weapon;
 
         inHand.Init(w, fx);
 
-        // Add logic if the player is carrying only one weapon, the current weapon gets put in off hand
-        // Add logic for dropping weapons
+        // Set the location to the player's hand
         Vector3 size = inHand.transform.localScale;
 
         inHand.transform.parent = main.body.rightHand.transform;
@@ -249,6 +256,7 @@ public class PlayerCombat : MonoBehaviour
         inHand.transform.localPosition = Vector3.zero;
         inHand.transform.localScale = size;
 
+        // Set the layer to UI overlay
         inHand.gameObject.layer = 16;
         Transform[] children = inHand.transform.GetComponentsInChildren<Transform>();
         foreach (Transform c in children) c.gameObject.layer = 16;
@@ -257,15 +265,23 @@ public class PlayerCombat : MonoBehaviour
         fx.rb.useGravity = false;
         fx.coll.enabled = false;
 
+        // Make it so other scripts recognize that this is the weapon now
+        weaponSlots[handIndex] = inHand; wpnIndex = handIndex;
+        PlayerManager.Instance.WeaponSlotsChanged();
         main.body.SetWeapon(fx.weaponAnimator);
+        main.body.weaponAnimator.Play("Equip");
         main.onPrimaryInteraction -= ShootWeapon;
         main.onPrimaryInteraction += ShootWeapon;
-        //main.onSecondaryInteraction -= AimDownSights;
-        //main.onSecondaryInteraction += AimDownSights;
-        HUDManager.UpdateWeaponText(w.weaponName);
-        HUDManager.Instance.bulletSpread = w.bulletSpread;
+
+        // Update the ui for the player
+        HUDManager.UpdateWeaponText(inHand.weaponName);
+        HUDManager.Instance.bulletSpread = inHand.bulletSpread;
         HUDManager.UpdateAmmoText(inHand.currentBulletCount, inHand.currentRounds);
 
+        // Allow the equip animation to player
+        canFire = false;
+
+        // If a previous weapon was queued, drop it.
         if (prev != null)
         {
             Weapon.DropHand(prev);

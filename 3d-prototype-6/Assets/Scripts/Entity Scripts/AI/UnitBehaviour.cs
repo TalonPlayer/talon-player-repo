@@ -50,6 +50,7 @@ public class UnitBehaviour : MonoBehaviour
         // 2 -> 20% 3 -> 30% 4 -> 40% 5 -> 50%
 
         if (AILevel == 10) return 0;
+        if (choiceAmount <= 0) return -1;
 
         float[] chances = new float[choiceAmount];
         // Calculate Best Chances first

@@ -70,7 +70,6 @@ public class HeadBobController : MonoBehaviour
 
     private void PlayMotion(Vector3 motion)
     {
-
         if (combat.isAiming)
             bobMotion = Vector3.zero;
         else

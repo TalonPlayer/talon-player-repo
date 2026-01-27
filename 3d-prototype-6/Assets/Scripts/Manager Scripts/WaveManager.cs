@@ -6,13 +6,14 @@ public class WaveManager : MonoBehaviour
 {
     public static WaveManager Instance;
     public int maxOnScreen = 14;
-    public int EnemyCount{get { return enemies.Count; }}
+    public int EnemyCount { get { return enemies.Count; } }
     public int nextWaveTimer = 30;
     public List<WaveInfo> wave;
     private WaveInfo currentWave;
     public int waveIndex = -1;
     public int spawnIndex = 0;
     public bool intermission = false;
+    public bool debugMode = false;
     [SerializeField] private List<Transform> spawnpoints = new List<Transform>();
     private List<Unit> enemies = new List<Unit>();
     private Coroutine spawningRoutine, intermissionRoutine;
@@ -23,6 +24,12 @@ public class WaveManager : MonoBehaviour
     }
     void Start()
     {
+        if (debugMode) 
+        { 
+            intermission = true;
+            return;
+        }
+        
         Reset();
     }
 
@@ -68,7 +75,7 @@ public class WaveManager : MonoBehaviour
             {
                 Vector3 pos = new Vector3();
                 Quaternion rot = new Quaternion();
-                
+
                 if (spawnpoints.Count == 0)
                 {
                     pos = Vector3.zero;
@@ -78,7 +85,7 @@ public class WaveManager : MonoBehaviour
                 {
                     Transform rand = Helper.RandomElement(spawnpoints);
 
-                    pos = rand.position; 
+                    pos = rand.position;
                     rot = rand.rotation;
                 }
 
@@ -101,7 +108,7 @@ public class WaveManager : MonoBehaviour
                 spawnIndex++;
                 HUDManager.UpdateWaveInfo($"");
             }
-            
+
         }
     }
     private IEnumerator Intermission(int time)
@@ -134,6 +141,8 @@ public class WaveManager : MonoBehaviour
         {
             if (intermissionRoutine != null) StopCoroutine(intermissionRoutine);
             intermissionRoutine = StartCoroutine(Intermission(5));
+
+            intermission = false;
         }
     }
 

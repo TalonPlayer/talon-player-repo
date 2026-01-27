@@ -15651,7 +15651,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57214213b10e853499881464a777fee3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hand: {fileID: 11400000, guid: c52934a9adc36384983b364bffb9883d, type: 2}
+  hand: {fileID: 11400000, guid: d0c74b79f3b495a4ba6f9e13e7049c6a, type: 2}
   handObj: {fileID: 8809703128245662948}
   groundLayer:
     serializedVersion: 2
@@ -15659,7 +15659,7 @@ MonoBehaviour:
   currentRounds: 0
   turrets: []
   playerAudio: {fileID: 6069010498324995884}
-  defaultWeapon: {fileID: 11400000, guid: c52934a9adc36384983b364bffb9883d, type: 2}
+  defaultWeapon: {fileID: 11400000, guid: d0c74b79f3b495a4ba6f9e13e7049c6a, type: 2}
   isHoldingAmmo: 0
   isRotating: 0
   rot: {x: 0, y: 0, z: 0}
@@ -15675,10 +15675,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef27a3ff055b63445bf37bbdebd72520, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 10
+  moveSpeed: 6
   acceleration: 100
   deceleration: 100
-  maxSpeed: 10
+  maxSpeed: 6
   dashSpeed: 65
   dashDuration: 0.5
   dashCooldown: 1

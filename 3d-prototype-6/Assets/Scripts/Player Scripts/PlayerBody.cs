@@ -86,7 +86,10 @@ public class PlayerBody : MonoBehaviour
 
     public void ADSFade(bool isAiming, float adsSpeed)
     {
+        AnimatorStateInfo stateInfo = weaponAnimator.GetCurrentAnimatorStateInfo(0);
+        if (stateInfo.IsName("Equip")) return;
         string aimState = isAiming ? "ADS" : "Normal View";
         weaponAnimator.CrossFade(aimState, adsSpeed, 0);
+        weaponAnimator.SetBool("IsAiming", isAiming);
     }
 }

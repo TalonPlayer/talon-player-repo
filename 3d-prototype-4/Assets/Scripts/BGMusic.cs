@@ -21,7 +21,7 @@ public class BGMusic : MonoBehaviour
     public bool enable = false;
     void Start()
     {
-        Invoke(nameof(StartDelay), 1.5f);
+        //Invoke(nameof(StartDelay), 1.5f);
 
     }
 

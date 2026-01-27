@@ -56,6 +56,7 @@ public class RuntimeWeapon
     public int currentBulletCount = 0;
     public int currentRounds = 0;
     public WeaponEffects model;
+    public Weapon instance;
     public bool used;
 
     public RuntimeWeapon(Weapon w)
@@ -80,6 +81,7 @@ public class RuntimeWeapon
         currentBulletCount = w.currentBulletCount;
         currentRounds = w.currentRounds;
 
+        instance = w;
         used = true;
     }
 

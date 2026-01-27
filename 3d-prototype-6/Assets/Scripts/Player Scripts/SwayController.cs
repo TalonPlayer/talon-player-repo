@@ -26,19 +26,22 @@ public class SwayController : MonoBehaviour
     private void CompositeSway()
     {
         Vector3 recoil = Vector3.zero; recoil.y = move.recoilPitchOffset * step / 2f;
-        transform.localPosition = Vector3.Lerp(transform.localPosition, swayPos + bob.bobMotion + recoil, Time.deltaTime * smooth);
-        transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(swayRot + bob.bobMotion), Time.deltaTime * smoothRot);
+
+        if (combat.isAiming)
+        {
+            transform.localPosition = Vector3.Lerp(transform.localPosition, Vector3.zero, Time.deltaTime * smooth);
+            transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(Vector3.zero), Time.deltaTime * smoothRot);
+        }
+        else
+        {
+            transform.localPosition = Vector3.Lerp(transform.localPosition, swayPos + bob.bobMotion + recoil, Time.deltaTime * smooth);
+            transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(swayRot + bob.bobMotion), Time.deltaTime * smoothRot);
+        }
+
     }
 
     private void Sway()
     {
-
-        if (combat.isAiming) 
-        {
-            swayPos = Vector3.zero;
-            return;
-        }
-
         Vector3 invertLook = move.lookInput * -step;
 
         invertLook.x = Mathf.Clamp(invertLook.x, -maxStepDistance, maxStepDistance);
@@ -49,17 +52,12 @@ public class SwayController : MonoBehaviour
 
     private void SwayRotation()
     {
-
-        if (combat.isAiming) 
-        {
-            swayRot = Vector3.zero;
-            return;
-        }
         Vector3 invertLook = move.lookInput * -stepRot;
 
         invertLook.x = Mathf.Clamp(invertLook.x, -maxRotStep, maxRotStep);
         invertLook.y = Mathf.Clamp(invertLook.y, -maxRotStep, maxRotStep);
 
-        swayRot = new Vector3(invertLook.y + move.recoilPitchOffset * (combat.inHand.recoilY * .15f), invertLook.x, invertLook.x);
+        if (combat.inHand)
+            swayRot = new Vector3(invertLook.y + move.recoilPitchOffset * (combat.inHand.recoilY * .15f), invertLook.x, invertLook.x);
     }
 }

@@ -60,7 +60,7 @@ public class PlayerManager : MonoBehaviour
             count++;
         }
 
-        if (count < 0) return Vector3.zero;
+        if (count <= 0) return Vector3.zero;
 
         center /= count;
 
@@ -88,7 +88,6 @@ public class PlayerManager : MonoBehaviour
 
         int desired = SaveSystem.currentPlayers.Count;
 
-        /*
         // 1) Try spawn P1 on Keyboard+Mouse (optional)
         var p1 = playerInputManager.JoinPlayer(
             playerIndex: numOfPlayers,
@@ -101,7 +100,6 @@ public class PlayerManager : MonoBehaviour
         if (desired == 1) return;
          numOfPlayers++;
 
-        */
         // 2) Spawn remaining players on available gamepads
         foreach (var pad in Gamepad.all)
         {

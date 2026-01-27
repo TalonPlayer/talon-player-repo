@@ -105,6 +105,7 @@ MonoBehaviour:
   rotateSpeed: 0
   audioSource: {fileID: 8911128333098234134}
   isMoving: 0
+  isActive: 1
   moveSpeed: 0.5
   targetLocation: {fileID: 0}
 --- !u!82 &8911128333098234134
@@ -119,7 +120,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 0.14
+  m_Volume: 0.067
   m_Pitch: 1
   Loop: 0
   Mute: 0

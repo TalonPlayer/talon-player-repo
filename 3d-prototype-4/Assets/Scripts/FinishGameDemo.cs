@@ -5,7 +5,6 @@ using UnityEngine;
 public class FinishGameDemo : MonoBehaviour
 {
     // This class ends the game if the player reaches the end of the demo
-    public Animator animator;
     public void EndGame()
     {
         foreach (Player player in PlayerManager.Instance.players)
@@ -14,7 +13,6 @@ public class FinishGameDemo : MonoBehaviour
             player.hand.enabled = false;
         }
         
-        animator.SetTrigger("Play");
-        // PlayerManager.Instance.EndGame();
+        PlayerManager.Instance.EndGame();
     }
 }

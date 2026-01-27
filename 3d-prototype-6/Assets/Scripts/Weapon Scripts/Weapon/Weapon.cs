@@ -40,6 +40,8 @@ public class Weapon : MonoBehaviour
     public bool HasMags { get { return CurrentMags > 0; } }
     public bool OutOfAmmo { get { return !HasAmmo && !HasMags; } }
     public bool IsReady { get { return _lastShootTime + fireRate < Time.time; } }
+    public bool CanReload { get { return currentBulletCount < maxBulletCount && currentRounds > 0; } }
+    public bool IsFull { get { return currentBulletCount == maxBulletCount && currentRounds == maxRounds;}}
     public WeaponEffects fx;
     public void Init(RuntimeWeapon w, WeaponEffects f)
     {
@@ -74,67 +76,58 @@ public class Weapon : MonoBehaviour
     }
     public void Shoot(string tag, LayerMask layers, Vector3 headPos, Vector3 aimDir, Entity attacker, bool isAiming = false)
     {
-        if (_lastShootTime + fireRate < Time.time)
+        Vector3 baseDir;
+        for (int i = 0; i < bulletsPerShot; i++)
         {
-            Vector3 baseDir;
-            for (int i = 0; i < bulletsPerShot; i++)
+
+            if (isAiming) baseDir = Helper.SpreadRandomizer(aimDir, bulletSpread / 2f);
+            else baseDir = Helper.SpreadRandomizer(aimDir, bulletSpread);
+            if (Physics.Raycast(headPos, baseDir, out RaycastHit hit, 100f, layers, QueryTriggerInteraction.Ignore))
             {
-
-                if (isAiming) baseDir = Helper.SpreadRandomizer(aimDir, bulletSpread / 2f);
-                else baseDir = Helper.SpreadRandomizer(aimDir, bulletSpread);
-                if (Physics.Raycast(headPos, baseDir, out RaycastHit hit, 100f, layers, QueryTriggerInteraction.Ignore))
+                Action onHit = null;
+                if (hit.collider.CompareTag(tag))
                 {
-                    Action onHit = null;
-                    if (hit.collider.CompareTag(tag))
+                    float damage = baseDamage;
+                    BodyPart b = hit.collider.GetComponent<BodyPart>();
+                    Entity e = hit.collider.GetComponent<Entity>();
+
+                    if (b)
                     {
-                        float damage = baseDamage;
-                        BodyPart b = hit.collider.GetComponent<BodyPart>();
-                        Entity e = hit.collider.GetComponent<Entity>();
-
-                        if (b)
-                        {
-                            e = b.main;
-                            damage = Mathf.RoundToInt(b.damageMult * baseDamage);
-                            b.Hit(baseDir, damage);
-                        }
-
-                        damage += Mathf.RoundToInt(critMult * baseDamage);
-                        if (e)
-                            if (e.isAlive)
-                                onHit = () =>
-                                {
-                                    e.OnHit(Mathf.RoundToInt(damage), attacker);
-                                    UnityAction onRagdollDeath = () => b.Hit(baseDir, damage);
-                                    if (b && e.isAlive) e.death.AppendEvent(onRagdollDeath);
-                                };
-
+                        e = b.main;
+                        damage = Mathf.RoundToInt(b.damageMult * baseDamage);
+                        b.Hit(baseDir, damage);
                     }
 
-                    StartCoroutine(fx.SpawnTrail(hit, onHit));
+                    damage += Mathf.RoundToInt(critMult * baseDamage);
+                    if (e)
+                        if (e.isAlive)
+                            onHit = () =>
+                            {
+                                e.OnHit(Mathf.RoundToInt(damage), attacker);
+                                UnityAction onRagdollDeath = () => b.Hit(baseDir, damage);
+                                if (b && e.isAlive) e.death.AppendEvent(onRagdollDeath);
+                            };
+
                 }
-                else StartCoroutine(fx.SpawnTrail(headPos + fx.barrelPoint.forward * 50f));
+
+                StartCoroutine(fx.SpawnTrail(hit, onHit));
             }
-            currentBulletCount--;
-            _lastShootTime = Time.time;
+            else StartCoroutine(fx.SpawnTrail(headPos + fx.barrelPoint.forward * 50f));
         }
+        _lastShootTime = Time.time;
+        currentBulletCount--;
     }
 
     public void Reload()
     {
-
-        if (CurrentMags > 0)
+        if (currentBulletCount < maxBulletCount && currentRounds > 0)
         {
-            int remaining = maxBulletCount - currentBulletCount;
-            currentBulletCount = maxBulletCount;
-            currentRounds -= remaining;
-        }
-        else
-        {
-            int remaining = maxBulletCount - currentBulletCount;
-            currentBulletCount += remaining;
-            currentRounds = 0;
-        }
+            int needed = maxBulletCount - currentBulletCount;
+            int taken = Mathf.Min(needed, currentRounds);
 
+            currentBulletCount += taken;
+            currentRounds -= taken;
+        }
     }
 
     public void SingleReload()
@@ -151,11 +144,17 @@ public class Weapon : MonoBehaviour
             weapon.fx.rb.isKinematic = false;
             weapon.fx.rb.useGravity = true;
             weapon.fx.coll.enabled = true;
-            weapon.fx.coll.GetComponent<Outline>().SetOutlineActive(false); ;
+            weapon.fx.coll.GetComponent<Outline>().SetOutlineActive(false);
             weapon.gameObject.layer = 15;
             Transform[] children = weapon.transform.GetComponentsInChildren<Transform>();
             foreach (Transform c in children) c.gameObject.layer = 15;
         }
+    }
+
+    public void RefillWeapon()
+    {
+        currentBulletCount = maxBulletCount;
+        currentRounds = maxRounds;
     }
 }
 public enum WeaponType

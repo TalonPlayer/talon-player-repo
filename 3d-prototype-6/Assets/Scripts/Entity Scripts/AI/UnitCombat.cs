@@ -53,7 +53,7 @@ public class UnitCombat : MonoBehaviour
     {
         _isPaused = true;
         yield return new WaitForSeconds(interval);
-        intervalShotCount = inHand.maxBulletCount - main.ai.AILevelChoice(inHand.maxBulletCount);
+        intervalShotCount = Random.Range(4, 6 + main.ai.AILevel);
         _isPaused = false;
 
     }

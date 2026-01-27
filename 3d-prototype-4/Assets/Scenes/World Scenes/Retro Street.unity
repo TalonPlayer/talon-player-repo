@@ -208,7 +208,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.75
+  m_Volume: 0
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -1700,6 +1700,7 @@ MonoBehaviour:
   playerEnterPoint: {fileID: 1865639017}
   door: {fileID: 1665003499}
   isPortal: 0
+  active: 1
 --- !u!65 &183020330
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -16926,7 +16927,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.75
+  m_Volume: 0
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -17482,6 +17483,7 @@ MonoBehaviour:
   playerEnterPoint: {fileID: 2064905451}
   door: {fileID: 1442579664}
   isPortal: 0
+  active: 1
 --- !u!65 &1703640016
 BoxCollider:
   m_ObjectHideFlags: 0

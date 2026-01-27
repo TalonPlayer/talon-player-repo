@@ -103,6 +103,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Swap Weapon",
+                    "type": "Value",
+                    "id": "e5757af8-91f5-4873-9233-ac333e97de4c",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -301,6 +310,45 @@
                     "processors": "",
                     "groups": "",
                     "action": "Next Wave",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3e30e7cb-c43b-4129-ad9d-5c6bbc6cdf91",
+                    "path": "<Mouse>/scroll/y",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Swap Weapon",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Menu Traversal",
+            "id": "a8a54030-f8b4-492e-a495-136468d5a0f1",
+            "actions": [
+                {
+                    "name": "Exit Menu",
+                    "type": "Button",
+                    "id": "0a417699-8282-4e73-ad3f-8fd978726f9f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "b7aac0d7-996f-4838-8a69-d4a4a2e1e2eb",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Exit Menu",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

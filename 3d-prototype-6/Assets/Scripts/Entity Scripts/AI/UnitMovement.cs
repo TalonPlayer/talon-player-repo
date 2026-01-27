@@ -189,6 +189,7 @@ public class UnitMovement : MonoBehaviour
     public void MoveToCover()
     {
         int index = main.ai.AILevelChoice(main.vision.validCovers.Length);
+        if (index < 0) return;
         coverPoint = main.vision.validCovers[index];
         if (coverPoint == null) coverPoint = main.vision.validCovers[0];
         if (coverPoint == null)

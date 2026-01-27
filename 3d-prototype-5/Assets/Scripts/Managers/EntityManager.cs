@@ -80,9 +80,9 @@ public class MyEntityManager : MonoBehaviour
     void Start()
     {
         PresetOutfits();
-        AddPresetPool();
+        //AddPresetPool();
         SillyHalloween();
-        // CreateEntityPool();
+        CreateEntityPool();
 
         /*
         foreach (EntityObj info in entityInfos)

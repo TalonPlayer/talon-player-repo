@@ -83,7 +83,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Right Hand/TAS11/Model
+    path: Right Hand/TAP11/Model
   m_PositionCurves:
   - curve:
       serializedVersion: 2
@@ -154,7 +154,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Right Hand/TAS11/Model
+    path: Right Hand/TAP11/Model
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -197,7 +197,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Right Hand/TAS11/Model/TAS11/TAS11/Slide
+    path: Right Hand/TAP11/Model/TAS11/TAS11/Slide
   m_ScaleCurves: []
   m_FloatCurves: []
   m_PPtrCurves: []
@@ -209,7 +209,7 @@ AnimationClip:
   m_ClipBindingConstant:
     genericBindings:
     - serializedVersion: 2
-      path: 2867975519
+      path: 2474437018
       attribute: 1
       script: {fileID: 0}
       typeID: 4
@@ -218,7 +218,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 2965624886
+      path: 56096245
       attribute: 1
       script: {fileID: 0}
       typeID: 4
@@ -227,7 +227,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 2867975519
+      path: 2474437018
       attribute: 4
       script: {fileID: 0}
       typeID: 4
@@ -328,7 +328,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: Right Hand/TAS11/Model
+    path: Right Hand/TAP11/Model
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -403,7 +403,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: Right Hand/TAS11/Model
+    path: Right Hand/TAP11/Model
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -478,7 +478,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: Right Hand/TAS11/Model
+    path: Right Hand/TAP11/Model
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -553,10 +553,10 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
-    path: Right Hand/TAS11/Model
+    path: Right Hand/TAP11/Model
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -628,10 +628,10 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
-    path: Right Hand/TAS11/Model
+    path: Right Hand/TAP11/Model
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -703,10 +703,10 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
-    path: Right Hand/TAS11/Model
+    path: Right Hand/TAP11/Model
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -751,7 +751,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: Right Hand/TAS11/Model/TAS11/TAS11/Slide
+    path: Right Hand/TAP11/Model/TAS11/TAS11/Slide
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -799,7 +799,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: Right Hand/TAS11/Model/TAS11/TAS11/Slide
+    path: Right Hand/TAP11/Model/TAS11/TAS11/Slide
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -847,7 +847,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: Right Hand/TAS11/Model/TAS11/TAS11/Slide
+    path: Right Hand/TAP11/Model/TAS11/TAS11/Slide
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -860,7 +860,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Right Hand/TAS11/Model
+    path: Right Hand/TAP11/Model
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -872,7 +872,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Right Hand/TAS11/Model
+    path: Right Hand/TAP11/Model
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -884,10 +884,17 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Right Hand/TAS11/Model
+    path: Right Hand/TAP11/Model
     classID: 4
     script: {fileID: 0}
     flags: 0
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
-  m_Events: []
+  m_Events:
+  - time: 0.8333333
+    functionName: FinishEquip
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0

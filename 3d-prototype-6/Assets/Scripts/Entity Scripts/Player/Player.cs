@@ -61,9 +61,12 @@ public class Player : Entity
     public void Reset()
     {
         AddPoints(-points);
+        AddPoints(50000);
         health = _maxHealth;
         isAlive = true;
         HUDManager.UpdateHealthBar(1f);
+
+        
     }
 
     public override void OnHit(int damage, Entity attacker)

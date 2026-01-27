@@ -8,15 +8,22 @@ public class PlayerInputHandler : MonoBehaviour
 {
     private Player main;
     private PlayerInteraction interaction;
+    private PlayerInput playerInput;
     void Awake()
     {
         main = GetComponent<Player>();
         interaction = GetComponent<PlayerInteraction>();
+        playerInput = GetComponent<PlayerInput>();
     }
 
     void Start()
     {
 
+    }
+
+    public void SwapInput(string actionMap)
+    {
+        playerInput.SwitchCurrentActionMap(actionMap);
     }
 
     public void OnMove(CallbackContext ctx)
@@ -85,7 +92,7 @@ public class PlayerInputHandler : MonoBehaviour
     {
         if (ctx.started)
         {
-            main.combat.Melee();
+            //main.combat.Melee();
         }
     }
 
@@ -96,7 +103,7 @@ public class PlayerInputHandler : MonoBehaviour
             main.combat.Reload();
         }
     }
-
+    
     public void OnInteract(CallbackContext ctx)
     {
         if (ctx.started)
@@ -110,6 +117,25 @@ public class PlayerInputHandler : MonoBehaviour
         if (ctx.started)
         {
             WaveManager.Instance.SkipIntermission();
+        }
+    }
+
+    public void OnSwapWeapon(CallbackContext ctx)
+    {
+        if (ctx.started)
+        {
+            int increm = Mathf.Clamp(Mathf.RoundToInt(ctx.ReadValue<float>()), -1 , 1);
+            
+            main.combat.Swap(increm);
+        }
+    }
+
+    public void OnExitShop(CallbackContext ctx)
+    {
+        if (ctx.started)
+        {
+            if (ShopHUDManager.Instance.isOpened)
+            ShopHUDManager.Instance.ExitShop();
         }
     }
 }
